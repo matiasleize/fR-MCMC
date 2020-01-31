@@ -1,0 +1,42 @@
+Holja de consultas:
+
+-Preguntas de las diapos (Ver Lyx)
+
+-Preguntas del paper para leer
+
+-Preguntas del código
+	No pude hacer que ande en Wolfram, no se que onda. 
+	Lo pude hacer en Octave y me dio lo mismo que en Python :)
+	Que significa que la suma de las funciones no de 1 para z chicos y grandes? Haciendo zoom se ve que diverge para z=300,100 (si diverge )
+	Como escribir f,f_R,f_2R(x,y,v,w)? No estamos viendo la evolucion de f(R)! Sino la evolucion de H, por eso gamma que solo depdnde de f(R) y derivadas es un parametro)
+	Como sigo? Hasta ahora resolvi la forma funcoinal de x,y,v,w,gamma. Ahora lo que tengo que hacer el escribir analiticamente la forma de, x*,y*,v*,w*,gamma* que salen de la teoria y conpararlo con lo que obtuve?
+-Preguntas de las ecuaciones dinamicas
+	Viendo el paper de dinamica no lineal parece que la dinamica en una de las variables (S) no se tiene en cuenta. Porque?
+
+- Preguntas de las cuentas
+	Me deje el cuaderno en casa pero la ecacion para x no salio :( (Faltaria ver la expresion del tensor de ricci que queda)
+
+
+1)
+Plotear uno encima del otro copiando el vector de octave en python
+
+2)
+X=salida_python
+Y=salida_octave
+
+X-Y=diferencia
+
+
+
+
+-----------------------
+H(z): salen de las ecuaciones, eso va  adepender de las f(R) y sus derivadas (Aca entra la fisica)!!!.
+
+
+Decirle a Lucila que le diga a Carolina que me pase los datos.   
+
+De la tesis de carolina leer la parte de DN1A y los cronometros cosmicos.
+
+'Beyond Einstein gravity' las primeras 100 paginas estan las ecuaciones de Friedmann todo piola
+
+

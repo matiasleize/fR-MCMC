@@ -1,0 +1,786 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+%\oddsidemargin -0.44cm		% Left margin is 1in + this value
+%\topmargin -0.44cm			% Top margin is 1in + this value
+%\headsep 0cm
+%\headheight 0cm
+%\textwidth 16.8cm		    % Right margin is not set explicitly
+%\textheight 25.5cm			% Bottom margin is not set explicitly
+\usepackage{my_preamble}
+\end_preamble
+\use_default_options true
+\begin_modules
+customHeadersFooters
+\end_modules
+\maintain_unincluded_children false
+\language spanish
+\language_package default
+\inputencoding default
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize a4paper
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1cm
+\topmargin 2cm
+\rightmargin 1cm
+\bottommargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style french
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\listings_params "keywordstyle={\color{keyword_color}\ttfamily\bfseries},commentstyle={\color{comentarios_color}\itshape},emphstyle={\color{red}},breaklines=true,basicstyle={\ttfamily},stringstyle={\color{cadenas_color}},identifierstyle={\color{identifier_color}},backgroundcolor={\color{fondocodigo_color}},keepspaces=true,numbers=left,xleftmargin=2em,frame=leftline,rulecolor={\color{black}},numbersep=5pt,tabsize=3"
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand include
+filename "macros2018.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+Tesis
+\end_layout
+
+\begin_layout Section
+Ecuaciones utilizadas
+\end_layout
+
+\begin_layout Standard
+Partimos de las ecuaciones dinámicas de Friedmann, Raychandhuri y continuidad
+\begin_inset Formula 
+\[
+H^{2}=\frac{1}{3f_{R}}\left(\rho_{m}+\frac{Rf_{R}-f}{2}-3H\dot{R}f_{2R}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+-3H^{2}-2=\frac{1}{f_{R}}\left[\dot{R}^{2}f_{3R}+\left(2H\dot{R}+\ddot{R}\right)f_{2R}+\frac{f-Rf_{R}}{2}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\dot{\rho_{m}}+3H\rho_{m}=0
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Proponemos el siguiente cambio de coordenadas 
+\begin_inset Formula 
+\[
+\begin{cases}
+x & =\frac{\dot{R}f_{2R}}{Hf_{R}}\\
+y & =\frac{f}{6H^{2}f_{R}}\\
+v & =\frac{R}{6H^{2}}\\
+\Omega & =\text{\ensuremath{\frac{\rho_{m}}{3H^{2}f_{R}}}}
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+que nos van a permitir escribir las ecuaciones de dinámicas de una manera
+ más simple.
+ Finalmente, cabe aclarar que especificar la 
+\begin_inset Formula $f\left(R\right)$
+\end_inset
+
+ que se estudiará es análogo a especificar la forma del parámetro 
+\begin_inset Formula $\Gamma=\frac{f_{R}}{Rf_{2R}}$
+\end_inset
+
+ que aparecerá en las ecuaciones de movimiento.
+ 
+\end_layout
+
+\begin_layout Standard
+Antes de proceder a hacer, escribiremos un par de resultados que nos servirán
+ luego.
+ Partimos de la formula conocida para el escalar de curvatura:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+R & =6\left(2H^{2}+\dot{H}\right)\\
+-\frac{\dot{H}}{H^{2}} & =2-\frac{R}{6H^{2}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+y obtenemos que 
+\begin_inset Formula 
+\begin{equation}
+\boxed{-\frac{\dot{H}}{H^{2}}=2-v}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+y por otro lado, tenemos que 
+\begin_inset Formula 
+\begin{align*}
+\frac{dt}{dz} & =\BUNDERBRACE{\frac{dt}{da}}{=\frac{1}{\dot{a}}}\BUPBRACE{\frac{da}{dz}}{=\frac{d\left(1+z\right)^{-1}}{dz}}\\
+ & =-\frac{\left(1+z\right)^{-2}}{\dot{a}}\\
+ & =-\BUNDERBRACE{\frac{a}{\dot{a}}}{=\frac{1}{H}}\frac{1}{\left(z+1\right)}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\boxed{\frac{dt}{dz}=\frac{-1}{H\left(z+1\right)}}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph*
+Ecuación de Friedmann
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+H^{2} & =\frac{1}{3f_{R}}\left(\rho_{m}+\frac{Rf_{R}-f}{2}-3H\dot{R}f_{2R}\right)\\
+1 & =\frac{2\rho_{m}+Rf_{R}-f-6H\dot{R}f_{2R}-f}{6H^{2}f_{R}}\\
+1 & =\BUNDERBRACE{\frac{\rho_{m}}{3H^{2}f_{R}}}{\Omega}+\BUNDERBRACE{\frac{R}{6H^{2}}}v-\BUNDERBRACE{\frac{\dot{R}f_{2R}}{Hf_{R}}}x-\BUNDERBRACE{\frac{f}{6H^{2}f_{R}}}y
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\boxed{1=\Omega+v-x-y}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph*
+Ecuación de Raychandhuri
+\end_layout
+
+\begin_layout Standard
+Para escribir la ecuación de Raychandhuri en las nuevas variables, realizamos
+ primero un cálculo auxiliar.
+ 
+\end_layout
+
+\begin_layout Standard
+Ahora si, la derivada respecto a 
+\begin_inset Formula $z$
+\end_inset
+
+ del parámetro de Hubble se escribe como
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{dH}{dz} & =\BUNDERBRACE{\frac{dt}{dz}}{=\frac{-1}{\left(1+z\right)H}}\dot{H}\\
+ & =\frac{-\dot{H}}{\left(1+z\right)H}\\
+ & =\frac{H}{\left(1+z\right)}\frac{\dot{H}}{H\text{²}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\boxed{\frac{dH}{dz}=\frac{H}{\left(1+z\right)}\frac{\dot{H}}{H\text{²}}}\label{eq:H_de_z}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+esta formula va a ser util a la hora de querer encontrar 
+\begin_inset Formula $H\left(z\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+Ecuaciones dinámicas de las nuevas variables
+\end_layout
+
+\begin_layout Subparagraph*
+Dinámica de 
+\begin_inset Formula $x$
+\end_inset
+
+:
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+FALTA
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subparagraph*
+Dinámica de 
+\begin_inset Formula $y$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{dy}{dz} & =\frac{dt}{dz}\dot{y}\\
+ & =\frac{dt}{dz}\left[\frac{f_{R}^{2}\dot{R}6H^{2}-12ff_{R}H\dot{H}-6ff_{2R}\dot{R}H^{2}}{36H^{4}f_{R}^{2}}\right]\\
+ & =\frac{-1}{\left(1+z\right)}\left[\BUNDERBRACE{\frac{\dot{R}}{6H^{3}}}{=vx\Gamma}-\BUNDERBRACE{\frac{f\dot{H}}{3H^{4}f_{R}}}{\frac{2y}{\REDCANCEL{H^{2}}}\REDCANCEL{H^{2}}\left(2-v\right)}-\BUNDERBRACE{\frac{ff_{2R}\dot{R}}{6H^{3}f_{R}^{2}}}{=xy}\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\boxed{\frac{dy}{dz}=\frac{-1}{\left(1+z\right)}\left[vx\Gamma-xy+4y-2yv\right]}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subparagraph*
+Dinámica de 
+\begin_inset Formula $v$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{dv}{dz} & =\frac{dt}{dz}\dot{v}\\
+ & =\frac{dt}{dz}\frac{\dot{R}H^{2}-2R\dot{H}}{6H^{3}}\\
+ & =\frac{-1}{\left(z+1\right)}\frac{\dot{R}H^{2}-2R\dot{H}}{6H^{4}}\\
+ & =\frac{-v}{\left(z+1\right)}\left[\BUNDERBRACE{\frac{\dot{R}}{RH}}{=x\Gamma}+2\left(2-v\right)\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\boxed{\frac{dv}{dz}=\frac{-v}{\left(z+1\right)}\left(x\Gamma+4-2v\right)}\label{eq:v_de_z}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subparagraph*
+Dinámica de 
+\begin_inset Formula $\Omega$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{d\Omega}{dz} & =\frac{dt}{dz}\dot{\Omega}\\
+ & =\frac{dt}{dz}\frac{\dot{\rho_{m}}3H^{2}f_{R}-6\rho_{m}H\dot{H}f_{R}-3\rho_{m}H^{2}f_{2R}\dot{R}}{9H^{4}f_{R}^{2}}\\
+ & =\frac{1}{\left(z+1\right)}\BUNDERBRACE{\frac{\rho_{m}}{2H^{2}f_{R}}}{=\Omega}\frac{1}{H^{2}f_{R}}\left(3H^{2}f_{R}+2\dot{H}f_{R}+H\dot{R}f_{2R}\right)\\
+ & =\frac{\Omega}{\left(z+1\right)}\left(3+\BUNDERBRACE{\frac{2\dot{H}}{H^{2}}}{=2\left(v-2\right)}+\BUNDERBRACE{\frac{\dot{R}f_{2R}}{Hf_{R}}}{=x}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\boxed{\frac{d\Omega}{dz}=\frac{\Omega}{\left(z+1\right)}\left(-1+2v+x\right)}\label{eq:omega_de_z}
+\end{equation}
+
+\end_inset
+
+de esta manera, podemos escribir magnitudes físicas en función de estas
+ variables:
+\end_layout
+
+\begin_layout Subparagraph*
+Parámetro de Hubble (
+\begin_inset Formula $H\left(z\right)$
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+):
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ 
+\end_layout
+
+\begin_layout Standard
+Partimos de la ecuación 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:H_de_z"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ e inegramos
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\int_{H_{0}}^{H\left(z\right)}\frac{dH}{H} & =\int_{0}^{z}\frac{dz}{z+1}\left(2-v\right)\\
+\ln\left|\frac{H\left(z\right)}{H_{0}}\right| & =2\ln\left|z+1\right|-\BUNDERBRACE{\int_{0}^{z}\frac{v}{z+1}dz}{\equiv F\left(z\right)}\\
+ & =\ln\left(z+1\right)^{2}-F\left(z\right)\\
+\frac{H\left(z\right)}{H_{0}} & =\left(z+1\right)^{2}e^{-F\left(z\right)}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\boxed{H\left(z\right)=H_{0}\left(z+1\right)^{2}e^{-F\left(z\right)}}\label{eq:H(z)}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+con 
+\begin_inset Formula $F\left(z\right)=\int_{0}^{z}dz\frac{v\left(z\right)}{z+1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subparagraph*
+Parámetro de Hubble (
+\begin_inset Formula $d_{L}\left(z\right)$
+\end_inset
+
+): 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\boxed{d_{L}=\left(z+1\right)\int_{0}^{z}\frac{dz}{H\left(z\right)}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\boxed{q=1-v}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Mostrar esas 3 magnitudes integradas en python para H-S con n=1 (u otro
+ facil)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Para corroborar que los valores obtenidos son razonables, se volvieron a
+ calcular estas cantidades pero en un programa en 
+\emph on
+Octave 
+\emph default
+y se observó la diferencia entre ambos calculos como función de 
+\begin_inset Formula $z$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Comparación de las magnitudes en Octave
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph*
+Ecuaciones dinámicas de las nuevas variables (versión 2.0)
+\end_layout
+
+\begin_layout Standard
+Como mencionamos antes, para toda 
+\begin_inset Formula $f\left(R\right)$
+\end_inset
+
+para la cual podamos escribir 
+\begin_inset Formula $\Gamma=\Gamma\left(x,y,v,\Omega\right),$
+\end_inset
+
+las ecuaciones dinámicas que mencionamos nos alcanzarán para resolver el
+ sistema.
+ Sin embargo, cuando no podamos dar una forma analítica cerrada para 
+\begin_inset Formula $\Gamma\left(x,y,v,\Omega\right)$
+\end_inset
+
+ (como en el modelo de Hu-Zawicki más general), este sistema de ecuaciones
+ no está cerrado.
+ Si estamos en este escenario, debemos escribir una nueva ecuación de movimiento
+ para cerrar el sistema.
+ La dinámica del escalar de curvatura normalizado 
+\begin_inset Formula $r=\frac{R}{cH_{0}^{2}}$
+\end_inset
+
+ tiene la forma
+\begin_inset Formula 
+\begin{align*}
+\frac{dr}{dz} & =\frac{1}{cH_{0}^{2}}\frac{dR}{dt}\frac{dt}{dz}\\
+ & =\frac{-1}{H\left(1+z\right)}\frac{1}{cH_{0}^{2}}\BUNDERBRACE{\frac{\dot{R}f_{2R}}{Hf_{R}}}{=x}\BUNDERBRACE{\frac{f_{R}}{f_{2R}R}}{=\Gamma}R\\
+ & =\frac{-x\Gamma R}{H\left(1+z\right)cH_{0}^{2}}\\
+ & =\frac{-x\Gamma r\REDCANCEL{cH_{0}^{2}}}{H\left(1+z\right)\REDCANCEL{cH_{0}^{2}}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\boxed{\frac{dr}{dz}=-\frac{x\Gamma r}{\left(1+z\right)}}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+ahora, el sistema de ecuaciones de las nuevas variables es:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+COMPLETAR
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{cases}
+\frac{dx}{dz} & =\text{FALTA}\\
+\frac{dy}{dz} & =\frac{-1}{\left(1+z\right)}\left[vx\Gamma-xy+4y-2yv\right]\\
+\frac{dv}{dz} & =\frac{-v}{\left(z+1\right)}\left(x\Gamma+4-2v\right)\\
+\frac{d\Omega}{dz} & =\frac{\Omega}{\left(z+1\right)}\left(-1+2v+x\right)\\
+\frac{dr}{dz} & =-\frac{x\Gamma r}{\left(1+z\right)}
+\end{cases}\label{eq:Sistema 2.0}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+En el modelo de Hu-Zawicki mas general, se puede escribir de forma explícita
+ 
+\begin_inset Formula $\Gamma=\Gamma\left(r\right),$
+\end_inset
+
+por lo que esta bien representado en este nuevo set de ecuaciones.
+\begin_inset Formula 
+\[
+\Gamma_{H-S}\left(r\right)=\frac{\left(1+dr^{n}\right)\left(-bnr^{n}+\left(1+dr^{n}\right)^{2}r\right)}{r^{n}bn\left[\left(1-n\right)+d\left(1+n\right)r^{n}\right]}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+donde 
+\begin_inset Formula $n$
+\end_inset
+
+, 
+\begin_inset Formula $c$
+\end_inset
+
+, 
+\begin_inset Formula $b$
+\end_inset
+
+ y 
+\begin_inset Formula $d$
+\end_inset
+
+ son parámetros del modelo.
+\end_layout
+
+\begin_layout Standard
+Para corroborar que el sistema nuevo 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:Sistema 2.0"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ funcione, vamos a utilizar que para 
+\begin_inset Formula $n=1$
+\end_inset
+
+podemos escribir 
+\begin_inset Formula $\Gamma_{H-S}\left(y,v\right)=\frac{yv}{2\left(y-v\right)^{2}}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+De esta manera, se comparó la función 
+\begin_inset Formula $H\left(z\right)$
+\end_inset
+
+ arrojada por el sistema 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:Sistema 2.0"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ con 
+\begin_inset Formula $\Gamma_{H-S}\left(r\right)$
+\end_inset
+
+ y el sistema anterior con 
+\begin_inset Formula $\Gamma_{H-S}\left(y,v\right).$
+\end_inset
+
+ El resultado de la diferencia entre los valores de 
+\begin_inset Formula $H\left(z\right)$
+\end_inset
+
+ es graficada abajo.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Grafico de diferencia entre los H
+\begin_inset Formula $\left(z\right)$
+\end_inset
+
+ con los dos sistemas de ecuaciones
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_body
+\end_document

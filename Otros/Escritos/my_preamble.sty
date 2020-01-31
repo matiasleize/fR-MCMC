@@ -1,0 +1,107 @@
+%\date{}  % Sacamos la fecha del principio
+\hyphenation{dis-po-si-ti-vo re-gis-tro con-si-de-rar-se} %  Indicamos cómo separar las palabras. Cada palabra se separa con un espacio.
+% ---------------------------------------------------------------
+\usepackage[most]{tcolorbox} % Permite hacer "box" con colores para destacar cosas.
+\usepackage{lmodern} % Parece que mejora el aspecto de las fuentes vectoriales o algo asi
+\usepackage[T1]{fontenc} % Utiliza un cifrado de 8 bits para los caracteres permitiendo usar los acentuados sin problemas
+\usepackage{float}
+\usepackage{units}
+\usepackage{graphicx}
+\usepackage{esint}
+\usepackage{mathrsfs}
+\usepackage{dsfont}
+\usepackage{amsmath} % Si no pongo esto me tira el error  de "\iint already defined..."
+\usepackage{sectsty} % Esto es para cambiar el color y estilo de los títulos de secciones.
+\usepackage{xcolor} % No sé por qué hay dos paquetes de colores.
+\usepackage{color} % No sé por qué hay dos paquetes de colores.
+\usepackage{placeins} % Es para que los flotantes no se vallan a cualquier lado.  Para usar "placeins" colocar codigo TeX en forma de \FloatBarrier y los flotantes no pasan de ahi.
+\usepackage{caption}
+% ---------------------------------------------------------------------------------------------
+%\definecolor{my_gray}{RGB}{200, 200, 200} % Este es el que uso en las ecuaciones con el comando '\GRISCLARO'
+% Estilo de títulos de secciones, subsecciones, etc.
+\chapterfont{\bfseries\sffamily\color[rgb]{.1,.1,.3}}
+\sectionfont{\bfseries\sffamily\color[rgb]{.1,.1,.4}}
+\subsectionfont{\bfseries\sffamily\color[rgb]{.2,.2,.6}}
+\subsubsectionfont{\bfseries\sffamily\color[rgb]{.2,.2,.8}}
+\paragraphfont{\bfseries\sffamily\color[rgb]{.2,.2,.8}}
+% Colores para los listados de código
+\definecolor{comentarios_color}{RGB}{190, 190, 190}
+\definecolor{cadenas_color}{RGB}{57, 167, 157}
+\definecolor{keyword_color}{RGB}{100,100,180}
+\definecolor{fondocodigo_color}{RGB}{250, 255, 255}
+\definecolor{identifier_color}{RGB}{50,50,120}
+% ---------------------------------------------------------------------------------------------
+% Configuración de epígrafes
+\DeclareCaptionFont{CaptionLabel}{\color[rgb]{.1,.1,.7}\bfseries\sffamily}
+\DeclareCaptionFont{CaptionText}{\color[rgb]{.3,.3,.8}}
+\captionsetup[figure]{margin=40pt,font=normalsize,labelfont={CaptionLabel,bf},textfont=CaptionText}
+\captionsetup[table]{margin=40pt,font=normalsize,labelfont={CaptionLabel,bf},textfont=CaptionText}
+% ---------------------------------------------------------------------------------------------
+% Definiciones de 'tcolorbox':
+\definecolor{CalculosAuxiliaresBoxBackgroundColor}{RGB}{240, 240, 240}
+\definecolor{CalculosAuxiliaresBoxFrameColor}{RGB}{80, 80, 190}
+\definecolor{ComentarioBoxBackgroundColor}{RGB}{245, 245, 255}
+\definecolor{ComentarioBoxFrameColor}{RGB}{160, 170, 210}
+\definecolor{EcuacionImportanteBoxBackgroundColor}{RGB}{240, 255, 240}
+\definecolor{EcuacionImportanteBoxFrameColor}{RGB}{50, 160, 50}
+
+\newcounter{BoxCounter}
+
+\newtcolorbox{CalculosAuxiliares} {
+title=\bfseries\sffamily Cálculos Auxiliares,
+colback=CalculosAuxiliaresBoxBackgroundColor,
+colframe=CalculosAuxiliaresBoxFrameColor,
+center, 
+valign=top, 
+halign=left,
+%before skip=0.8cm, % Espacio en blanco antes del recuadro.
+%after skip=1.2cm, % Espacio en blanco después del recuadro.
+left = 2mm,
+right = 2mm,
+breakable,
+enhanced
+}
+
+\newtcolorbox[use counter=BoxCounter]{Comentario}[2][] {
+colback=ComentarioBoxBackgroundColor,
+colframe=ComentarioBoxFrameColor,
+center, 
+valign=top, 
+halign=left,
+%before skip=0.8cm, % Espacio en blanco antes del recuadro.
+%after skip=1.2cm, % Espacio en blanco después del recuadro.
+breakable,
+enhanced,
+title=\bfseries\sffamily #2 \hfill Box \theBoxCounter,
+#1
+}
+
+\newtcolorbox[use counter=BoxCounter]{Importante}[2][] {
+colback=EcuacionImportanteBoxBackgroundColor,
+colframe=EcuacionImportanteBoxFrameColor,
+center, 
+valign=top, 
+halign=left,
+before skip=1cm, % Espacio en blanco antes del recuadro.
+after skip=1cm, % Espacio en blanco después del recuadro.
+breakable,
+enhanced,
+title=\bfseries\sffamily #2 \hfill Box \theBoxCounter,
+#1
+}
+% ----------------------------------------------------------------------------------------------
+% Esto es para los "botones" de citas y referencias no tengan un cuadrado horrible alrededor.
+\hypersetup {
+colorlinks,
+linkcolor={},
+citecolor={},
+urlcolor={blue}
+}
+% ----------------------------------------------------------------------------------------------
+\edef\timestamp{%
+  \the\year
+  \two@digits\month
+  \two@digits\day
+  \two@digits{\numexpr(\time*2 - 59)/120\relax}%
+  \two@digits{\numexpr\time - 60*\numexpr(\time*2 - 59)/120\relax\relax}%
+}
