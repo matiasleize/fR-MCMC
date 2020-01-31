@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Dec 15 16:21:11 2019
+
+@author: matias
+"""
+
+import numpy as np
+from matplotlib import pyplot as plt
+
+#%% Integramos el vector v y calculamos el Hubble
+zs = np.linspace(0,3,7000)
+
+omega_m = 0.3089
+omega_DE = 0.6911
+omega_r = 1 - omega_m - omega_DE
+
+
+E_z = lambda z, omega_r, omega_m, omega_DE: np.sqrt(omega_r * (1+z)**4 + omega_m * (1+z)**3 + omega_DE)
+
+
+hubbles = E_z(zs,omega_r, omega_m, omega_DE)
+
+
+plt.plot(zs,hubbles)
+
+# Guardamos z y H()
+np.savez('/home/matias/Documents/Tesis/Software/Integracion numérica/Python/Sistema_5ec/H(z)_lcdm'
+         , zs=zs, hubbles=hubbles)
