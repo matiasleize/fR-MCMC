@@ -6,11 +6,12 @@ Created on Wed Aug 28 23:03:17 2019
 @author: matias
 """
 
-from scipy.integrate import solve_ivp
 import numpy as np
 from matplotlib import pyplot as plt
+from scipy.integrate import solve_ivp
 from scipy.integrate import simps as simps
 import time
+
 #%%
 #Gamma de Lucila
 gamma = lambda r,b,c,d,n: ((1+d*r**n) * (-b*n*r**n + r*(1+d*r**n)**2)) / (b*n*r**n * (1-n+d*(1+n)*r**n))  
@@ -99,7 +100,7 @@ sol = solve_ivp(dX_dz, [zi,zf], ci, max_step=0.01)
 
 
 # Guardamos z y v(z)
-np.savez('/home/matias/Documents/Tesis/Software/Integracion numérica/Python/Sistema_5ec/v(z)'
+np.savez('/home/matias/Documents/tesis_licenciatura/Software/Integracion numérica/Python/Sistema_5ec/v(z)'
          , zs=sol.t, v=sol.y[2])
 
 #%% Integramos el vector v y calculamos el Hubble
@@ -132,7 +133,7 @@ plt.legend(loc='best')
 plt.grid(True)
 
 # Guardamos z y H()
-np.savez('/home/matias/Documents/Tesis/Software/Integracion numérica/Python/Sistema_5ec/H(z)'
+np.savez('/home/matias/Documents/tesis_licenciatura/Software/Integracion numérica/Python/Sistema_5ec/H(z)'
          , zs=zs, hubbles=hubbles)
 
 #%% Chequeo
