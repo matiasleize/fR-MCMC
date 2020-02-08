@@ -21,8 +21,9 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 
-from funciones_int import integrador,leer_data,magn_aparente_teorica,chi_2
-from funciones_
+from funciones_int import integrador, magn_aparente_teorica
+from funciones_data import leer_data_pantheon
+from funciones_estadistica import chi_2
 
 #%% Predeterminados:
 H_0 =  73.48
@@ -68,8 +69,8 @@ def params_to_chi2(theta, params_fijos):
         return [s0,s1,s2,s3,s4]
     
     z,E = integrador(dX_dz,ci, params_modelo)
-    os.chdir(path_git+'/Software/Estadística/')
-    zcmb,zhel, Cinv, mb = leer_data('lcparam_full_long_zhel.txt')
+    os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
+    zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
     muth = magn_aparente_teorica(z,E,zhel,zcmb)
     
     if isinstance(Mabs,list):
