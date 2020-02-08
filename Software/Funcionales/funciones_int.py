@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Sun Feb  2 13:28:48 2020
 
@@ -10,7 +8,6 @@ from matplotlib import pyplot as plt
 from scipy.integrate import solve_ivp
 import numpy as np
 from scipy.integrate import simps as simps
-from numpy.linalg import inv
 import time
 
 from scipy.interpolate import interp1d
@@ -20,6 +17,9 @@ H_0 =  73.48
 
 
 def integrador(sistema_ec, cond_iniciales, parametros_modelo, z_inicial=0, z_final=3):    
+    '''Esta función integra el sistema de ecuaciones diferenciales entre 
+    z_inicial y z_final, dadas las condiciones iniciales y los parámetros
+    del modelo.'''
     [b,d,c,r_0,n] = parametros_modelo
     # Resolvemos
     sol = solve_ivp(sistema_ec, [z_inicial,z_final], cond_iniciales, max_step=0.01)
@@ -47,8 +47,8 @@ def integrador(sistema_ec, cond_iniciales, parametros_modelo, z_inicial=0, z_fin
 
 def plot_sol(solucion):
     
-    '''Dado un gamma y una solución de las variables dinamicas, grafica estas
-    por separado en una figura de 4x4.'''
+    '''Dada una gamma (que especifica el modelo) y una solución de las
+    variables dinámicas, grafica estas por separado en una figura de 4x4.'''
 
     f, axes = plt.subplots(2,3)
     ax = axes.flatten()
@@ -62,28 +62,11 @@ def plot_sol(solucion):
     plt.show()
     
 
-def leer_data(archivo):
-    # leo la tabla de datos:
-    zcmb,zhel,dz,mb,dmb=np.loadtxt(archivo, usecols=(1,2,3,4,5),unpack=True)
-    
-    #creamos la matriz diagonal con los errores de mB. ojo! esto depende de alfa y beta:
-    Dstat=np.diag(dmb**2.)
-    # hay que leer la matriz de los errores sistematicos que es de NxN
-    sn=len(zcmb)
-    Csys=np.loadtxt('lcparam_full_long_sys.txt',unpack=True)
-    Csys=Csys.reshape(sn,sn)
-    #armamos la matriz de cov final y la invertimos:
-    Ccov=Csys+Dstat
-    Cinv=inv(Ccov)
-
-    return zcmb,zhel, Cinv, mb
-
-
-
 def magn_aparente_teorica(z,E,zhel,zcmb):
-    '''Parte teorica a partir de mi modelo de H(z), para cada sn voy a hacer
-    la integral correspondiente: Calculamos la distancia luminosa 
-    d_L =  (c/H_0) int(dz'/E(z'))'''
+    '''A partir de un array de redshift y un array de la magnitud E = H_0/H
+    que salen de la integración numérica, se calcula el mu teórico que deviene
+    del modelo. muth = 25 + 5 * log_{10}(d_L), 
+    donde d_L =  (c/H_0) (1+z) int(dz'/E(z'))'''
     
     d_c=np.zeros(len(E)) #Distancia comovil
     for i in range (1, len(E)):
@@ -96,14 +79,3 @@ def magn_aparente_teorica(z,E,zhel,zcmb):
     ##magnitud aparente teorica
     muth = 25 + 5 * np.log10(d_L) #base cosmico
     return muth
-
-
-
-def chi_2(muth,magn_aparente_obs,M_abs,C_invertida):
-    sn = len(muth)
-    muobs =  magn_aparente_obs - M_abs
-    deltamu = muobs - muth
-    transp = np.transpose(deltamu)
-    aux = np.dot(C_invertida,deltamu)
-    chi2 = np.dot(transp,aux)/sn
-    return chi2
