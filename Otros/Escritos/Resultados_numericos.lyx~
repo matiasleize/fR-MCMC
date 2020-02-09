@@ -117,6 +117,10 @@ filename "macros2018.lyx"
 Primeras cuentas de la Tesis
 \end_layout
 
+\begin_layout Author
+Matías Leizerovich
+\end_layout
+
 \begin_layout Section
 Ecuaciones utilizadas
 \end_layout
@@ -610,14 +614,14 @@ Para el modelo de Hu-Sawicki con
 
 \begin_layout Standard
 \begin_inset Graphics
-	filename /home/matias/Documents/Tesis/Software/Integracion numérica/Python/Sistema_4ec/Resultados/H(z).png
+	filename /home/matias/Documents/Tesis/tesis_licenciatura/Software/Integracion numérica/Python/Sistema_4ec/Resultados/H(z).png
 	scale 60
 
 \end_inset
 
 
 \begin_inset Graphics
-	filename /home/matias/Documents/Tesis/Software/Integracion numérica/Python/Sistema_4ec/Resultados/d_L(z).png
+	filename /home/matias/Documents/Tesis/tesis_licenciatura/Software/Integracion numérica/Python/Sistema_4ec/Resultados/d_L(z).png
 	scale 60
 
 \end_inset
@@ -627,7 +631,7 @@ Para el modelo de Hu-Sawicki con
 
 \begin_layout Standard
 \begin_inset Graphics
-	filename /home/matias/Documents/Tesis/Software/Integracion numérica/Python/Sistema_4ec/Resultados/q(z).png
+	filename /home/matias/Documents/Tesis/tesis_licenciatura/Software/Integracion numérica/Python/Sistema_4ec/Resultados/q(z).png
 	scale 60
 
 \end_inset
@@ -837,7 +841,7 @@ noprefix "false"
 
 \begin_layout Standard
 \begin_inset Graphics
-	filename /home/matias/Documents/Tesis/Software/Integracion numérica/Python/Sistema_5ec/Resultados/comparo_does.png
+	filename /home/matias/Documents/Tesis/tesis_licenciatura/Software/Integracion numérica/Python/Sistema_5ec/Resultados/comparo_does.png
 	scale 40
 
 \end_inset
