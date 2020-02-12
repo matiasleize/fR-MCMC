@@ -44,6 +44,8 @@ n = 1
 #%%
 #Parametros a ajustar
 
+os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
+zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
 
 def params_to_chi2(theta, params_fijos):
     '''Dados los parámetros del modelo devuelve un chi2'''
@@ -69,24 +71,15 @@ def params_to_chi2(theta, params_fijos):
         return [s0,s1,s2,s3,s4]
     
     z,E = integrador(dX_dz,ci, params_modelo)
-    os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
-    zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
     muth = magn_aparente_teorica(z,E,zhel,zcmb)
-    
-    if isinstance(Mabs,list):
-        chis_M = np.zeros(len(Mabs))
-        for i,M_0 in enumerate(Mabs):
-            chis_M[i] = chi_2(muth,mb,M_0,Cinv)
-        return chis_M
-    else:
-        chi2 = chi_2(muth,mb,Mabs,Cinv)
-        return chi2
+    chi2 = chi_2(muth,mb,Mabs,Cinv)
+    return chi2
     
 #%%
 from scipy.optimize import minimize
+#FALTA CORREGIR EL SIGNO DE LOG_LIKELYHOOD Y nll
 
-
-M_true = 19.6
+M_true = -19.6
 b_true = 1.1
 c_true = 0.24
 d_true = 1/19
@@ -94,7 +87,7 @@ d_true = 1/19
 np.random.seed(42)
 nll = lambda theta: -0.5 * params_to_chi2(theta, params_fijos=[r_0,n])
 initial = np.array([M_true, b_true,c_true,d_true]) + 0.1 * np.random.randn(4)
-soln = minimize(nll, initial,bounds =([19.2,19.8],[0.95,1.2],[0.1,0.4],[0.02,0.07]))
+soln = minimize(nll, initial,bounds =([-19.8,-19.2],[0.95,1.2],[0.1,0.4],[0.02,0.07]))
 m_ml, b_ml, c_ml, d_ml = soln.x
 
 print(m_ml,b_ml,c_ml,d_ml)
@@ -107,7 +100,7 @@ import emcee
 def log_prior(theta):
     M, b, c,d = theta
 #    if 19 < M < 19.6 and 0.95 < b < 1.5 and 0.2 < c < 0.3 and 0 < d < 0.04:
-    if 18 < M < 20 and 0.5 < b < 4 and 0 < c < 1 and 0 < d < 0.3:
+    if -20 < M < -18 and 0.5 < b < 4 and 0 < c < 1 and 0 < d < 0.3:
         return 0.0
     return -np.inf
 
