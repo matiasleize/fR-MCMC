@@ -14,7 +14,7 @@ from scipy.interpolate import interp1d
 from scipy.constants import c as c_luz
 
 def integrador(sistema_ec, cond_iniciales, parametros_modelo,
-               z_inicial=0, z_final=3, cantidad_zs=2000, max_step=0.05): 
+               z_inicial=0, z_final=3, cantidad_zs=100, max_step=0.1): 
     #cantidad_zs_ideal = 7000
     # max_step_ideal = 0.005
     
