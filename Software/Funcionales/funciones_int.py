@@ -25,20 +25,20 @@ def dX_dz(z, variables,*params_modelo):
     w = variables[3]
     r = variables[4]
 
-    nombre_modelo = params_modelo[-1]
-    if nombre_modelo == 'Star':
-        gamma = lambda r,b,c,d,n : b*r
-        [B,C,D,N,_] = params_modelo
-        G = gamma(r,B,C,D,N)
-    elif nombre_modelo == 'HS':
+    #nombre_modelo = params_modelo[-1]
+    #if nombre_modelo == 'Star':
+#        gamma = lambda r,b,c,d,n : b*r
+#        [B,C,D,N,_] = params_modelo
+#        G = gamma(r,B,C,D,N)
+#    elif nombre_modelo == 'HS':
         #if params_modelo[3]==1:
         #    gamma = lambda y,v: y*v/(2*(y-v)**2)
         #    G = gamma(y,v)
         #else:
             #[b,d,c,n] = parametros_modelo
-        gamma = lambda r_0,b,c,d,n: ((1+d*r**n) * (-b*n*r**n + r*(1+d*r**n)**2)) / (b*n*r**n * (1-n+d*(1+n)*r**n))
-        [B,C,D,N,_] = params_modelo
-        G = gamma(r,B,C,D,N)
+    gamma = lambda r,b,c,d,n: ((1+d*r**n) * (-b*n*r**n + r*(1+d*r**n)**2)) / (b*n*r**n * (1-n+d*(1+n)*r**n))
+    [B,C,D,N] = params_modelo
+    G = gamma(r,B,C,D,N)
 
     s0 = (-w + x**2 + (1+v)*x - 2*v + 4*y) / (z+1)
     s1 = - (v*x*G - x*y + 4*y - 2*y*v) / (z+1)
@@ -50,7 +50,7 @@ def dX_dz(z, variables,*params_modelo):
 
 
 def integrador(cond_iniciales, params_modelo ,sistema_ec=dX_dz,
-                z_inicial=0, z_final=3, cantidad_zs=1000, max_step=0.05,
+                z_inicial=0, z_final=3, cantidad_zs=100, max_step=0.1,
                 ): #cantidad_zs_ideal = 7000, # max_step_ideal = 0.005
     '''Esta función integra el sistema de ecuaciones diferenciales entre
     z_inicial y z_final, dadas las condiciones iniciales y los parámetros
@@ -63,8 +63,8 @@ def integrador(cond_iniciales, params_modelo ,sistema_ec=dX_dz,
     t1 = time.time()
     for i in range(len(zs)):
         zf = zs[i] # ''z final'' para cada paso de integracion
-        sol = solve_ivp(sistema_ec, [z_inicial,zf], cond_iniciales,
-            args=params_modelo, max_step=max_step)
+        sol = solve_ivp(sistema_ec, [z_inicial,zf],
+         cond_iniciales,args=params_modelo, max_step=max_step)
         int_v = simps((sol.y[2])/(1+sol.t),sol.t) # integro desde 0 a z
         hubbles[i]=(1+zf)**2 * np.e**(-int_v)
     t2 = time.time()
