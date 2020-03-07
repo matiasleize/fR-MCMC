@@ -21,7 +21,10 @@ os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_int import integrador
 from funciones_data import leer_data_pantheon
-from funciones_supernovas import params_to_chi2
+from funciones_supernovas import params_to_chi2_H0_fijo
+
+#ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,b,omega_m,H_0,n
+
 
 #%% Predeterminados:
 H_0 =  73.48 #Unidades de (km/seg)/Mpc
@@ -47,7 +50,7 @@ omega_m_true = 0.26
 
 
 np.random.seed(42)
-log_likelihood = lambda theta: -0.5 * params_to_chi2(ci, theta,[n,H_0], zcmb, zhel, Cinv, mb)
+log_likelihood = lambda theta: -0.5 * params_to_chi2_H0_fijo(ci, theta,[H_0,n], zcmb, zhel, Cinv, mb)
 
 nll = lambda *args: -log_likelihood(*args)
 initial = np.array([M_true, b_true,omega_m_true]) + 0.1 * np.random.randn(3)
@@ -62,7 +65,7 @@ print(m_ml,b_ml,omega_m_ml)
 #%% Definimos las gunciones de prior y el posterior
 
 def log_prior(theta):
-    M, b = theta
+    M, b, omega_m = theta
     if -20 < M < -19 and 0.5 < b < 2 and 0.2 < omega_m < 0.9:
         return 0.0
     return -np.inf
@@ -84,7 +87,7 @@ sampler.run_mcmc(pos, 100, progress=True); #Defino la cant de pasos
 #%% Graficamos las cadenas de Markov
 fig, axes = plt.subplots(3, figsize=(10, 7), sharex=True)
 samples = sampler.get_chain()
-labels = ["m", "b","omega_m"]
+labels = ["M", "b","omega_m"]
 for i in range(ndim):
     ax = axes[i]
     ax.plot(samples[:, :, i], "k", alpha=0.3)
@@ -103,4 +106,4 @@ fig = corner.corner(
 );
 #%% Guardado
 os.chdir(path_git)
-np.savez('Software/samp_b_m', samples = samples, sampler=sampler)
+np.savez('Software/supernovas_samp_M_b_omega', samples = samples, sampler=sampler)
