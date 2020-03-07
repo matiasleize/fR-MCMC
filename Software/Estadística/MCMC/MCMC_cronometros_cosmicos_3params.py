@@ -18,6 +18,7 @@ path_git = '/home/matias/Documents/Tesis/tesis_licenciatura'
 path_datos_global = '/home/matias/Documents/Tesis/'
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
+from funciones_data import leer_data_cronometros
 from funciones_cronometros import params_to_chi2
 
 #%% Predeterminados:
