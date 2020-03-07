@@ -40,7 +40,7 @@ z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
 b_true = 2
 omega_m_true = 0.26
 
-np.random.seed(42)
+#np.random.seed(42)
 log_likelihood = lambda theta: -0.5 * params_to_chi2(ci,theta, [H_0,n],z_data,H_data,dH)
 nll = lambda *args: -log_likelihood(*args)
 initial = np.array([omega_m_true,b_true]) + 0.1 * np.random.randn(2)
@@ -50,7 +50,7 @@ print(omega_m_ml,b_ml)
 #%%
 def log_prior(theta):
     omega_m, b = theta
-    if 0 < omega_m < 1 and -5 < b < 5:
+    if 0.2 < omega_m < 0.4 and 0.5 < b < 5:
         return 0.0
     return -np.inf
 
@@ -63,7 +63,7 @@ pos = soln.x + 1e-4 * np.random.randn(12, 2)
 nwalkers, ndim = pos.shape
 #%%
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability)
-sampler.run_mcmc(pos, 2000, progress=True);
+sampler.run_mcmc(pos, 1000, progress=True);
 #%%
 %matplotlib qt5
 plt.close()
