@@ -23,7 +23,7 @@ def chi_2_cronometros(H_data, H_teo, dH):
     chi2 = np.sum((H_data-H_teo)**2/dH**2)
     return chi2
 
-def params_to_chi2(cond_iniciales, theta, params_fijos, z_data, H_data, dH):
+def params_to_chi2_H0_fijo(cond_iniciales, theta, params_fijos, z_data, H_data, dH):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos de los
     cronómetros cósmicos'''
 
@@ -33,14 +33,14 @@ def params_to_chi2(cond_iniciales, theta, params_fijos, z_data, H_data, dH):
     ## Transformo los parametros fisicos en los del modelo:
     c1,c2,r_hs = params_fisicos_to_modelo(omega_m,b)
     params_modelo = [c1,r_hs,c2,n] #de la cruz: [b,c(*H0^2),d,r_0,n]
-    z,E = integrador(cond_iniciales, params_modelo)
+    z,E = integrador(cond_iniciales, params_modelo, cantidad_zs=100, max_step=0.1)
     H_int = interp1d(z,E)
     H_teo = H_0 * H_int(z_data)
 
     chi = chi_2_cronometros(H_teo,H_data,dH)
     return chi
 
-def params_to_chi2_H0(cond_iniciales, theta, params_fijos, z_data, H_data, dH):
+def params_to_chi2(cond_iniciales, theta, params_fijos, z_data, H_data, dH):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos de los
     cronómetros cósmicos'''
 
@@ -50,7 +50,7 @@ def params_to_chi2_H0(cond_iniciales, theta, params_fijos, z_data, H_data, dH):
     ## Transformo los parametros fisicos en los del modelo:
     c1,c2,r_hs = params_fisicos_to_modelo(omega_m,b)
     params_modelo = [c1,r_hs,c2,n] #de la cruz: [b,c(*H0^2),d,r_0,n]
-    z,E = integrador(cond_iniciales, params_modelo)
+    z,E = integrador(cond_iniciales, params_modelo, cantidad_zs=100, max_step=0.1)
     H_int = interp1d(z,E)
     H_teo = H_0 * H_int(z_data)
 
