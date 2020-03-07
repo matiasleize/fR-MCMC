@@ -1,4 +1,4 @@
-
+'''Ejemplo de la pagina de emcee sobre la implementacion de la convergencia y guardado'''
 import emcee
 import numpy as np
 
