@@ -39,7 +39,7 @@ b_true = 2
 omega_m_true = 0.26
 
 np.random.seed(42)
-log_likelihood = lambda theta: -0.5 * params_to_chi2(ci,theta, [H_0,n],z_data,H_data,dH)
+log_likelihood = lambda theta: -0.5 * params_to_chi2_H0_fijo(ci,theta, [H_0,n],z_data,H_data,dH)
 nll = lambda *args: -log_likelihood(*args)
 initial = np.array([omega_m_true,b_true]) + 0.1 * np.random.randn(2)
 soln = minimize(nll, initial)#,bounds =([0,1],[-10,10]))
