@@ -49,8 +49,8 @@ def dX_dz(z, variables,*params_modelo):
 
 
 
-def integrador(cond_iniciales, params_modelo ,sistema_ec=dX_dz,
-                cantidad_zs, max_step, z_inicial=0, z_final=3
+def integrador(cond_iniciales, params_modelo,cantidad_zs, max_step,
+                sistema_ec=dX_dz, z_inicial=0, z_final=3
                 ): #cantidad_zs_ideal = 7000, # max_step_ideal = 0.005
     '''Esta función integra el sistema de ecuaciones diferenciales entre
     z_inicial y z_final, dadas las condiciones iniciales y los parámetros
