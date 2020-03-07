@@ -56,6 +56,12 @@ def integrador(cond_iniciales, params_modelo ,sistema_ec=dX_dz,
     z_inicial y z_final, dadas las condiciones iniciales y los parámetros
     del modelo.'''
 
+    '''Para el integrador, dependiendo que datos se usan hay que ajustar
+    el cantidad_zs y el max_step.
+    Para cronometros: cantidad_zs=100, max_step=0.1
+    Para supernovas: cantidad_zs=2000, max_step=0.05
+    '''
+
     # Integramos el vector v y calculamos el Hubble
     zs = np.linspace(z_inicial,z_final,cantidad_zs)
     hubbles = np.zeros(len(zs))
@@ -94,7 +100,7 @@ def magn_aparente_teorica(z,E,zhel,zcmb,H_0=73.48):
     '''A partir de un array de redshift y un array de la magnitud E = H_0/H
     que salen de la integración numérica, se calcula el mu teórico que deviene
     del modelo. muth = 25 + 5 * log_{10}(d_L),
-    donde d_L =  (c/H_0) (1+z) int(dz'/E(z'))'''
+    donde d_L = (c/H_0) (1+z) int(dz'/E(z'))'''
 
     d_c=np.zeros(len(E)) #Distancia comovil
     for i in range (1, len(E)):
