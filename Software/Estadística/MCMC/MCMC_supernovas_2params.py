@@ -99,5 +99,5 @@ fig = corner.corner(
     flat_samples, labels=labels, truths=[b_true, omega_m_true]
 );
 #%% Guardado
-os.chdir(path_git)
-np.savez('Software/supernovas_samp_b_omega', samples = samples, sampler=sampler)
+os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones')
+np.savez('supernovas_samp_b_omega', samples = samples, sampler=sampler)
