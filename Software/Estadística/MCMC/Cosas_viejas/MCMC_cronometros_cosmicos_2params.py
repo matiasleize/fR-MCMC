@@ -18,7 +18,7 @@ path_git = '/home/matias/Documents/Tesis/tesis_licenciatura'
 path_datos_global = '/home/matias/Documents/Tesis/'
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
-from funciones_cronometros import  params_to_chi2
+from funciones_cronometros import  params_to_chi2_H0_fijo
 
 #%% Predeterminados:
 H_0 =  73.48 #Unidades de (km/seg)/Mpc
