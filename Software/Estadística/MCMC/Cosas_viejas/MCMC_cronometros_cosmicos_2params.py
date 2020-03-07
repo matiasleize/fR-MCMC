@@ -18,6 +18,7 @@ path_git = '/home/matias/Documents/Tesis/tesis_licenciatura'
 path_datos_global = '/home/matias/Documents/Tesis/'
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
+from funciones_data import leer_data_cronometros
 from funciones_cronometros import  params_to_chi2_H0_fijo
 
 #%% Predeterminados:
@@ -39,7 +40,7 @@ b_true = 2
 omega_m_true = 0.26
 
 np.random.seed(42)
-log_likelihood = lambda theta: -0.5 * params_to_chi2(ci,theta, [H_0,n],z_data,H_data,dH)
+log_likelihood = lambda theta: -0.5 * params_to_chi2_H0_fijo(ci,theta, [H_0,n],z_data,H_data,dH)
 nll = lambda *args: -log_likelihood(*args)
 initial = np.array([omega_m_true,b_true]) + 0.1 * np.random.randn(2)
 soln = minimize(nll, initial)#,bounds =([0,1],[-10,10]))
@@ -59,9 +60,49 @@ def log_probability(theta):
     return lp + log_likelihood(theta)
 pos = soln.x + 1e-4 * np.random.randn(12, 2)
 nwalkers, ndim = pos.shape
-#%%
+
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability)
-sampler.run_mcmc(pos, 1000, progress=True);
+#%%
+max_n = 1000
+# We'll track how the average autocorrelation time estimate changes
+index = 0
+autocorr = np.empty(max_n)
+
+# This will be useful to testing convergence
+old_tau = np.inf
+
+# Now we'll sample for up to max_n steps
+for sample in sampler.sample(pos, iterations=max_n, progress=True):
+    # Only check convergence every 100 steps
+    if sampler.iteration % 100:
+        continue
+
+    # Compute the autocorrelation time so far
+    # Using tol=0 means that we'll always get an estimate even
+    # if it isn't trustworthy
+    tau = sampler.get_autocorr_time(tol=0)
+    autocorr[index] = np.mean(tau)
+    index += 1
+
+    # Check convergence
+    converged = np.all(tau * 100 < sampler.iteration)
+    converged &= np.all(np.abs(old_tau - tau) / tau < 0.01)
+    if converged:
+        break
+    old_tau = tau
+
+#%%
+#Grafico de la autocorrelación en función del largo de la cadena.
+n = 100 * np.arange(1, index + 1)
+y = autocorr[:index]
+plt.plot(n, n / 100.0, "--k")
+plt.plot(n, y)
+plt.xlim(0, n.max())
+plt.ylim(0, y.max() + 0.1 * (y.max() - y.min()))
+plt.xlabel("number of steps")
+plt.ylabel(r"mean $\hat{\tau}$");
+
+
 #%%
 %matplotlib qt5
 plt.close()
