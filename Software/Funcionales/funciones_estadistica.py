@@ -6,6 +6,9 @@ Created on Sun Feb  2 13:28:48 2020
 
 import numpy as np
 
+'''En este file deberían in la definición de chi2 de las SN1a y
+params_to_chi2 de SN1A.'''
+
 def chi_2(muth,magn_aparente_obs,M_abs,C_invertida):
     '''Dado el resultado teórico muth y los datos de la
     magnitud aparente y absoluta observada, con su matriz de correlación
