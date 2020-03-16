@@ -112,7 +112,7 @@ plt.xlabel("number of steps")
 plt.ylabel(r"mean $\hat{\tau}$");
 
 #%% Grafico de las cadenas
-%matplotlib qt5
+#%matplotlib qt5
 plt.close()
 fig, axes = plt.subplots(2, figsize=(10, 7), sharex=True)
 samples = sampler.get_chain()
