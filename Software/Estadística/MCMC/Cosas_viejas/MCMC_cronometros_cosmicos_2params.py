@@ -13,11 +13,12 @@ from scipy.interpolate import interp1d
 
 import sys
 import os
-from os.path import join as osjoin
-path_git = '/home/matias/Documents/Tesis/tesis_licenciatura'
-path_datos_global = '/home/matias/Documents/Tesis/'
+from pc_path import definir_path
+path_git, path_datos_global = definir_path()
+
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
+from funciones_data import leer_data_cronometros
 from funciones_cronometros import  params_to_chi2_H0_fijo
 
 #%% Predeterminados:
@@ -40,11 +41,14 @@ omega_m_true = 0.26
 
 np.random.seed(42)
 log_likelihood = lambda theta: -0.5 * params_to_chi2_H0_fijo(ci,theta, [H_0,n],z_data,H_data,dH)
-nll = lambda *args: -log_likelihood(*args)
-initial = np.array([omega_m_true,b_true]) + 0.1 * np.random.randn(2)
-soln = minimize(nll, initial)#,bounds =([0,1],[-10,10]))
-omega_m_ml, b_ml = soln.x
-print(omega_m_ml,b_ml)
+
+os.chdir(path_git)
+sys.path.append('./Software/Estadística/Resultados_simulaciones')
+
+with np.load('valores_medios_cronom_2params.npz') as data:
+    sol = data['sol']
+omega_m_ml = sol[1]
+b_ml = sol[0]
 #%%
 def log_prior(theta):
     omega_m, b = theta
@@ -57,12 +61,57 @@ def log_probability(theta):
     if not np.isfinite(lp):
         return -np.inf
     return lp + log_likelihood(theta)
-pos = soln.x + 1e-4 * np.random.randn(12, 2)
+pos = sol + 1e-4 * np.random.randn(12, 2)#Posicion inicial de cada caminante
 nwalkers, ndim = pos.shape
+# Set up the backend
+# Don't forget to clear it in case the file already exists
+os.chdir(path_datos_global)
+sys.path.append('./Resultados_cadenas')
+filename = "sample_cron_b_omega_1.h5"
+backend = emcee.backends.HDFBackend(filename)
+backend.reset(nwalkers, ndim)
 #%%
-sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability)
-sampler.run_mcmc(pos, 1000, progress=True);
+sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
+max_n = 10000
+# We'll track how the average autocorrelation time estimate changes
+index = 0
+autocorr = np.empty(max_n)
+# This will be useful to testing convergence
+old_tau = np.inf
+
+# Now we'll sample for up to max_n steps
+for sample in sampler.sample(pos, iterations=max_n, progress=True):
+    # Only check convergence every 100 steps
+    if sampler.iteration % 100:
+        continue
+
+    # Compute the autocorrelation time so far
+    # Using tol=0 means that we'll always get an estimate even
+    # if it isn't trustworthy
+    tau = sampler.get_autocorr_time(tol=0)
+    autocorr[index] = np.mean(tau)
+    os.chdir(path_git)
+    sys.path.append('./Software/Estadística/Resultados_simulaciones')
+    np.savez('taus_cron_2params', taus=autocorr, indice = index )
+    index += 1
+    # Check convergence
+    converged = np.all(tau * 100 < sampler.iteration)
+    converged &= np.all(np.abs(old_tau - tau) / tau < 0.01)
+    if converged:
+        break
+    old_tau = tau
 #%%
+#Grafico de la autocorrelación en función del largo de la cadena.
+n = 100 * np.arange(1, index + 1)
+y = autocorr[:index]
+plt.plot(n, n / 100.0, "--k")
+plt.plot(n, y)
+plt.xlim(0, n.max())
+plt.ylim(0, y.max() + 0.1 * (y.max() - y.min()))
+plt.xlabel("number of steps")
+plt.ylabel(r"mean $\hat{\tau}$");
+
+#%% Grafico de las cadenas
 %matplotlib qt5
 plt.close()
 fig, axes = plt.subplots(2, figsize=(10, 7), sharex=True)
@@ -76,16 +125,7 @@ for i in range(ndim):
     ax.yaxis.set_label_coords(-0.1, 0.5)
 
 axes[-1].set_xlabel("step number");
-#%%
-tau = sampler.get_autocorr_time()
-print(tau)
-#%%
+#%% Grafico de los contornos de confianza
 flat_samples = sampler.get_chain(discard=20, flat=True)#,thin=50)
 print(flat_samples.shape)
-#%%
 fig = corner.corner(flat_samples, labels=labels, truths=[omega_m_ml,b_ml]);
-#%%Guardamos los datos
-
-os.chdir(path_git)
-np.savez('Software/Estadística/Resultados_simulaciones//MCMC cronometros/samp_cron_om_b'
-         , samples = samples, sampler=sampler)

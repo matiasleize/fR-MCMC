@@ -4,13 +4,12 @@
 Created on Sat Oct 26 17:48:22 2019
 
 @author: matias
-"""    
+"""
 
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.integrate import simps as simps
-
-
+#CAMBIAR PATH
 npzfile = np.load('/home/matias/Documents/Tesis/Software/Integracion numérica/Python/Sistema_4ec/H(z).npz')
 zs = npzfile['zs']
 hubbles = npzfile['hubbles']

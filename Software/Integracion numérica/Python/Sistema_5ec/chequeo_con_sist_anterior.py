@@ -13,8 +13,9 @@ import sys
 import os
 from os.path import join as osjoin
 
-path_git = '/home/matias/Documents/Tesis/tesis_licenciatura'
-path_datos_global = '/home/matias/Documents/Tesis/'
+from pc_path import definir_path
+path_git, path_datos_global = definir_path()
+
 
 os.chdir(path_git)
 sys.path.append('./Software/Integracion numérica/Python/Sistema_4ec/')

@@ -6,9 +6,8 @@ Created on Sun Feb  2 13:02:59 2020
 import sys
 import os
 from os.path import join as osjoin
-path_git = '/home/matias/Documents/Tesis/tesis_licenciatura'
-
-path_datos_global = '/home/matias/Documents/Tesis/'
+from pc_path import definir_path
+path_git, path_datos_global = definir_path()
 
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
@@ -24,12 +23,12 @@ from funciones_estadistica import chi_2
 H_0 =  73.48
 
 #Gamma de Lucila (define el modelo)
-gamma = lambda r,b,c,d,n: ((1+d*r**n) * (-b*n*r**n + r*(1+d*r**n)**2)) / (b*n*r**n * (1-n+d*(1+n)*r**n))  
+gamma = lambda r,b,c,d,n: ((1+d*r**n) * (-b*n*r**n + r*(1+d*r**n)**2)) / (b*n*r**n * (1-n+d*(1+n)*r**n))
 #Coindiciones iniciales e intervalo
 x_0 = -0.339
 y_0 = 1.246
 v_0 = 1.64
-w_0 = 1+x_0+y_0-v_0 
+w_0 = 1+x_0+y_0-v_0
 r_0 = 41
 
 ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
@@ -48,27 +47,27 @@ def params_to_chi2(params_modelo,Mabs):
 
     [b,c,d,r_0,n] = params_modelo
 
-    def dX_dz(z, variables): 
+    def dX_dz(z, variables):
         x = variables[0]
         y = variables[1]
         v = variables[2]
         w = variables[3]
         r = variables[4]
-        
+
         G = gamma(r,b,c,d,n)
-        
+
         s0 = (-w + x**2 + (1+v)*x - 2*v + 4*y) / (z+1)
         s1 = - (v*x*G - x*y + 4*y - 2*y*v) / (z+1)
         s2 = -v * (x*G + 4 - 2*v) / (z+1)
         s3 = w * (-1 + x+ 2*v) / (z+1)
-        s4 = -x*r*G/(1+z)        
+        s4 = -x*r*G/(1+z)
         return [s0,s1,s2,s3,s4]
-    
+
     z,E = integrador(dX_dz,ci, params_modelo)
     os.chdir(path_git+'/Software/Estadística/')
     zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
     muth = magn_aparente_teorica(z,E,zhel,zcmb)
-    
+
     if isinstance(Mabs,list):
         chis_M = np.zeros(len(Mabs))
         for i,M_0 in enumerate(Mabs):
@@ -94,5 +93,5 @@ chis = np.zeros((len(bs),len(Ms)))
 for k,b0 in enumerate (bs):
     params  = [b0,c,d,r_0,n]
     chis[k,:] = params_to_chi2(params,Ms)
-#%%  
+#%%
 plt.pcolor(chis)
