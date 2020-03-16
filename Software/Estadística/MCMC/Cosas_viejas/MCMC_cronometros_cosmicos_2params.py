@@ -65,8 +65,8 @@ pos = sol + 1e-4 * np.random.randn(12, 2)#Posicion inicial de cada caminante
 nwalkers, ndim = pos.shape
 # Set up the backend
 # Don't forget to clear it in case the file already exists
-os.chdir(path_git)
-sys.path.append('./Software/Estadística/Resultados_simulaciones')
+os.chdir(path_datos_global)
+sys.path.append('./Resultados_cadenas')
 filename = "sample_cron_b_omega_1.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim)
