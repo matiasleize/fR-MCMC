@@ -10,8 +10,8 @@ from os.path import join as osjoin
 from scipy.interpolate import interp1d
 
 from scipy.constants import c as c_luz #metros/segundos
-path_git = '/home/matias/Documents/Tesis/tesis_licenciatura'
-path_datos_global = '/home/matias/Documents/Tesis/'
+from pc_path import definir_path
+path_git, path_datos_global = definir_path()
 
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
