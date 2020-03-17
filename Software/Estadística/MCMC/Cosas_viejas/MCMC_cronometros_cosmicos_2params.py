@@ -90,7 +90,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     tau = sampler.get_autocorr_time(tol=0)
     autocorr[index] = np.mean(tau)
     os.chdir(path_git)
-    sys.path.append('./Software/Estadística/Resultados_simulaciones')
+    sys.path.append('./Software/Estadística/Resultados_simulaciones/')
     np.savez('taus_cron_2params', taus=autocorr, indice = index )
     index += 1
     # Check convergence
