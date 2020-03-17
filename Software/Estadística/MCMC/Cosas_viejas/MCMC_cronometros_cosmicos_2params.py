@@ -3,6 +3,7 @@ Created on Wed Feb  5 16:07:35 2020
 
 @author: matias
 """
+#!/usr/bin/env
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.optimize import minimize
@@ -42,9 +43,7 @@ omega_m_true = 0.26
 np.random.seed(42)
 log_likelihood = lambda theta: -0.5 * params_to_chi2_H0_fijo(ci,theta, [H_0,n],z_data,H_data,dH)
 
-os.chdir(path_git)
-sys.path.append('./Software/Estadística/Resultados_simulaciones')
-
+os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_cronom_2params.npz') as data:
     sol = data['sol']
 omega_m_ml = sol[1]
