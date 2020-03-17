@@ -65,13 +65,13 @@ nwalkers, ndim = pos.shape
 # Set up the backend
 # Don't forget to clear it in case the file already exists
 os.chdir(path_datos_global)
-sys.path.append('./Resultados_cadenas')
+sys.path.append('./Resultados_cadenas/')
 filename = "sample_cron_b_omega_1.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim)
 #%%
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
-max_n = 10000
+max_n = 6000
 # We'll track how the average autocorrelation time estimate changes
 index = 0
 autocorr = np.empty(max_n)
