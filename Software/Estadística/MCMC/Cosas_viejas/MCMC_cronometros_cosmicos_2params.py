@@ -63,68 +63,38 @@ def log_probability(theta):
 pos = sol + 1e-4 * np.random.randn(12, 2)#Posicion inicial de cada caminante
 nwalkers, ndim = pos.shape
 # Set up the backend
-# Don't forget to clear it in case the file already exists
-os.chdir(path_datos_global)
-sys.path.append('./Resultados_cadenas/')
-filename = "sample_cron_b_omega_1.h5"
+
+os.chdir(path_datos_global+'/Resultados_cadenas/')
+filename = "sample_cron_b_omega_10.h5"
 backend = emcee.backends.HDFBackend(filename)
-backend.reset(nwalkers, ndim)
+backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
+
 #%%
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
 max_n = 6000
-# We'll track how the average autocorrelation time estimate changes
-index = 0
-autocorr = np.empty(max_n)
+
 # This will be useful to testing convergence
 old_tau = np.inf
-
 # Now we'll sample for up to max_n steps
 for sample in sampler.sample(pos, iterations=max_n, progress=True):
     # Only check convergence every 100 steps
-    if sampler.iteration % 100:
+    if sampler.iteration % 5: #100
         continue
-
+    os.chdir(path_datos_global+'/Resultados_cadenas/')
+    textfile_witness = open('witness.txt','w')
+    textfile_witness.write('Número de iteración: {}'.format(sampler.iteration))
+    textfile_witness.close()
     # Compute the autocorrelation time so far
     # Using tol=0 means that we'll always get an estimate even
     # if it isn't trustworthy
     tau = sampler.get_autocorr_time(tol=0)
-    autocorr[index] = np.mean(tau)
-    os.chdir(path_git)
-    sys.path.append('./Software/Estadística/Resultados_simulaciones/')
-    np.savez('taus_cron_2params', taus=autocorr, indice = index )
-    index += 1
+
     # Check convergence
-    converged = np.all(tau * 100 < sampler.iteration)
+    converged = np.all(tau * 100 < sampler.iteration) #100
     converged &= np.all(np.abs(old_tau - tau) / tau < 0.01)
     if converged:
+        textfile_witness = open('witness.txt','w')
+        textfile_witness.write('Convergío!')
+        textfile_witness.close()
         break
     old_tau = tau
-#%%
-#Grafico de la autocorrelación en función del largo de la cadena.
-n = 100 * np.arange(1, index + 1)
-y = autocorr[:index]
-plt.plot(n, n / 100.0, "--k")
-plt.plot(n, y)
-plt.xlim(0, n.max())
-plt.ylim(0, y.max() + 0.1 * (y.max() - y.min()))
-plt.xlabel("number of steps")
-plt.ylabel(r"mean $\hat{\tau}$");
-
-#%% Grafico de las cadenas
-#%matplotlib qt5
-plt.close()
-fig, axes = plt.subplots(2, figsize=(10, 7), sharex=True)
-samples = sampler.get_chain()
-labels = ['omega_m','b']
-for i in range(ndim):
-    ax = axes[i]
-    ax.plot(samples[:, :, i], "k", alpha=0.3)
-    ax.set_xlim(0, len(samples))
-    ax.set_ylabel(labels[i])
-    ax.yaxis.set_label_coords(-0.1, 0.5)
-
-axes[-1].set_xlabel("step number");
-#%% Grafico de los contornos de confianza
-flat_samples = sampler.get_chain(discard=20, flat=True)#,thin=50)
-print(flat_samples.shape)
-fig = corner.corner(flat_samples, labels=labels, truths=[omega_m_ml,b_ml]);
