@@ -68,7 +68,8 @@ os.chdir(path_datos_global+'/Resultados_cadenas/')
 filename = "sample_cron_b_omega_10.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
-
+textfile_witness = open('witness.txt','w+')
+textfile_witness.close()
 #%%
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
 max_n = 6000
@@ -78,7 +79,7 @@ old_tau = np.inf
 # Now we'll sample for up to max_n steps
 for sample in sampler.sample(pos, iterations=max_n, progress=True):
     # Only check convergence every 100 steps
-    if sampler.iteration % 5: #100
+    if sampler.iteration % 5: #100 es cada cuanto chequea convergencia
         continue
     os.chdir(path_datos_global+'/Resultados_cadenas/')
     textfile_witness = open('witness.txt','w')
@@ -90,7 +91,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     tau = sampler.get_autocorr_time(tol=0)
 
     # Check convergence
-    converged = np.all(tau * 100 < sampler.iteration) #100
+    converged = np.all(tau * 100 < sampler.iteration) #100 es el threshold de convergencia
     converged &= np.all(np.abs(old_tau - tau) / tau < 0.01)
     if converged:
         textfile_witness = open('witness.txt','w')
