@@ -6,10 +6,13 @@ Created on Wed Feb  5 16:07:35 2020
 #!/usr/bin/env
 import numpy as np
 from matplotlib import pyplot as plt
+np.random.seed(42)
+
 from scipy.optimize import minimize
 import emcee
 import corner
 from scipy.interpolate import interp1d
+import time
 
 
 import sys
@@ -33,21 +36,17 @@ w_0 = 1 + x_0 + y_0 - v_0
 r_0 = 41
 ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
 #%%
-
 os.chdir(path_git+'/Software/Estadística/Datos/')
 z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
-
 b_true = 2
 omega_m_true = 0.26
-
-np.random.seed(42)
 log_likelihood = lambda theta: -0.5 * params_to_chi2_H0_fijo(ci,theta, [H_0,n],z_data,H_data,dH)
-
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_cronom_2params.npz') as data:
     sol = data['sol']
 omega_m_ml = sol[1]
 b_ml = sol[0]
+
 #%%
 def log_prior(theta):
     omega_m, b = theta
@@ -60,31 +59,38 @@ def log_probability(theta):
     if not np.isfinite(lp):
         return -np.inf
     return lp + log_likelihood(theta)
+#%%
+# Initialize the walkers
 pos = sol + 1e-4 * np.random.randn(12, 2)#Posicion inicial de cada caminante
 nwalkers, ndim = pos.shape
-# Set up the backend
 
+# Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/')
-filename = "sample_cron_b_omega_10.h5"
+filename = "sample_cron_b_omega_prueba.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
 textfile_witness = open('witness.txt','w+')
 textfile_witness.close()
 #%%
+#Initialize the sampler
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
-max_n = 6000
+max_n = 10
 
 # This will be useful to testing convergence
 old_tau = np.inf
+
 # Now we'll sample for up to max_n steps
 for sample in sampler.sample(pos, iterations=max_n, progress=True):
     # Only check convergence every 100 steps
     if sampler.iteration % 5: #100 es cada cuanto chequea convergencia
         continue
+
     os.chdir(path_datos_global+'/Resultados_cadenas/')
     textfile_witness = open('witness.txt','w')
     textfile_witness.write('Número de iteración: {}'.format(sampler.iteration))
+    textfile_witness.write('Tiempo: {}'.format(time.time()))
     textfile_witness.close()
+
     # Compute the autocorrelation time so far
     # Using tol=0 means that we'll always get an estimate even
     # if it isn't trustworthy
@@ -92,9 +98,10 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
 
     # Check convergence
     converged = np.all(tau * 100 < sampler.iteration) #100 es el threshold de convergencia
+    #También pido que tau se mantenga relativamente constante:
     converged &= np.all(np.abs(old_tau - tau) / tau < 0.01)
     if converged:
-        textfile_witness = open('witness.txt','w')
+        textfile_witness = open('witness.txt','a')
         textfile_witness.write('Convergío!')
         textfile_witness.close()
         break
