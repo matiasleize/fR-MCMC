@@ -1,7 +1,3 @@
 #Ignora la cahce de funcionales.
 
-Software/Funcionales/__pycache__/
-
-Software/Estadística/MCMC/Cosas_viejas/__pycache__/
-
-__pychache__/
+__pycache__/
