@@ -1,2 +1,7 @@
 #Ignora la cahce de funcionales.
-home/matias/Documents/Tesis/tesis_licenciatura/Software/Funcionales/__pycache__
+
+Software/Funcionales/__pycache__/
+
+Software/Estadística/MCMC/Cosas_viejas/__pycache__/
+
+__pychache__/
