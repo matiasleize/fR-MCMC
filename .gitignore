@@ -1,3 +1,2 @@
-#Ignora la cahce de funcionales.
-
+#Ignora la cache.
 __pycache__/
