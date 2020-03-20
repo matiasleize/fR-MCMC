@@ -11,6 +11,7 @@ from scipy.optimize import minimize
 import emcee
 import corner
 from scipy.interpolate import interp1d
+import time
 
 
 import sys
@@ -41,7 +42,7 @@ z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
 omega_m_true = 0.26
 b_true = 2
 H0_true = 73.48
-log_likelihood = lambda theta: -0.5 * params_to_chi2_H0(ci,theta,n,z_data,H_data,dH)
+log_likelihood = lambda theta: -0.5 * params_to_chi2(ci,theta,n,z_data,H_data,dH)
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_cronom_3params.npz') as data:
     sol = data['sol']
@@ -61,7 +62,7 @@ def log_probability(theta):
     if not np.isfinite(lp):
         return -np.inf
     return lp + log_likelihood(theta)
-pos = soln.x + 1e-4 * np.random.randn(12, 3)
+pos = sol + 1e-4 * np.random.randn(12, 3)
 nwalkers, ndim = pos.shape
 #%%
 # Set up the backend
@@ -87,7 +88,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
 
     os.chdir(path_datos_global+'/Resultados_cadenas/')
     textfile_witness = open('witness.txt','w')
-    textfile_witness.write('Número de iteración: {}'.format(sampler.iteration))
+    textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
     textfile_witness.write('Tiempo: {}'.format(time.time()))
     textfile_witness.close()
 
