@@ -103,7 +103,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     converged &= np.all(np.abs(old_tau - tau) / tau < 0.01)
     if converged:
         textfile_witness = open('witness.txt','a')
-        textfile_witness.write('Convergío!')
+        textfile_witness.write('Convergió!')
         textfile_witness.close()
         break
     old_tau = tau
