@@ -75,7 +75,7 @@ textfile_witness.close()
 #%%
 #Initialize the sampler
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
-max_n = 10
+max_n = 10000
 
 # This will be useful to testing convergence
 old_tau = np.inf
