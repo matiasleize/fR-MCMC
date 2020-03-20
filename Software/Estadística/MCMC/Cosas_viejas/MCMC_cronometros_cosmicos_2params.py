@@ -38,14 +38,14 @@ ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
 #%%
 os.chdir(path_git+'/Software/Estadística/Datos/')
 z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
-b_true = 2
 omega_m_true = 0.26
+b_true = 2
 log_likelihood = lambda theta: -0.5 * params_to_chi2_H0_fijo(ci,theta, [H_0,n],z_data,H_data,dH)
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_cronom_2params.npz') as data:
     sol = data['sol']
-omega_m_ml = sol[1]
-b_ml = sol[0]
+omega_m_ml = sol[0]
+b_ml = sol[1]
 
 #%%
 def log_prior(theta):
@@ -66,7 +66,7 @@ nwalkers, ndim = pos.shape
 
 # Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/')
-filename = "sample_cron_b_omega_prueba.h5"
+filename = "sample_cron_omega_b_1.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
 textfile_witness = open('witness.txt','w+')
@@ -74,7 +74,7 @@ textfile_witness.close()
 #%%
 #Initialize the sampler
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
-max_n = 10
+max_n = 10000
 
 # This will be useful to testing convergence
 old_tau = np.inf
