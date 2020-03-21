@@ -39,9 +39,6 @@ ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
 
 os.chdir(path_git+'/Software/Estadística/Datos/')
 z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
-omega_m_true = 0.26
-b_true = 2
-H0_true = 73.48
 log_likelihood = lambda theta: -0.5 * params_to_chi2(ci,theta,n,z_data,H_data,dH)
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_cronom_3params.npz') as data:

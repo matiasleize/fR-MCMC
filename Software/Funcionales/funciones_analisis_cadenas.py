@@ -51,8 +51,8 @@ def graficar_cadenas(sampler,labels= ['omega_m','b']):
 def graficar_contornos(sampler,params_truths,discard=20,thin=None,labels= ['omega_m','b']):
 	'''Grafica los contornos de confianza.'''
 	if thin == None:
-		flat_samples = sampler.get_chain(discard, flat=True)
+		flat_samples = sampler.get_chain(discard=discard, flat=True)
 	else:
-		flat_samples = sampler.get_chain(discard, flat=True, thin=thin)
+		flat_samples = sampler.get_chain(discard=discard, flat=True, thin=thin)
 	print(flat_samples.shape)
 	fig = corner.corner(flat_samples, labels=labels, truths=params_truths);
