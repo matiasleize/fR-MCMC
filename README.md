@@ -1,4 +1,4 @@
-# tesis_licenciatura
+# Tesis Licenciatura
 Tesis de la Licenciatura en Ciencias Físicas. Facultad de Ciencias Exactas y Naturales de la Universidad de Buenos Aires.
 
 ## Observación importante:
