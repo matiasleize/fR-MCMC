@@ -74,7 +74,7 @@ sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend
 max_n = 10000
 # This will be useful to testing convergence
 old_tau = np.inf
-
+#
 # Now we'll sample for up to max_n steps
 for sample in sampler.sample(pos, iterations=max_n, progress=True):
     # Only check convergence every 100 steps
