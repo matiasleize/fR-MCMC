@@ -43,6 +43,7 @@ os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_cronom_3params.npz') as data:
     sol = data['sol']
 #Parche para salir desde un H0 razonable
+sol[1]=0.5
 sol[2]=73
 
 #%%
@@ -70,7 +71,7 @@ textfile_witness.close()
 #%%
 #Initialize the sampler
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
-max_n = 10000
+max_n = 10
 
 # This will be useful to testing convergence
 old_tau = np.inf
