@@ -6,9 +6,10 @@ def definir_path():
     elif socket.gethostname() == 'quipus': #Compu de Susana
         path_git = '/home/mleize/tesis_licenciatura'
         path_datos_global = '/home/mleize'
-    elif: socket.gethostname() == 'mn328': #Cluster
+    elif socket.gethostname() == 'mn328': #Cluster
         path_git = '/tmpu/dsy_g/mleiz_a/tesis_licenciatura'
         path_datos_global = '/tmpu/dsy_g/mleiz_a'
     else:
         path_git = 'mleize/tesis_licenciatura'
         path_datos_global = 'mleize'
+    return path_git, path_datos_global
