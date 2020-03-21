@@ -44,9 +44,6 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2_H0_fijo(ci,theta, [H_0,n],z
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_cronom_2params.npz') as data:
     sol = data['sol']
-omega_m_ml = sol[0]
-b_ml = sol[1]
-
 #%%
 def log_prior(theta):
     omega_m, b = theta
