@@ -36,21 +36,19 @@ r_0 = 41
 ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
 #%%
 
-
 os.chdir(path_git+'/Software/Estadística/Datos/')
 z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
 log_likelihood = lambda theta: -0.5 * params_to_chi2(ci,theta,n,z_data,H_data,dH)
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_cronom_3params.npz') as data:
     sol = data['sol']
-omega_m_ml = sol[0]
-b_ml = sol[1]
-H0_ml = sol[2]
+#Parche para salir desde un H0 razonable
+sol[2]=73
 
 #%%
 def log_prior(theta):
     omega_m, b, H_0 = theta
-    if 0.1 < omega_m < 1 and 0.5 < b < 5 and 20 < H_0 < 85:
+    if 0.1 < omega_m < 1 and -2 < b < 1 and 20 < H_0 < 85:
         return 0.0
     return -np.inf
 
