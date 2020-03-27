@@ -19,7 +19,7 @@ sys.path.append('./Software/Funcionales/')
 from funciones_int import integrador, magn_aparente_teorica
 from funciones_cambio_parametros import params_fisicos_to_modelo
 
-#ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,b,omega_m,H_0,n
+#ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
 
 def chi_2_supernovas(muth,magn_aparente_obs,M_abs,C_invertida):
@@ -40,12 +40,12 @@ def params_to_chi2_M_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel, Ci
     '''Dados los parámetros del modelo devuelve un chi2 para los datos de
     supernovas. 3 parámetros fijos y 2 variables.'''
 
-    [b,omega_m] = theta
+    [omega_m,b] = theta
     [Mabs,H_0,n] = params_fijos
 
     ## Transformo los parametros fisicos en los del modelo:
     c1,c2,r_hs = params_fisicos_to_modelo(omega_m,b)
-    params_modelo = [c1,r_hs,c2,n] #de la cruz: [b,c(*H0^2),d,r_0,n]
+    params_modelo = [c1,r_hs/(H_0**2),c2,n] #de la cruz: [b,c,d,r_0,n]
 
     z,E = integrador(cond_iniciales, params_modelo, cantidad_zs=2000, max_step=0.05)
     muth = magn_aparente_teorica(z,E,zhel,zcmb)
@@ -56,7 +56,7 @@ def params_to_chi2_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel, Cinv
     '''Dados los parámetros del modelo devuelve un chi2 para los datos de
     supernovas. 2 parámetros fijos y 3 variables'''
 
-    [Mabs,b,omega_m] = theta
+    [Mabs,omega_m,b] = theta
     [H_0,n] = params_fijos
 
     ## Transformo los parametros fisicos en los del modelo:
@@ -69,18 +69,19 @@ def params_to_chi2_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel, Cinv
     return chi
 
 
-def params_to_chi2(cond_iniciales, theta, params_fijos, z_data, H_data, dH):
+def params_to_chi2(cond_iniciales, theta, params_fijos, zcmb, zhel, Cinv, mb,verbose=True):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
     de supernovas. 1 parámetro fijo y 4 variables'''
 
-    [Mabs,b,omega_m,H_0] = theta
+    [Mabs,omega_m,b,H_0] = theta
     n = params_fijos
 
     ## Transformo los parametros fisicos en los del modelo:
-    c1,c2,r_hs = params_fisicos_to_modelo(omega_m,b)
+    c1,c2,r_hs = params_fisicos_to_modelo(omega_m,b,H_0)
     params_modelo = [c1,r_hs,c2,n] #de la cruz: [b,c(*H0^2),d,r_0,n]
 
-    z,E = integrador(cond_iniciales, params_modelo)
+    z,E = integrador(cond_iniciales, params_modelo,
+                    cantidad_zs=2000, max_step=0.05,verbose=verbose)
     muth = magn_aparente_teorica(z,E,zhel,zcmb)
     chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
     return chi
