@@ -10,7 +10,6 @@ import emcee
 import corner
 from scipy.interpolate import interp1d
 
-
 import sys
 import os
 from os.path import join as osjoin
@@ -36,17 +35,20 @@ ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
 os.chdir(path_git+'/Software/Estadística/Datos/')
 z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
 
-b_true = 2
 omega_m_true = 0.26
+b_true = -1
 H0_true =  73.48 #Unidades de (km/seg)/Mpc
 
 np.random.seed(42)
-log_likelihood = lambda theta: -0.5 * params_to_chi2(ci,theta,n,z_data,H_data,dH)
-nll = lambda *args: -log_likelihood(*args)
-initial = np.array([omega_m_true,b_true,H0_true]) + 0.1 * np.random.randn(3)
-soln = minimize(nll, initial)
+nll = lambda theta: params_to_chi2(ci,theta,n,z_data,H_data,dH)
+initial = np.array([omega_m_true,b_true,H0_true])
+#bnds = ((0.01, 1), (-2, 1),(60,80))
+bnds = ((0.1, 1), (None, None),(50,80))
+soln = minimize(nll, initial,bounds=bnds, options = {'eps': 0.001})
+#soln = minimize(nll, initial, options = {'eps': 0.001})
 omega_m_ml, b_ml, H0_ml = soln.x
 print(omega_m_ml,b_ml,H0_ml)
 
 os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
 np.savez('valores_medios_cronom_3params', sol=soln.x)
+# Salienron los valores: 0.1 -0.0005103509345308695 50.0

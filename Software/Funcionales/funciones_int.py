@@ -50,7 +50,7 @@ def dX_dz(z, variables,*params_modelo):
 
 
 def integrador(cond_iniciales, params_modelo,cantidad_zs, max_step,
-                sistema_ec=dX_dz, z_inicial=0, z_final=3
+                sistema_ec=dX_dz, z_inicial=0, z_final=3, verbose=True
                 ): #cantidad_zs_ideal = 7000, # max_step_ideal = 0.005
     '''Esta función integra el sistema de ecuaciones diferenciales entre
     z_inicial y z_final, dadas las condiciones iniciales y los parámetros
@@ -74,9 +74,9 @@ def integrador(cond_iniciales, params_modelo,cantidad_zs, max_step,
         int_v = simps((sol.y[2])/(1+sol.t),sol.t) # integro desde 0 a z
         hubbles[i]=(1+zf)**2 * np.e**(-int_v)
     t2 = time.time()
-
-    print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
-          int((t2-t1) - 60*int((t2-t1)/60))))
+    if verbose == True:
+        print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
+              int((t2-t1) - 60*int((t2-t1)/60))))
     return zs, hubbles
 
 def plot_sol(solucion):
