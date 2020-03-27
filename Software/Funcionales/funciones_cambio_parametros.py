@@ -13,6 +13,8 @@ import time
 from scipy.interpolate import interp1d
 from scipy.constants import c as c_luz #metros/segundos
 
+#ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m, b, H_0, n
+
 def params_fisicos_to_modelo(omega_m, b, H_0, n=1):
     '''Toma los parametros fisicos (omega_m, el parametro de distorsión b y H_0)
     y devuelve los parametros del modelo c1, c2 y R_HS'''
