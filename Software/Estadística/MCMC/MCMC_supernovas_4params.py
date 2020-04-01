@@ -57,7 +57,7 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2(ci, theta, n, zcmb, zhel, C
 #%% Definimos las gunciones de prior y el posterior
 
 def log_prior(theta):
-    M, b, omega_m, H0 = theta
+    M, omega_m, b, H0 = theta
     if -20 < M < -19 and  0.1 < omega_m < 0.9 and -4 < b < 4 and 60 < H0 < 80:
         return 0.0
     return -np.inf
@@ -78,7 +78,7 @@ os.chdir(path_datos_global+'/Resultados_cadenas/')
 filename = "sample_supernovas_M_omega_b_H0_101.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
-textfile_witness = open('witness_sn.txt','w+')
+textfile_witness = open('witness.txt','w+')
 textfile_witness.close()
 #%%
 #Initialize the sampler
@@ -94,7 +94,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
         continue
 
     os.chdir(path_datos_global+'/Resultados_cadenas/')
-    textfile_witness = open('witness_sn.txt','w')
+    textfile_witness = open('witness.txt','w')
     textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
     textfile_witness.write('Tiempo: {}'.format(time.time()))
     textfile_witness.close()
@@ -109,7 +109,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     #También pido que tau se mantenga relativamente constante:
     converged &= np.all((np.abs(old_tau - tau) / tau) < 0.01)
     if converged:
-        textfile_witness = open('witness_sn.txt','a')
+        textfile_witness = open('witness.txt','a')
         textfile_witness.write('Convergió!')
         textfile_witness.close()
         break
