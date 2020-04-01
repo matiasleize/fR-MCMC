@@ -17,7 +17,7 @@ with np.load('valores_medios_cronom_3params.npz') as data:
     sol = data['sol']
 #%%
 os.chdir(path_datos_global+'/Resultados_cadenas/')
-filename = 'sample_cron_omega_b_H0_1.h5'
+filename = 'sample_cron_omega_b_H0_prueba.h5'
 reader = emcee.backends.HDFBackend(filename)
 # Algunos valores
 tau = reader.get_autocorr_time()
@@ -29,6 +29,7 @@ print(tau)
 %matplotlib qt5
 graficar_cadenas(reader,labels = ['omega_m','b', 'H0'])
 #%%
+burnin=100
 graficar_contornos(reader,params_truths=sol,discard=burnin,
                     labels= ['omega_m','b','H0'])
 #%%
