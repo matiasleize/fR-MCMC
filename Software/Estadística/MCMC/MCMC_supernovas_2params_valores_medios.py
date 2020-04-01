@@ -49,7 +49,7 @@ b_true = -1
 #np.random.seed(42)
 nll = lambda theta: params_to_chi2_omega_H0_fijo(ci, theta, params_fijos, zcmb, zhel, Cinv, mb)
 initial = np.array([M_true,b_true])
-soln = minimize(nll, initial, options = {'eps': 0.01}, bounds =((-19,-16),(-2, 2)))
+soln = minimize(nll, initial)#, options = {'eps': 0.01}, bounds =((-19,-16),(-20, 20)))
 M_ml, b_ml = soln.x
 
 print(M_ml,b_ml)

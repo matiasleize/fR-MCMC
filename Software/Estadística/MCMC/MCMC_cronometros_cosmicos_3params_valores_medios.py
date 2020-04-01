@@ -35,7 +35,7 @@ ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
 os.chdir(path_git+'/Software/Estadística/Datos/')
 z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
 
-omega_m_true = 0.2
+omega_m_true = 0.26
 b_true = -1.2
 H0_true =  73.48 #Unidades de (km/seg)/Mpc
 
@@ -43,7 +43,7 @@ H0_true =  73.48 #Unidades de (km/seg)/Mpc
 nll = lambda theta: params_to_chi2(ci,theta,n,z_data,H_data,dH)
 initial = np.array([omega_m_true,b_true,H0_true])
 #bnds = ((0.01, 1), (-2, 1),(60,80))
-bnds = ((0.1, 0.7), (-4, 4),(20,80))
+bnds = ((0.1, 0.5), (None, None),(60,80))
 soln = minimize(nll, initial,bounds=bnds)#, options = {'eps': 0.001})
 #soln = minimize(nll, initial)#, options = {'eps': 0.001})
 omega_m_ml, b_ml, H0_ml = soln.x
