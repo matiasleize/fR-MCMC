@@ -42,9 +42,8 @@ def params_to_chi2(cond_iniciales, theta, params_fijos, zcmb, zhel, Cinv,
     n = params_fijos
 
     ## Transformo los parametros fisicos en los del modelo:
-    c1,c2,r_hs = params_fisicos_to_modelo(omega_m,b,H_0,n)
-    params_modelo = [c1,r_hs/(H_0**2),c2,n] #de la cruz: [b,c,d,n]
-
+    c1,c2 = params_fisicos_to_modelo(omega_m,b,n)
+    params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
     z,E = integrador(cond_iniciales, params_modelo,
                     cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
     muth = magn_aparente_teorica(z,E,zhel,zcmb,H_0)
@@ -61,9 +60,8 @@ def params_to_chi2_omega_H0_fijo(cond_iniciales, theta, params_fijos, zcmb,
     [omega_m,H_0,n] = params_fijos
 
     ## Transformo los parametros fisicos en los del modelo:
-    c1,c2,r_hs = params_fisicos_to_modelo(omega_m,b,H_0,n)
-    params_modelo = [c1,r_hs/(H_0**2),c2,n] #de la cruz: [b,c,d,n]
-
+    c1,c2 = params_fisicos_to_modelo(omega_m,b,n)
+    params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
     z,E = integrador(cond_iniciales, params_modelo,
                     cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
     muth = magn_aparente_teorica(z,E,zhel,zcmb,H_0)
@@ -79,9 +77,8 @@ def params_to_chi2_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel,
     [H_0,n] = params_fijos
 
     ## Transformo los parametros fisicos en los del modelo:
-    c1,c2,r_hs = params_fisicos_to_modelo(omega_m,b)
-    params_modelo = [c1,r_hs/(H_0**2),c2,n] #de la cruz: [b,c,d,n]
-
+    c1,c2 = params_fisicos_to_modelo(omega_m,b,n)
+    params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
     z,E = integrador(cond_iniciales, params_modelo,
                     cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
     muth = magn_aparente_teorica(z,E,zhel,zcmb,H_0)
@@ -97,9 +94,8 @@ def params_to_chi2_M_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel,
     [Mabs,H_0,n] = params_fijos
 
     ## Transformo los parametros fisicos en los del modelo:
-    c1,c2,r_hs = params_fisicos_to_modelo(omega_m,b)
-    params_modelo = [c1,r_hs/(H_0**2),c2,n] #de la cruz: [b,c,d,r_0,n]
-
+    c1,c2 = params_fisicos_to_modelo(omega_m,b,n)
+    params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
     z,E = integrador(cond_iniciales, params_modelo,
                     cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
     muth = magn_aparente_teorica(z,E,zhel,zcmb,H_0)

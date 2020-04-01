@@ -36,10 +36,9 @@ def dX_dz(z, variables,*params_modelo):
         #    G = gamma(y,v)
         #else:
             #[b,d,c,n] = parametros_modelo
-    gamma = lambda r,b,c,d,n: ((1+d*r**n) * (-b*n*r**n + r*(1+d*r**n)**2)) / (b*n*r**n * (1-n+d*(1+n)*r**n))
-    [B,C,D,N] = params_modelo
-    G = gamma(r,B,C,D,N)
-
+    gamma = lambda r,b,d,n: ((1+d*r**n) * (-b*n*r**n + r*(1+d*r**n)**2)) / (b*n*r**n * (1-n+d*(1+n)*r**n))
+    [B,D,N] = params_modelo
+    G = gamma(r,B,D,N)
     s0 = (-w + x**2 + (1+v)*x - 2*v + 4*y) / (z+1)
     s1 = - (v*x*G - x*y + 4*y - 2*y*v) / (z+1)
     s2 = -v * (x*G + 4 - 2*v) / (z+1)
@@ -111,7 +110,7 @@ def magn_aparente_teorica(z,E,zhel,zcmb,H_0):
     ##Magnitud aparente teorica
     muth = 25 + 5 * np.log10(d_L)
     return muth
-    
+
 #%%
 if __name__ == '__main__':
 
