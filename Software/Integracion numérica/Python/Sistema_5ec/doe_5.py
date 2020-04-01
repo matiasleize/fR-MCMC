@@ -95,7 +95,7 @@ zf = 3 # Es un valor razonable con las SN 1A
 #%% Resolvemos y graficamos
 #plt.close('all')
 
-sol = solve_ivp(dX_dz, [zi,zf], ci, max_step=0.01)
+sol = solve_ivp(dX_dz, [zi,zf], ci)#, max_step=0.01)
 #plot_sol(sol)
 
 
@@ -114,7 +114,7 @@ t1 = time.time()
 for i in range(len(zs)):
     zi = zs[0]
     zf = zs[i]
-    sol = solve_ivp(dX_dz, [zi,zf], ci, max_step=0.1)      # 0.005
+    sol = solve_ivp(dX_dz, [zi,zf], ci #,max_step=0.1)      # 0.005
 
     int_v = simps((sol.y[2])/(1+sol.t),sol.t)
     lala[i] = int_v
