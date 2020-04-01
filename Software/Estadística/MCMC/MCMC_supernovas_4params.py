@@ -44,7 +44,7 @@ with np.load('valores_medios_supernovas_4params.npz') as data:
 #Parche para salir desde un H0 razonable
 sol[0]=-19.2
 sol[1]=0.23
-sol[2]=0.5
+sol[2]=-0.5
 sol[3]=73
 
 #Parametros a ajustar
@@ -77,7 +77,7 @@ nwalkers, ndim = pos.shape
 #%%
 # Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/')
-filename = "sample_supernovas_M_omega_b_H0_prueba.h5"
+filename = "sample_supernovas_M_omega_b_H0_101.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
 textfile_witness = open('witness_sn.txt','w+')
