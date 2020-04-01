@@ -43,9 +43,9 @@ os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_cronom_3params.npz') as data:
     sol = data['sol']
 #Parche para salir desde un H0 razonable
-sol[0]=0.23
-sol[1]=0.5
-sol[2]=73
+sol[0] = 0.23
+sol[1] = -0.5
+sol[2] = 73
 
 
 #%%
@@ -65,7 +65,7 @@ nwalkers, ndim = pos.shape
 #%%
 # Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/')
-filename = "sample_cron_omega_b_H0_prueba.h5"
+filename = "sample_cron_omega_b_H0_101.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
 textfile_witness = open('witness.txt','w+')
