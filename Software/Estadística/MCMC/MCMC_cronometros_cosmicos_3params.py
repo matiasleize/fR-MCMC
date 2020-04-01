@@ -5,7 +5,7 @@ Created on Wed Feb  5 16:07:35 2020
 """
 import numpy as np
 from matplotlib import pyplot as plt
-np.random.seed(42)
+np.random.seed()
 
 from scipy.optimize import minimize
 import emcee
@@ -43,13 +43,15 @@ os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_cronom_3params.npz') as data:
     sol = data['sol']
 #Parche para salir desde un H0 razonable
+sol[0]=0.23
 sol[1]=0.5
 sol[2]=73
+
 
 #%%
 def log_prior(theta):
     omega_m, b, H_0 = theta
-    if 0.1 < omega_m < 1 and -2 < b < 1 and 20 < H_0 < 85:
+    if 0.26 < omega_m < 0.27 and -2 < b < 2 and 73 < H_0 < 73.1:
         return 0.0
     return -np.inf
 
@@ -63,7 +65,7 @@ nwalkers, ndim = pos.shape
 #%%
 # Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/')
-filename = "sample_cron_omega_b_H0_2.h5"
+filename = "sample_cron_omega_b_H0_prueba.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
 textfile_witness = open('witness.txt','w+')
