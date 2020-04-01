@@ -49,9 +49,39 @@ def dX_dz(z, variables,*params_modelo):
 
 
 
-def integrador(cond_iniciales, params_modelo,cantidad_zs, max_step,
+def integrador(cond_iniciales, params_modelo, cantidad_zs, max_step,
+                sistema_ec=dX_dz, z_inicial=0, z_final=3, verbose=True):
+                #cantidad_zs_ideal = 7000, # max_step_ideal = 0.005
+
+    '''Esta función integra el sistema de ecuaciones diferenciales entre
+    z_inicial y z_final, dadas las condiciones iniciales y los parámetros
+    del modelo.
+        Para el integrador, dependiendo que datos se usan hay que ajustar
+    el cantidad_zs y el max_step.
+    Para cronometros: max_step=0.1
+    Para supernovas:  max_step=0.05
+    '''
+
+    # Integramos el vector v y calculamos el Hubble
+    zs = np.linspace(z_inicial,z_final,cantidad_zs)
+    hubbles = np.ones(len(zs)) #Para que el primer valor de este array sea 1!
+    t1 = time.time()
+    sol = solve_ivp(sistema_ec, (z_inicial,z_final),
+    cond_iniciales,t_eval=zs,args=params_modelo, max_step=max_step)
+    for i in range (1, len(sol.t)):
+        int_v =  simps((sol.y[2][:i])/(1+sol.t[:i]),sol.t[:i])
+        hubbles[i] = (1+sol.t[i])**2 * np.e**(-int_v)
+    t2 = time.time()
+    if verbose == True:
+        print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
+        int((t2-t1) - 60*int((t2-t1)/60))))
+    return zs, hubbles
+
+def integrador_VIEJO(cond_iniciales, params_modelo,cantidad_zs, max_step,
                 sistema_ec=dX_dz, z_inicial=0, z_final=3, verbose=True
                 ): #cantidad_zs_ideal = 7000, # max_step_ideal = 0.005
+    '''DISCONTINUADA'''
+
     '''Esta función integra el sistema de ecuaciones diferenciales entre
     z_inicial y z_final, dadas las condiciones iniciales y los parámetros
     del modelo.'''
@@ -65,19 +95,19 @@ def integrador(cond_iniciales, params_modelo,cantidad_zs, max_step,
     # Integramos el vector v y calculamos el Hubble
     zs = np.linspace(z_inicial,z_final,cantidad_zs)
     hubbles = np.zeros(len(zs))
-
     t1 = time.time()
     for i in range(len(zs)):
         zf = zs[i] # ''z final'' para cada paso de integracion
-        sol = solve_ivp(sistema_ec, [z_inicial,zf],
-         cond_iniciales,args=params_modelo, max_step=max_step)
+        sol = solve_ivp(sistema_ec, (z_inicial,zf),
+              cond_iniciales,args=params_modelo, max_step=max_step)
         int_v = simps((sol.y[2])/(1+sol.t),sol.t) # integro desde 0 a z
-        hubbles[i]=(1+zf)**2 * np.e**(-int_v)
+        hubbles[i] = (1+zf)**2 * np.e**(-int_v)
     t2 = time.time()
     if verbose == True:
         print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
               int((t2-t1) - 60*int((t2-t1)/60))))
     return zs, hubbles
+
 
 def plot_sol(solucion):
 
@@ -96,15 +126,15 @@ def plot_sol(solucion):
     plt.show()
 
 
-def magn_aparente_teorica(z,E,zhel,zcmb,H_0=73.48):
+def magn_aparente_teorica(z,E,zhel,zcmb,H_0):
     '''A partir de un array de redshift y un array de la magnitud E = H_0/H
     que salen de la integración numérica, se calcula el mu teórico que deviene
     del modelo. muth = 25 + 5 * log_{10}(d_L),
     donde d_L = (c/H_0) (1+z) int(dz'/E(z'))'''
 
-    d_c=np.zeros(len(E)) #Distancia comovil
+    d_c = np.zeros(len(E)) #Distancia comovil
     for i in range (1, len(E)):
-        d_c[i] = 0.001*(c_luz/H_0) * simps(1/E[:i],z[:i])
+        d_c[i] = 0.001*(c_luz/H_0) * simps(1/E[:i],z[:i]) #Paso c_luz a km/seg
 
     dc_int = interp1d(z,d_c) #Interpolamos
 
@@ -113,3 +143,63 @@ def magn_aparente_teorica(z,E,zhel,zcmb,H_0=73.48):
     ##Magnitud aparente teorica
     muth = 25 + 5 * np.log10(d_L)
     return muth
+#%%
+if __name__ == '__main__':
+
+    sistema_ec=dX_dz
+    z_inicial=0
+    z_final=3
+    cantidad_zs = 100
+    max_step=0.1
+    verbose=True
+
+
+    x_0 = -0.339
+    y_0 = 1.246
+    v_0 = 1.64
+    w_0 = 1 + x_0 + y_0 - v_0
+    r_0 = 41
+    ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
+    cond_iniciales=ci
+
+    #c1_true = 1
+    #r_hs_true/H_0**2  = 0.24
+    #c2_true = 1/19
+    #n=1
+    params_modelo=[1,0.24,1/19,1]
+
+#%% Forma nueva de integrar
+    #%matplotlib qt5
+    from matplotlib import pyplot as plt
+
+    plt.figure()
+    zs = np.linspace(z_inicial,z_final,cantidad_zs)
+    t1 = time.time()
+    sol = solve_ivp(sistema_ec, [z_inicial,z_final],
+          cond_iniciales,t_eval=zs,args=params_modelo, max_step=max_step)
+    t2 = time.time()
+    print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
+          int((t2-t1) - 60*int((t2-t1)/60))))
+    plot_sol(sol)
+
+    plt.figure()
+    E=np.ones(len(sol. t))
+    for i in range (1, len(sol.t)):
+        int_v =  simps((sol.y[2][:i])/(1+sol.t[:i]),sol.t[:i])
+        E[i] = (1+sol.t[i])**2 * np.e**(-int_v)
+    plt.plot(sol.t,E)
+
+#%% Forma vieja de integrar
+    plt.figure()
+    t1 = time.time()
+    zs = np.linspace(z_inicial,z_final,cantidad_zs)
+    hubbles_1 = np.zeros(len(zs))
+    for i in range(len(zs)):
+        zf = zs[i] # ''z final'' para cada paso de integracion
+        sol_1 = solve_ivp(sistema_ec,[z_inicial,zf], cond_iniciales,args=params_modelo, max_step=max_step)
+        int_v = simps((sol_1.y[2])/(1+sol_1.t),sol_1.t) # integro desde 0 a z
+        hubbles_1[i] = (1+zf)**2 * np.e**(-int_v)
+    t2 = time.time()
+    print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
+          int((t2-t1) - 60*int((t2-t1)/60))))
+    plt.plot(zs,hubbles_1)
