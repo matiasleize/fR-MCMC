@@ -37,18 +37,21 @@ ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
 
 os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
 zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
-
+#%%
 #Parametros a ajustar
 M_true = -19.6
 omega_m_true = 0.26
-b_true = 2
-H0_true =  73.48 #Unidades de (km/seg)/Mpc
+b_true = -1.2
+H0_true =  73#73.48 #Unidades de (km/seg)/Mpc
 
 #%%
 np.random.seed(42)
 nll = lambda theta: params_to_chi2(ci, theta, n, zcmb, zhel, Cinv, mb)
 initial = np.array([M_true,omega_m_true,b_true,H0_true])
-soln = minimize(nll, initial)#, bounds =((15, 20),(0,1),(-2, 1),(50,80)))
+soln = minimize(nll, initial,options = {'eps': 0.001}, bounds =((16, 20),(0.26,0.261),(-2, 4),(73,73.001)))
 M_ml, omega_m_ml, b_ml, H0_ml = soln.x
-#%%
+
 print(M_ml,omega_m_ml,b_ml,H0_ml)
+
+os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
+np.savez('valores_medios_supernovas_4params', sol=soln.x)
