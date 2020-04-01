@@ -77,38 +77,6 @@ def integrador(cond_iniciales, params_modelo, cantidad_zs, max_step,
         int((t2-t1) - 60*int((t2-t1)/60))))
     return zs, hubbles
 
-def integrador_VIEJO(cond_iniciales, params_modelo,cantidad_zs, max_step,
-                sistema_ec=dX_dz, z_inicial=0, z_final=3, verbose=True
-                ): #cantidad_zs_ideal = 7000, # max_step_ideal = 0.005
-    '''DISCONTINUADA'''
-
-    '''Esta función integra el sistema de ecuaciones diferenciales entre
-    z_inicial y z_final, dadas las condiciones iniciales y los parámetros
-    del modelo.'''
-
-    '''Para el integrador, dependiendo que datos se usan hay que ajustar
-    el cantidad_zs y el max_step.
-    Para cronometros: cantidad_zs=100, max_step=0.1
-    Para supernovas: cantidad_zs=2000, max_step=0.05
-    '''
-
-    # Integramos el vector v y calculamos el Hubble
-    zs = np.linspace(z_inicial,z_final,cantidad_zs)
-    hubbles = np.zeros(len(zs))
-    t1 = time.time()
-    for i in range(len(zs)):
-        zf = zs[i] # ''z final'' para cada paso de integracion
-        sol = solve_ivp(sistema_ec, (z_inicial,zf),
-              cond_iniciales,args=params_modelo, max_step=max_step)
-        int_v = simps((sol.y[2])/(1+sol.t),sol.t) # integro desde 0 a z
-        hubbles[i] = (1+zf)**2 * np.e**(-int_v)
-    t2 = time.time()
-    if verbose == True:
-        print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
-              int((t2-t1) - 60*int((t2-t1)/60))))
-    return zs, hubbles
-
-
 def plot_sol(solucion):
 
     '''Dada una gamma (que especifica el modelo) y una solución de las
@@ -143,6 +111,7 @@ def magn_aparente_teorica(z,E,zhel,zcmb,H_0):
     ##Magnitud aparente teorica
     muth = 25 + 5 * np.log10(d_L)
     return muth
+    
 #%%
 if __name__ == '__main__':
 
