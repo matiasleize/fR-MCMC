@@ -37,15 +37,14 @@ ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
 
 os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
 zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
-log_likelihood = lambda theta: -0.5*params_to_chi2(ci, theta, n, zcmb, zhel, Cinv, mb)
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_supernovas_4params.npz') as data:
     sol = data['sol']
 #Parche para salir desde un H0 razonable
-sol[0]=-19.2
-sol[1]=0.23
-sol[2]=-0.5
-sol[3]=73
+sol[0] = -19.2
+sol[1] = 0.23
+sol[2] = -0.5
+sol[3] = 73
 
 #Parametros a ajustar
 #M_true = -19.6
@@ -59,10 +58,9 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2(ci, theta, n, zcmb, zhel, C
 
 def log_prior(theta):
     M, b, omega_m, H0 = theta
-    if -20 < M < -19 and  0.1 < omega_m < 0.9 and -2 < b < 4 and 60 < H0 < 80:
+    if -20 < M < -19 and  0.1 < omega_m < 0.9 and -4 < b < 4 and 60 < H0 < 80:
         return 0.0
     return -np.inf
-
 
 def log_probability(theta):
     lp = log_prior(theta)
@@ -109,7 +107,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     # Check convergence
     converged = np.all(tau * 100 < sampler.iteration) #100 es el threshold de convergencia
     #También pido que tau se mantenga relativamente constante:
-    converged &= np.all(np.abs(old_tau - tau) / tau < 0.01)
+    converged &= np.all((np.abs(old_tau - tau) / tau) < 0.01)
     if converged:
         textfile_witness = open('witness_sn.txt','a')
         textfile_witness.write('Convergió!')

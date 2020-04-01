@@ -17,7 +17,7 @@ with np.load('valores_medios_supernovas_4params.npz') as data:
     sol = data['sol']
 #%%
 os.chdir(path_datos_global+'/Resultados_cadenas/')
-filename = 'sample_supernovas_omega_b_H0_prueba.h5'
+filename = 'sample_supernovas_omega_b_H0_101.h5'
 reader = emcee.backends.HDFBackend(filename)
 # Algunos valores
 tau = reader.get_autocorr_time()
