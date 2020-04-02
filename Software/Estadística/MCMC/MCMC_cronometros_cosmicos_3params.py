@@ -51,7 +51,7 @@ sol[2] = 73
 #%%
 def log_prior(theta):
     omega_m, b, H_0 = theta
-    if 0.2 < omega_m < 0.27 and -2 < b < 2 and 60 < H_0 < 80:
+    if 0.001 < omega_m < 0.27 and -10 < b < 2 and 50 < H_0 < 80:
         return 0.0
     return -np.inf
 
@@ -97,7 +97,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     # Check convergence
     converged = np.all(tau * 100 < sampler.iteration) #100 es el threshold de convergencia
     #También pido que tau se mantenga relativamente constante:
-    converged &= np.all(np.abs(old_tau - tau) / tau < 0.01)
+#    converged &= np.all(np.abs(old_tau - tau) / tau < 0.01) DESPUES DESCOMENTAR
     if converged:
         textfile_witness = open('witness.txt','a')
         textfile_witness.write('Convergió!')
