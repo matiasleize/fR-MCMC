@@ -42,9 +42,9 @@ def params_fisicos_to_modelo_vieja(omega_m, b, H_0, n=1):
 
 #%%
 if __name__ == '__main__':
-    H_0=73.48
-    b_true = 2
     omega_m_true = 0.24
+    b_true = 2
+    H_0=73.48
     c1,r_hs,c2 = params_fisicos_to_modelo_vieja(omega_m_true,b_true,H_0)
     print(c1,r_hs/H_0**2,c2)
     #c1_true = 1

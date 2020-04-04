@@ -22,7 +22,7 @@ sys.path.append('./Software/Funcionales/')
 from funciones_data import leer_data_pantheon
 from funciones_supernovas import params_to_chi2
 
-#ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,b,omega_m,H_0,n
+#ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
 #%% Predeterminados:
 n = 1

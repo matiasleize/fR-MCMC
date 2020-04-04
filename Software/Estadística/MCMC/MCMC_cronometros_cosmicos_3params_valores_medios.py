@@ -21,6 +21,8 @@ sys.path.append('./Software/Funcionales/')
 from funciones_data import leer_data_cronometros
 from funciones_cronometros import  params_to_chi2
 
+
+#ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 #%% Predeterminados:
 n = 1
 #Coindiciones iniciales e intervalo

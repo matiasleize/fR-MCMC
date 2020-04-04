@@ -22,7 +22,7 @@ sys.path.append('./Software/Funcionales/')
 from funciones_data import leer_data_pantheon
 from funciones_supernovas import params_to_chi2
 
-#ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,b,omega_m,H_0,n
+#ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
 #%% Predeterminados:
 n = 1
@@ -42,7 +42,7 @@ with np.load('valores_medios_supernovas_4params.npz') as data:
     sol = data['sol']
 #Parche para salir desde un H0 razonable
 sol[0] = -19.2
-sol[1] = 0.23
+sol[1] = 0.30
 sol[2] = -0.5
 sol[3] = 73
 
