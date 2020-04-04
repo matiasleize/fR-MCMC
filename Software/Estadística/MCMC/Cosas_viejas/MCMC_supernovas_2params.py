@@ -20,7 +20,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_data import leer_data_pantheon
-from funciones_supernovas import params_to_chi2_M_H0_fijo
+from funciones_supernovas import params_to_chi2_omega_H0_fijo
 
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,b,omega_m,H_0,n
 
@@ -47,7 +47,8 @@ sol[0] = -19.6
 sol[1] = -0.5
 
 #np.random.seed(42)
-log_likelihood = lambda theta: -0.5 * params_to_chi2(ci, theta, [omega_m,H_0,n], zcmb, zhel, Cinv, mb)
+log_likelihood = lambda theta: -0.5 * params_to_chi2_omega_H0_fijo(ci, theta,
+                                [omega_m,H_0,n], zcmb, zhel, Cinv, mb)
 
 #%% Definimos las funciones de prior y el posterior
 
