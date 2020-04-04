@@ -10,14 +10,13 @@ from scipy.optimize import minimize
 import emcee
 import corner
 from scipy.interpolate import interp1d
-
+import time
 
 import sys
 import os
 from os.path import join as osjoin
 from pc_path import definir_path
 path_git, path_datos_global = definir_path()
-
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_data import leer_data_pantheon
@@ -26,7 +25,7 @@ from funciones_supernovas import params_to_chi2_M_H0_fijo
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,b,omega_m,H_0,n
 
 #%% Predeterminados:
-M = -19.6
+omega_m = 0.30
 H_0 =  73.48 #Unidades de (km/seg)/Mpc
 n = 1
 #Coindiciones iniciales e intervalo
@@ -41,26 +40,20 @@ ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
 os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
 zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
 
-#Parametros a ajustar
-b_true = 2
-omega_m_true = 0.26
 #%%
+#Parche para salir desde un H0 razonable
+sol = np.zeros(2)
+sol[0] = -19.6
+sol[1] = -0.5
 
-np.random.seed(42)
-log_likelihood = lambda theta: -0.5 * params_to_chi2_M_H0_fijo(ci, theta,[M,H_0,n], zcmb, zhel, Cinv, mb)
+#np.random.seed(42)
+log_likelihood = lambda theta: -0.5 * params_to_chi2(ci, theta, [omega_m,H_0,n], zcmb, zhel, Cinv, mb)
 
-nll = lambda *args: -log_likelihood(*args)
-initial = np.array([b_true,omega_m_true]) + 0.1 * np.random.randn(2)
-soln = minimize(nll, initial, bounds =([-10, 10],[0,1]))
-b_ml, omega_m_ml = soln.x
-
-print(b_ml,omega_m_ml)
-
-#%% Definimos las gunciones de prior y el posterior
+#%% Definimos las funciones de prior y el posterior
 
 def log_prior(theta):
-    b, omega_m = theta
-    if 0.5 < b < 4 and 0.2 < omega_m < 0.9:
+    M,b = theta
+    if -20 < M < -19 and -4 < b < 4 :
         return 0.0
     return -np.inf
 
@@ -72,32 +65,48 @@ def log_probability(theta):
     return lp + log_likelihood(theta)
 
 
-pos = soln.x + 1e-4 * np.random.randn(10, 2) #Defino la cantidad de caminantes.
+pos = sol + 1e-4 * np.random.randn(12, 2) #Defino la cantidad de caminantes.
 nwalkers, ndim = pos.shape
-#%% Corremos el MonteCarlo
-sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability)
-sampler.run_mcmc(pos, 20, progress=True); #Defino la cant de pasos
-
-#%% Graficamos las cadenas de Markov
-fig, axes = plt.subplots(2, figsize=(10, 7), sharex=True)
-samples = sampler.get_chain()
-labels = ["b","omega_m"]
-for i in range(ndim):
-    ax = axes[i]
-    ax.plot(samples[:, :, i], "k", alpha=0.3)
-    ax.set_xlim(0, len(samples))
-    ax.set_ylabel(labels[i])
-    ax.yaxis.set_label_coords(-0.1, 0.5)
-
-axes[-1].set_xlabel("step number");
 
 #%%
-flat_samples = sampler.get_chain(discard=1, flat=True)
-print(flat_samples.shape)
-#%% Graficamos las gausianas 2D y proyectadas
-fig = corner.corner(
-    flat_samples, labels=labels, truths=[b_true, omega_m_true]
-);
-#%% Guardado
-os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones')
-np.savez('supernovas_samp_b_omega', samples = samples, sampler=sampler)
+# Set up the backend
+os.chdir(path_datos_global+'/Resultados_cadenas/')
+filename = "sample_supernovas_M_b_101.h5"
+backend = emcee.backends.HDFBackend(filename)
+backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
+textfile_witness = open('witness.txt','w+')
+textfile_witness.close()
+#%%
+#Initialize the sampler
+sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
+max_n = 15000
+# This will be useful to testing convergence
+old_tau = np.inf
+
+# Now we'll sample for up to max_n steps
+for sample in sampler.sample(pos, iterations=max_n, progress=True):
+    # Only check convergence every 100 steps
+    if sampler.iteration % 5: #100 es cada cuanto chequea convergencia
+        continue
+
+    os.chdir(path_datos_global+'/Resultados_cadenas/')
+    textfile_witness = open('witness.txt','w')
+    textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
+    textfile_witness.write('Tiempo: {}'.format(time.time()))
+    textfile_witness.close()
+
+    # Compute the autocorrelation time so far
+    # Using tol=0 means that we'll always get an estimate even
+    # if it isn't trustworthy
+    tau = sampler.get_autocorr_time(tol=0)
+
+    # Check convergence
+    converged = np.all(tau * 100 < sampler.iteration) #100 es el threshold de convergencia
+    #También pido que tau se mantenga relativamente constante:
+    converged &= np.all((np.abs(old_tau - tau) / tau) < 0.01)
+    if converged:
+        textfile_witness = open('witness.txt','a')
+        textfile_witness.write('Convergió!')
+        textfile_witness.close()
+        break
+    old_tau = tau
