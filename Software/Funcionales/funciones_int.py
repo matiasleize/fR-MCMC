@@ -8,6 +8,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.integrate import solve_ivp
 from scipy.integrate import simps as simps
+from scipy.integrate import cumtrapz as cumtrapz
 import time
 
 from scipy.interpolate import interp1d
@@ -38,7 +39,8 @@ def dX_dz(z, variables,*params_modelo):
             #[b,d,c,n] = parametros_modelo
     gamma = lambda r,b,d,n: ((1+d*r**n) * (-b*n*r**n + r*(1+d*r**n)**2)) / (b*n*r**n * (1-n+d*(1+n)*r**n))
     [B,D,N] = params_modelo
-    G = gamma(r,B,D,N)
+    #G = gamma(r,B,D,N)
+    G = 0
     s0 = (-w + x**2 + (1+v)*x - 2*v + 4*y) / (z+1)
     s1 = - (v*x*G - x*y + 4*y - 2*y*v) / (z+1)
     s2 = -v * (x*G + 4 - 2*v) / (z+1)
@@ -49,7 +51,7 @@ def dX_dz(z, variables,*params_modelo):
 
 
 def integrador(cond_iniciales, params_modelo, cantidad_zs, max_step,
-                sistema_ec=dX_dz, z_inicial=0, z_final=3, verbose=True):
+                sistema_ec=dX_dz, z_inicial=0, z_final=3, verbose=False):
                 #cantidad_zs_ideal = 7000, # max_step_ideal = 0.005
 
     '''Esta función integra el sistema de ecuaciones diferenciales entre
@@ -63,18 +65,26 @@ def integrador(cond_iniciales, params_modelo, cantidad_zs, max_step,
 
     # Integramos el vector v y calculamos el Hubble
     zs = np.linspace(z_inicial,z_final,cantidad_zs)
-    hubbles = np.ones(len(zs)) #Para que el primer valor de este array sea 1!
     t1 = time.time()
     sol = solve_ivp(sistema_ec, (z_inicial,z_final),
     cond_iniciales,t_eval=zs,args=params_modelo, max_step=max_step)
-    for i in range (1, len(sol.t)):
-        int_v =  simps((sol.y[2][:i])/(1+sol.t[:i]),sol.t[:i])
-        hubbles[i] = (1+sol.t[i])**2 * np.e**(-int_v)
+
+    if (len(sol.t)!=cantidad_zs):
+        print('Está integrando mal!')
+
+    #Chequear este paso!
+    #hubbles = np.ones(len(sol.t)) #Para que el primer valor de este array sea 1!
+    #for i in range (1, len(zs)):
+    #    int_v =  simps((sol.y[2][:i])/(1+sol.t[:i]),sol.t[:i])
+    #    hubbles[i] = (1+sol.t[i])**2 * np.e**(-int_v)
+
+    int_v =  cumtrapz(sol.y[2]/(1+sol.t), sol.t, initial=0)
+    hubbles = (1+sol.t)**2 * np.exp(-int_v)
     t2 = time.time()
     if verbose == True:
         print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
         int((t2-t1) - 60*int((t2-t1)/60))))
-    return zs, hubbles
+    return sol.t, hubbles
 
 def plot_sol(solucion):
 
@@ -99,10 +109,10 @@ def magn_aparente_teorica(z,E,zhel,zcmb,H_0):
     del modelo. muth = 25 + 5 * log_{10}(d_L),
     donde d_L = (c/H_0) (1+z) int(dz'/E(z'))'''
 
-    d_c = np.zeros(len(E)) #Distancia comovil
-    for i in range (1, len(E)):
-        d_c[i] = 0.001*(c_luz/H_0) * simps(1/E[:i],z[:i]) #Paso c_luz a km/seg
-
+    #d_c = np.zeros(len(E)) #Distancia comovil
+    #for i in range (1, len(E)):
+    #    d_c[i] = 0.001*(c_luz/H_0) * simps(1/E[:i],z[:i]) #Paso c_luz a km/seg
+    d_c =  0.001*(c_luz/H_0) * cumtrapz(1/E,z,initial=0)
     dc_int = interp1d(z,d_c) #Interpolamos
 
     d_L = (1+zhel) * dc_int(zcmb) #Obs, Caro multiplica por Zhel, con Zobs da un poquin mejor
@@ -131,10 +141,9 @@ if __name__ == '__main__':
     cond_iniciales=ci
 
     #c1_true = 1
-    #r_hs_true/H_0**2  = 0.24
     #c2_true = 1/19
     #n=1
-    params_modelo=[1,0.24,1/19,1]
+    params_modelo=[1,1/19,1]
 
 #%% Forma nueva de integrar
     #%matplotlib qt5
@@ -151,12 +160,13 @@ if __name__ == '__main__':
     plot_sol(sol)
 
     plt.figure()
-    E=np.ones(len(sol. t))
-    for i in range (1, len(sol.t)):
-        int_v =  simps((sol.y[2][:i])/(1+sol.t[:i]),sol.t[:i])
-        E[i] = (1+sol.t[i])**2 * np.e**(-int_v)
+    #E=np.ones(len(sol. t))
+    #for i in range (1, len(sol.t)):
+    #    int_v =  simps((sol.y[2][:i])/(1+sol.t[:i]),sol.t[:i])
+    #    E[i] = (1+sol.t[i])**2 * np.e**(-int_v)
+    int_v =  cumtrapz((sol.y[2])/(1+sol.t),sol.t,initial=0)
+    E = (1+sol.t)**2 * np.exp(-int_v)
     plt.plot(sol.t,E)
-
 #%% Forma vieja de integrar
     plt.figure()
     t1 = time.time()
@@ -166,7 +176,7 @@ if __name__ == '__main__':
         zf = zs[i] # ''z final'' para cada paso de integracion
         sol_1 = solve_ivp(sistema_ec,[z_inicial,zf], cond_iniciales,args=params_modelo, max_step=max_step)
         int_v = simps((sol_1.y[2])/(1+sol_1.t),sol_1.t) # integro desde 0 a z
-        hubbles_1[i] = (1+zf)**2 * np.e**(-int_v)
+        hubbles_1[i] = (1+zf)**2 * np.exp(-int_v)
     t2 = time.time()
     print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
           int((t2-t1) - 60*int((t2-t1)/60))))
