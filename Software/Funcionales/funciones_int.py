@@ -14,7 +14,7 @@ import time
 from scipy.interpolate import interp1d
 from scipy.constants import c as c_luz #metros/segundos
 
-def dX_dz(z, variables,*params_modelo):
+def dX_dz(z, variables,*params_modelo, model='HS'):
     '''Defino el sistema de ecuaciones a resolver. El argumento params_modelo
     es una lista donde los primeros n-1 elementos son los parametros del sistema,
     mientras que el útimo argumento especifica el modelo en cuestión,
@@ -37,8 +37,11 @@ def dX_dz(z, variables,*params_modelo):
         #    G = gamma(y,v)
         #else:
             #[b,d,c,n] = parametros_modelo
-    gamma = lambda r,b,d,n: ((1+d*r**n) * (-b*n*r**n + r*(1+d*r**n)**2)) / (b*n*r**n * (1-n+d*(1+n)*r**n))
-    [B,D,N] = params_modelo
+    if model == 'HS':
+        gamma = lambda r,b,d,n: ((1+d*r**n) * (-b*n*r**n + r*(1+d*r**n)**2)) / (b*n*r**n * (1-n+d*(1+n)*r**n))
+        [B,D,N] = params_modelo
+    else:
+        pass
     #G = gamma(r,B,D,N)
     G = 0
     s0 = (-w + x**2 + (1+v)*x - 2*v + 4*y) / (z+1)
@@ -62,10 +65,9 @@ def integrador(cond_iniciales, params_modelo, cantidad_zs, max_step,
     Para cronometros: max_step=0.1
     Para supernovas:  max_step=0.05
     '''
-
+    t1 = time.time()
     # Integramos el vector v y calculamos el Hubble
     zs = np.linspace(z_inicial,z_final,cantidad_zs)
-    t1 = time.time()
     sol = solve_ivp(sistema_ec, (z_inicial,z_final),
     cond_iniciales,t_eval=zs,args=params_modelo, max_step=max_step)
 
@@ -101,25 +103,6 @@ def plot_sol(solucion):
     [ax[i].set_xlabel('z (redshift)',fontsize='medium') for i in range(5)];
     [ax[i].invert_xaxis() for i in range(5)]; #Doy vuelta los ejes
     plt.show()
-
-
-def magn_aparente_teorica(z,E,zhel,zcmb,H_0):
-    '''A partir de un array de redshift y un array de la magnitud E = H_0/H
-    que salen de la integración numérica, se calcula el mu teórico que deviene
-    del modelo. muth = 25 + 5 * log_{10}(d_L),
-    donde d_L = (c/H_0) (1+z) int(dz'/E(z'))'''
-
-    #d_c = np.zeros(len(E)) #Distancia comovil
-    #for i in range (1, len(E)):
-    #    d_c[i] = 0.001*(c_luz/H_0) * simps(1/E[:i],z[:i]) #Paso c_luz a km/seg
-    d_c =  0.001*(c_luz/H_0) * cumtrapz(1/E,z,initial=0)
-    dc_int = interp1d(z,d_c) #Interpolamos
-
-    d_L = (1+zhel) * dc_int(zcmb) #Obs, Caro multiplica por Zhel, con Zobs da un poquin mejor
-
-    ##Magnitud aparente teorica
-    muth = 25 + 5 * np.log10(d_L)
-    return muth
 
 #%%
 if __name__ == '__main__':
