@@ -30,7 +30,29 @@ def magn_aparente_teorica(z, H, zcmb, zhel):
 
     #Magnitud aparente teorica
     muth = 25.0 + 5.0 * np.log10(d_L)
+
     return muth
+
+def magn_aparente_teorica_nueva(z, H, M_abs, zcmb, zhel):
+    '''A partir de un array de redshift y un array de la magnitud E = H_0/H
+    que salen de la integración numérica, se calcula el mu teórico que deviene
+    del modelo. muth = 25 + 5 * log_{10}(d_L),
+    donde d_L = (c/H_0) (1+z) int(dz'/E(z'))'''
+
+    d_c =  c_luz_km * cumtrapz(H**(-1), z, initial=0)
+    dc_int = interp1d(z, d_c) #Interpolamos
+    d_L = (1 + zhel) * dc_int(zcmb) #Obs, Caro multiplica por Zhel, con Zobs da un poquin mejor
+
+
+    #muth = 25.0 + 5.0 * np.log10(d_L)
+
+    #Magnitud aparente teorica
+    l_sn=10**(-(M_abs+19)/5)
+    muth = 5.7 + 5.0 * np.log10(d_L*(1+zcmb)/l_sn)
+    return muth
+
+
+
 
 def chi_2_supernovas(muth, muobs, C_invertida):
     '''Dado el resultado teórico muth y los datos de la
@@ -57,8 +79,10 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv, mb,
     z = np.linspace(0, 3, cantidad_zs)
     H = H_LCDM(z, omega_m, H_0)
 
+    #muth = magn_aparente_teorica(z, H, zcmb, zhel)
+    #muobs =  mb - Mabs
     muth = magn_aparente_teorica(z, H, zcmb, zhel)
-    muobs =  mb - Mabs
+    muobs =  mb
 
     chi = chi_2_supernovas(muth, muobs, Cinv)
     chi_norm = chi / (len(zcmb) - 1)
