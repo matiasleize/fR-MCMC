@@ -30,7 +30,7 @@ def chi_2_supernovas(muth,magn_aparente_obs,M_abs,C_invertida):
     deltamu = muobs - muth
     transp = np.transpose(deltamu)
     aux = np.dot(C_invertida,deltamu)
-    chi2 = np.dot(transp,aux)/sn
+    chi2 = np.dot(transp,aux)
     return chi2
 
 def params_to_chi2(cond_iniciales, theta, params_fijos, zcmb, zhel, Cinv,
@@ -46,9 +46,10 @@ def params_to_chi2(cond_iniciales, theta, params_fijos, zcmb, zhel, Cinv,
     params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
     z,E = integrador(cond_iniciales, params_modelo,
                     cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
-    muth = magn_aparente_teorica(z,E,zhel,zcmb,H_0)
+    muth = magn_aparente_teorica(z,E,zcmb,zhel,H_0)
     chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
-    return chi
+    chi_norm = chi / (len(zcmb) - len(theta))
+    return chi_norm
 
 def params_to_chi2_omega_H0_fijo(cond_iniciales, theta, params_fijos, zcmb,
                                 zhel, Cinv, mb, cantidad_zs=3000, max_step=0.1,
@@ -64,9 +65,10 @@ def params_to_chi2_omega_H0_fijo(cond_iniciales, theta, params_fijos, zcmb,
     params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
     z,E = integrador(cond_iniciales, params_modelo,
                     cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
-    muth = magn_aparente_teorica(z,E,zhel,zcmb,H_0)
+    muth = magn_aparente_teorica(z,E,zcmb,zhel,H_0)
     chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
-    return chi
+    chi_norm = chi / (len(zcmb) - len(theta))
+    return chi_norm
 
 def params_to_chi2_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel,
                             Cinv, mb, cantidad_zs=3000, max_step=0.1, verbose=True):
@@ -81,9 +83,10 @@ def params_to_chi2_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel,
     params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
     z,E = integrador(cond_iniciales, params_modelo,
                     cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
-    muth = magn_aparente_teorica(z,E,zhel,zcmb,H_0)
+    muth = magn_aparente_teorica(z,E,zcmb,zhel,H_0)
     chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
-    return chi
+    chi_norm = chi / (len(zcmb) - len(theta))
+    return chi_norm
 
 def params_to_chi2_M_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel,
                             Cinv, mb, cantidad_zs=3000, max_step=0.1, verbose=True):
@@ -98,6 +101,7 @@ def params_to_chi2_M_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel,
     params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
     z,E = integrador(cond_iniciales, params_modelo,
                     cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
-    muth = magn_aparente_teorica(z,E,zhel,zcmb,H_0)
+    muth = magn_aparente_teorica(z,E,zcmb,zhel,H_0)
     chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
-    return chi
+    chi_norm = chi / (len(zcmb) - len(theta))
+    return chi_norm
