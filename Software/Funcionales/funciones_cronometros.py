@@ -39,11 +39,12 @@ def params_to_chi2_H0_fijo(cond_iniciales, theta, params_fijos, z_data, H_data,
     params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
     z,E = integrador(cond_iniciales, params_modelo, cantidad_zs=cantidad_zs,
                     max_step=max_step, verbose=verbose)
-    H_int = interp1d(z,E)
-    H_teo = H_0 * H_int(z_data)
+    E_int = interp1d(z,E)
+    H_teo = H_0 * E_int(z_data)
 
     chi = chi_2_cronometros(H_teo,H_data,dH)
-    return chi
+    chi_norm = chi / (len(z_data)-len(theta))
+    return chi_norm
 
 def params_to_chi2(cond_iniciales, theta, params_fijos, z_data, H_data, dH,
                     cantidad_zs=3000, max_step=0.01, verbose=True):
@@ -59,12 +60,12 @@ def params_to_chi2(cond_iniciales, theta, params_fijos, z_data, H_data, dH,
     params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
     z,E = integrador(cond_iniciales, params_modelo, cantidad_zs=cantidad_zs,
                     max_step=max_step, verbose=verbose)
-    H_int = interp1d(z,E)
-    H_teo = H_0 * H_int(z_data)
+    E_int = interp1d(z,E)
+    H_teo = H_0 * E_int(z_data)
 
     chi = chi_2_cronometros(H_teo,H_data,dH)
-    return chi
-
+    chi_norm = chi / (len(z_data)-len(theta))
+    return chi_norm
 
 def params_to_chi2_viejos(cond_iniciales, theta, params_fijos, z_data, H_data,
                             dH, cantidad_zs=3000, max_step=0.01, verbose=True):
@@ -86,4 +87,5 @@ def params_to_chi2_viejos(cond_iniciales, theta, params_fijos, z_data, H_data,
     H_teo = H_0 * H_int(z_data)
 
     chi = chi_2_cronometros(H_teo,H_data,dH)
-    return chi
+    chi_norm = chi / (len(z_data)-len(theta))
+    return chi_norm
