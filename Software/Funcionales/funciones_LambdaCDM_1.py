@@ -43,16 +43,9 @@ def magn_aparente_teorica_nueva(z, H, M_abs, zcmb, zhel):
     dc_int = interp1d(z, d_c) #Interpolamos
     d_L = (1 + zhel) * dc_int(zcmb) #Obs, Caro multiplica por Zhel, con Zobs da un poquin mejor
 
+    muth = 25.0 + 5.0 * np.log10(d_L)
 
-    #muth = 25.0 + 5.0 * np.log10(d_L)
-
-    #Magnitud aparente teorica
-    l_sn=10**(-(M_abs+19)/5)
-    muth = 5.7 + 5.0 * np.log10(d_L*(1+zcmb)/l_sn)
     return muth
-
-
-
 
 def chi_2_supernovas(muth, muobs, C_invertida):
     '''Dado el resultado teórico muth y los datos de la
@@ -69,7 +62,7 @@ def chi_2_supernovas(muth, muobs, C_invertida):
 
 
 def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv, mb,
-                    cantidad_zs=int(10**6), Mfijo=False, omega_solo=False):
+                    cantidad_zs=int(10**4), Mfijo=False):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
     de supernovas. 1 parámetro fijo y 4 variables'''
 
@@ -79,11 +72,9 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv, mb,
     z = np.linspace(0, 3, cantidad_zs)
     H = H_LCDM(z, omega_m, H_0)
 
-    #muth = magn_aparente_teorica(z, H, zcmb, zhel)
-    #muobs =  mb - Mabs
     muth = magn_aparente_teorica(z, H, zcmb, zhel)
-    muobs =  mb
+
+    muobs =  mb - Mabs
 
     chi = chi_2_supernovas(muth, muobs, Cinv)
-    chi_norm = chi / (len(zcmb) - 1)
-    return chi_norm
+    return chi

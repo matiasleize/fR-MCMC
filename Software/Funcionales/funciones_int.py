@@ -42,14 +42,14 @@ def dX_dz(z, variables,*params_modelo, model='HS'):
         [B,D,N] = params_modelo
     else:
         pass
-    #G = gamma(r,B,D,N)
-    G = 0
+    G = gamma(r,B,D,N)
     s0 = (-w + x**2 + (1+v)*x - 2*v + 4*y) / (z+1)
     s1 = - (v*x*G - x*y + 4*y - 2*y*v) / (z+1)
     s2 = -v * (x*G + 4 - 2*v) / (z+1)
     s3 = w * (-1 + x + 2*v) / (z+1)
-    s4 = -x*r*G/(1+z)
+    s4 = -x * r * G / (1+z)
     return [s0,s1,s2,s3,s4]
+
 
 
 
@@ -69,10 +69,12 @@ def integrador(cond_iniciales, params_modelo, cantidad_zs, max_step,
     # Integramos el vector v y calculamos el Hubble
     zs = np.linspace(z_inicial,z_final,cantidad_zs)
     sol = solve_ivp(sistema_ec, (z_inicial,z_final),
-    cond_iniciales,t_eval=zs,args=params_modelo, max_step=max_step)
+    cond_iniciales, t_eval=zs, args=params_modelo, max_step=max_step)
 
     if (len(sol.t)!=cantidad_zs):
         print('Está integrando mal!')
+    if np.all(zs==sol.t)==False:
+        print('Hay algo raro!')
 
     #Chequear este paso!
     #hubbles = np.ones(len(sol.t)) #Para que el primer valor de este array sea 1!
@@ -82,11 +84,14 @@ def integrador(cond_iniciales, params_modelo, cantidad_zs, max_step,
 
     int_v =  cumtrapz(sol.y[2]/(1+sol.t), sol.t, initial=0)
     hubbles = (1+sol.t)**2 * np.exp(-int_v)
+
     t2 = time.time()
     if verbose == True:
         print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
         int((t2-t1) - 60*int((t2-t1)/60))))
+
     return sol.t, hubbles
+
 
 def plot_sol(solucion):
 
@@ -108,11 +113,11 @@ def plot_sol(solucion):
 if __name__ == '__main__':
 
     sistema_ec=dX_dz
-    z_inicial=0
-    z_final=3
-    cantidad_zs = 100
-    max_step=0.1
-    verbose=True
+    z_inicial = 0
+    z_final = 3
+    cantidad_zs = 3000
+    max_step = 0.01
+    verbose = True
 
 
     x_0 = -0.339
@@ -121,12 +126,12 @@ if __name__ == '__main__':
     w_0 = 1 + x_0 + y_0 - v_0
     r_0 = 41
     ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
-    cond_iniciales=ci
+    cond_iniciales = ci
 
     #c1_true = 1
     #c2_true = 1/19
     #n=1
-    params_modelo=[1,1/19,1]
+    params_modelo = [1,1/19,1]
 
 #%% Forma nueva de integrar
     #%matplotlib qt5
@@ -141,7 +146,8 @@ if __name__ == '__main__':
     print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
           int((t2-t1) - 60*int((t2-t1)/60))))
     plot_sol(sol)
-
+    np.all(zs==sol.t)
+#%%
     plt.figure()
     #E=np.ones(len(sol. t))
     #for i in range (1, len(sol.t)):

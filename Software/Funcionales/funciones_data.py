@@ -1,13 +1,7 @@
-"""
-Created on Wed Feb  5 16:26:16 2020
-
-@author: matias
-"""
-
-
 import numpy as np
 from numpy.linalg import inv
 import numpy.ma as ma
+
 def leer_data_pantheon(archivo_pantheon,min_z = 0,max_z = 3):
 
     '''Toma la data de Pantheon y extrae la data de los redshifts zcmb y zhel
@@ -22,6 +16,7 @@ def leer_data_pantheon(archivo_pantheon,min_z = 0,max_z = 3):
                                    , usecols=(1,2,3,4,5),unpack=True)
     #creamos la matriz diagonal con los errores de mB. ojo! esto depende de alfa y beta:
     Dstat=np.diag(dmb**2.)
+
     # hay que leer la matriz de los errores sistematicos que es de NxN
     sn=len(zcmb)
     Csys=np.loadtxt('lcparam_full_long_sys.txt',unpack=True)
@@ -40,6 +35,20 @@ def leer_data_pantheon(archivo_pantheon,min_z = 0,max_z = 3):
     zcmb = zcmb[mask]
 
     return zcmb,zhel, Cinv, mb
+
+#%%
+def leer_data_cronometros(archivo_cronometros):
+
+    '''Toma la data de Pantheon y extrae la data de los redshifts zcmb y zhel
+    su error dz, además de los datos de la magnitud aparente con su error:
+    mb y dm. Con los errores de la magnitud aparente construye la
+    matriz de correlación asociada. La función devuelve la información
+    de los redshifts, la magnitud aparente y la matriz de correlación
+    inversa.'''
+
+    # leo la tabla de datos:
+    z, h, dh = np.loadtxt(archivo_cronometros, usecols=(0,1,2), unpack=True)
+    return z, h, dh
 #%%
 if __name__ == '__main__':
 
@@ -56,7 +65,17 @@ if __name__ == '__main__':
     #%%
     os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
     zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
-
+    (Cinv)
+    os.chdir(path_datos_global)
+    C_lucila = np.loadtxt('tabla.dat',unpack=True)
+#%%
+    tol = 5
+    for i in range(0,1048):
+        for j in range(0,1048):
+            if round(Cinv[i,j],tol) != round(C_lucila[i,j],tol):
+                print(round(Cinv[i,j],tol), round(C_lucila[i,j],tol))
+    #Hasta tol=4 anda piolita
+#%%
     min_z = 0
     max_z = 3
 
@@ -69,26 +88,3 @@ if __name__ == '__main__':
     Cinv_1 = Cinv_1.reshape(len(zhel),len(zhel))
     np.all(Cinv_1==Cinv)
     zcmb = zcmb[mask]
-
-
-
-
-
-
-
-
-
-
-#%%
-def leer_data_cronometros(archivo_cronometros):
-
-    '''Toma la data de Pantheon y extrae la data de los redshifts zcmb y zhel
-    su error dz, además de los datos de la magnitud aparente con su error:
-    mb y dm. Con los errores de la magnitud aparente construye la
-    matriz de correlación asociada. La función devuelve la información
-    de los redshifts, la magnitud aparente y la matriz de correlación
-    inversa.'''
-
-    # leo la tabla de datos:
-    z, h, dh = np.loadtxt(archivo_cronometros, usecols=(0,1,2), unpack=True)
-    return z, h, dh

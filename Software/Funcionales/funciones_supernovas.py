@@ -48,8 +48,8 @@ def params_to_chi2(cond_iniciales, theta, params_fijos, zcmb, zhel, Cinv,
                     cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
     muth = magn_aparente_teorica(z,E,zcmb,zhel,H_0)
     chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
-    chi_norm = chi / (len(zcmb) - len(theta))
-    return chi_norm
+    #chi_norm = chi / (len(zcmb) - len(theta))
+    return chi
 
 def params_to_chi2_omega_H0_fijo(cond_iniciales, theta, params_fijos, zcmb,
                                 zhel, Cinv, mb, cantidad_zs=3000, max_step=0.1,
@@ -67,8 +67,8 @@ def params_to_chi2_omega_H0_fijo(cond_iniciales, theta, params_fijos, zcmb,
                     cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
     muth = magn_aparente_teorica(z,E,zcmb,zhel,H_0)
     chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
-    chi_norm = chi / (len(zcmb) - len(theta))
-    return chi_norm
+    #chi_norm = chi / (len(zcmb) - len(theta))
+    return chi
 
 def params_to_chi2_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel,
                             Cinv, mb, cantidad_zs=3000, max_step=0.1, verbose=True):
@@ -85,8 +85,8 @@ def params_to_chi2_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel,
                     cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
     muth = magn_aparente_teorica(z,E,zcmb,zhel,H_0)
     chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
-    chi_norm = chi / (len(zcmb) - len(theta))
-    return chi_norm
+    #chi_norm = chi / (len(zcmb) - len(theta))
+    return chi
 
 def params_to_chi2_M_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel,
                             Cinv, mb, cantidad_zs=3000, max_step=0.1, verbose=True):
@@ -103,5 +103,5 @@ def params_to_chi2_M_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel,
                     cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
     muth = magn_aparente_teorica(z,E,zcmb,zhel,H_0)
     chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
-    chi_norm = chi / (len(zcmb) - len(theta))
-    return chi_norm
+    #chi_norm = chi / (len(zcmb) - len(theta))
+    return chi

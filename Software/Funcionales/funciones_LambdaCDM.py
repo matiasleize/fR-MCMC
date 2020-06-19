@@ -28,10 +28,6 @@ def magn_aparente_teorica(z, H, zcmb, zhel):
     del modelo. muth = 25 + 5 * log_{10}(d_L),
     donde d_L = (c/H_0) (1+z) int(dz'/E(z'))'''
 
-    #d_c = np.zeros(len(H)) #Distancia comovil
-    #for i in range (1, len(H)):
-    #    d_c[i] = 0.001*(c_luz/H_0) * simps(1/E[:i],z[:i]) #Paso c_luz a km/seg
-
     d_c =  c_luz_km * cumtrapz(H**(-1), z, initial=0)
     dc_int = interp1d(z, d_c) #Interpolamos
     d_L = (1 + zhel) * dc_int(zcmb) #Obs, Caro multiplica por Zhel, con Zobs da un poquin mejor
@@ -48,14 +44,6 @@ def chi_2_supernovas(muth, muobs, C_invertida):
     transp = np.transpose(deltamu) #vector columna
     aux = np.dot(C_invertida,transp) #vector columna
     chi2 = np.dot(deltamu,aux) #escalar
-
-    #chi2 = np.dot(np.dot(transp,C_invertida),deltamu) #cuenta de Caro
-    #chi2 = np.dot(deltamu, np.linalg.solve(C_invertida, deltamu)) # pagina de emcee #NO ANDA BIENN
-
-#    textfile_witness = open('sn.txt','a')
-#C_invertida = inv(C_invertida) # NO
-#    textfile_witness.write('{} \n'.format(chi2))
-#    textfile_witness.close()
     return chi2
 
 
@@ -81,12 +69,7 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv, mb,
     muobs =  mb - Mabs
 
     chi = chi_2_supernovas(muth, muobs, Cinv)
-    if omega_solo == True:
-        chi_norm = chi / (len(zcmb) - 1)
-
-    else:
-        chi_norm = chi / (len(zcmb) - len(theta))
-    return chi_norm
+    return chi
 
 def params_to_chi2_3params(theta, zcmb, zhel, Cinv, mb, cantidad_zs=10000):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
@@ -101,10 +84,7 @@ def params_to_chi2_3params(theta, zcmb, zhel, Cinv, mb, cantidad_zs=10000):
     muobs =  mb - Mabs
 
     chi = chi_2_supernovas(muth, muobs, Cinv)
-    chi_norm = chi / (len(zcmb) - len(theta))
-
-    return chi_norm
-
+    return chi
 
 # Cronómetros
 def chi_2_cronometros(H_teo, H_data, dH):
@@ -122,10 +102,7 @@ def params_to_chi2_cronometros(theta, z_data, H_data,
     H_int = interp1d(z, H)
     H_teo = H_int(z_data)
     chi = chi_2_cronometros(H_teo, H_data, dH)
-    chi_norm = chi / (len(z_data) - len(theta))
-    return chi_norm
-
-
+    return chi
 
 #%%
 if __name__ == '__main__':

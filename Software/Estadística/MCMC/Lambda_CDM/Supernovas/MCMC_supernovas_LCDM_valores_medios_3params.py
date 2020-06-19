@@ -42,6 +42,3 @@ print(M_ml,omega_m_ml,H0_ml)
 
 os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
 np.savez('valores_medios_supernovas_LCDM', sol=soln.x)
-
-#-19.197683620330114 0.35770413100161774
-#-19.244678551382137 0.2990371992236695

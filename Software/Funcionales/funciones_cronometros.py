@@ -26,6 +26,28 @@ def chi_2_cronometros(H_data, H_teo, dH):
     chi2 = np.sum(((H_data-H_teo)/dH)**2)
     return chi2
 
+
+def params_to_chi2(cond_iniciales, theta, params_fijos, z_data, H_data, dH,
+                    cantidad_zs=6000, max_step=0.01, verbose=True):
+    '''Dados los parámetros libres del modelo (omega, b y H0) y los que quedan params_fijos (n),
+    devuelve un chi2 para los datos de los
+    cronómetros cósmicos'''
+
+    [omega_m,b,H_0] = theta
+    n = params_fijos
+
+    ## Transformo los parametros fisicos en los del modelo:
+    c1,c2 = params_fisicos_to_modelo(omega_m,b,n)
+    params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
+    z,E = integrador(cond_iniciales, params_modelo, cantidad_zs=cantidad_zs,
+                    max_step=max_step, verbose=verbose)
+    E_int = interp1d(z,E)
+    H_teo = H_0 * E_int(z_data)
+
+    chi = chi_2_cronometros(H_teo,H_data,dH)
+    return chi
+
+
 def params_to_chi2_H0_fijo(cond_iniciales, theta, params_fijos, z_data, H_data,
                             dH, cantidad_zs=3000, max_step=0.01, verbose=True):
     '''Dados los parámetros libres del modelo (omega,b) y los que quedan params_fijos (H_0,n),
@@ -43,29 +65,7 @@ def params_to_chi2_H0_fijo(cond_iniciales, theta, params_fijos, z_data, H_data,
     H_teo = H_0 * E_int(z_data)
 
     chi = chi_2_cronometros(H_teo,H_data,dH)
-    chi_norm = chi / (len(z_data)-len(theta))
-    return chi_norm
-
-def params_to_chi2(cond_iniciales, theta, params_fijos, z_data, H_data, dH,
-                    cantidad_zs=3000, max_step=0.01, verbose=True):
-    '''Dados los parámetros libres del modelo (omega, b y H0) y los que quedan params_fijos (n),
-    devuelve un chi2 para los datos de los
-    cronómetros cósmicos'''
-
-    [omega_m,b,H_0] = theta
-    n = params_fijos
-
-    ## Transformo los parametros fisicos en los del modelo:
-    c1,c2 = params_fisicos_to_modelo(omega_m,b,n)
-    params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
-    z,E = integrador(cond_iniciales, params_modelo, cantidad_zs=cantidad_zs,
-                    max_step=max_step, verbose=verbose)
-    E_int = interp1d(z,E)
-    H_teo = H_0 * E_int(z_data)
-
-    chi = chi_2_cronometros(H_teo,H_data,dH)
-    chi_norm = chi / (len(z_data)-len(theta))
-    return chi_norm
+    return chi
 
 def params_to_chi2_viejos(cond_iniciales, theta, params_fijos, z_data, H_data,
                             dH, cantidad_zs=3000, max_step=0.01, verbose=True):
@@ -87,5 +87,4 @@ def params_to_chi2_viejos(cond_iniciales, theta, params_fijos, z_data, H_data,
     H_teo = H_0 * H_int(z_data)
 
     chi = chi_2_cronometros(H_teo,H_data,dH)
-    chi_norm = chi / (len(z_data)-len(theta))
-    return chi_norm
+    return chi

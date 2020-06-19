@@ -38,8 +38,6 @@ def params_fisicos_to_modelo_vieja(omega_m, b, H_0, n=1):
     r_hs = H_0**2 * 6 * (1-omega_m) /aux
     return c_1, r_hs, c_2
 
-
-
 #%%
 if __name__ == '__main__':
     omega_m_true = 0.24

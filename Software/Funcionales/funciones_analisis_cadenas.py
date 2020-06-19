@@ -11,23 +11,22 @@ import emcee
 import corner
 
 
-def graficar_taus_vs_n(sampler, num_param=0):
+def graficar_taus_vs_n(sampler, num_param=0,threshold=100.0):
 	'''Esta función grafica el tiempo de autocorrelación integraodo
 	 en función del largo de la cadena.'''
 	chain = sampler.get_chain()[:, :, num_param].T
-	#chain.shape[1] es el largo de las cadenas
 
 	# Compute the estimators for a few different chain lengths
-	N = np.exp(np.linspace(np.log(100), np.log(chain.shape[1]), 100)).astype(int)
+	N = np.exp(np.linspace(np.log(threshold), np.log(chain.shape[1]),
+	 	int(chain.shape[1]/threshold))).astype(int)
+	#donde chain.shape[1] es el largo de las cadenas
 
-	#len_chain,nwalkers,ndim=sampler.get_chain().shape
-	#N = np.linspace(1, len_chain, 100).astype(int)
 	taus = np.empty(len(N))
 	for i, n in enumerate(N):
 	    taus[i] = emcee.autocorr.integrated_time(chain[:, :n],quiet=True);
 	taus=np.cumsum(taus)
 	plt.loglog(N, taus, '.-')
-	plt.plot(N, N / 100.0, "--k", label=r"$\tau = N/100$")
+	plt.plot(N, N / threshold, "--k", label=r"$\tau = N/{}$".format(threshold))
 
 	ylim = plt.gca().get_ylim()
 	plt.ylim(ylim)
@@ -55,4 +54,5 @@ def graficar_contornos(sampler,params_truths,discard=20,thin=None,labels= ['omeg
 	else:
 		flat_samples = sampler.get_chain(discard=discard, flat=True, thin=thin)
 	print(flat_samples.shape)
-	fig = corner.corner(flat_samples, labels=labels, truths=params_truths);
+	fig = corner.corner(flat_samples, labels=labels, truths=params_truths,
+		 plot_datapoints=False,quantiles=(0.16, 0.84));
