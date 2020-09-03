@@ -12,15 +12,13 @@ os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_analisis_cadenas import graficar_cadenas,graficar_contornos,graficar_taus_vs_n
 #%%
-os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
+os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/LCDM')
 
-with np.load('valores_medios_supernovas_LCDM.npz') as data:
-#with np.load('valores_medios_cronom_LCDM_2params.npz') as data:
+with np.load('valores_medios_LCDM_cronom_2params.npz') as data:
     sol = data['sol']
 #%%
 os.chdir(path_datos_global+'/Resultados_cadenas/LDCM')
-filename = "sample_supernovas_LCDM_M_omega_1.h5"
-#filename = "sample_cronometros_LCDM_M_omega_1.h5"
+filename = "sample_LCDM_cronom_2params.h5"
 
 reader = emcee.backends.HDFBackend(filename)
 # Algunos valores
@@ -32,15 +30,27 @@ print(tau)
 #%%
 %matplotlib qt5
 graficar_cadenas(reader,
-                labels = ['M_abs','omega_m'])
-#                labels = ['omega_m', 'H0'])
+                labels = ['omega_m', 'H0'])
  #%%
-#burnin=300
+burnin=100
 graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,
-                    labels= ['M_abs','omega_m'])
-#                    labels = ['omega_m', 'H0'])
+                    labels = ['omega_m', 'H0'])
 #%%
 #Ojo, siempre muestra que convergio, aun cuando no
 plt.figure()
 graficar_taus_vs_n(reader,num_param=0,threshold=1000)
 graficar_taus_vs_n(reader,num_param=1,threshold=1000)
+
+#%% Printeo los valores!
+from IPython.display import display, Math
+samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
+labels = ['\Omega_m', 'H_{0}']
+len_chain,nwalkers,ndim=reader.get_chain().shape
+print(len_chain)
+for i in range(ndim):
+    mcmc = np.percentile(samples[:, i], [16, 50, 84])
+    mcmc[1]=sol[i] #Correción de mati: En vez de percentil 50 poner el mu
+    q = np.diff(mcmc)
+    txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{+{2:.3f}}}"
+    txt = txt.format(mcmc[1], q[0], q[1], labels[i])
+    display(Math(txt))

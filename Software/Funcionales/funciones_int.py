@@ -38,19 +38,22 @@ def dX_dz(z, variables,*params_modelo, model='HS'):
         #else:
             #[b,d,c,n] = parametros_modelo
     if model == 'HS':
-        gamma = lambda r,b,d,n: ((1+d*r**n) * (-b*n*r**n + r*(1+d*r**n)**2)) / (b*n*r**n * (1-n+d*(1+n)*r**n))
         [B,D,N] = params_modelo
+        if N==1:
+            gamma = lambda r,b,d: ((1+d*r) * (-b*r + r*(1+d*r)**2)) / (b*2*d*r**2)
+            G = gamma(r,B,D)
+        else:
+            gamma = lambda r,b,d,n: ((1+d*r**n) * (-b*n*r**n + r*(1+d*r**n)**2)) / (b*n*(1 - n + d * (1+n) * r**n)*r**n)
+            G = gamma(r,B,D,N)
+            print('Guarda que estas poniendo n!=1')
     else:
         pass
-    G = gamma(r,B,D,N)
     s0 = (-w + x**2 + (1+v)*x - 2*v + 4*y) / (z+1)
-    s1 = - (v*x*G - x*y + 4*y - 2*y*v) / (z+1)
-    s2 = -v * (x*G + 4 - 2*v) / (z+1)
-    s3 = w * (-1 + x + 2*v) / (z+1)
-    s4 = -x * r * G / (1+z)
+    s1 = (- (v*x*G - x*y + 4*y - 2*y*v)) / (z+1)
+    s2 = (-v * (x*G + 4 - 2*v)) / (z+1)
+    s3 = (w * (-1 + x + 2*v)) / (z+1)
+    s4 = (-x * r * G) / (1+z)
     return [s0,s1,s2,s3,s4]
-
-
 
 
 def integrador(cond_iniciales, params_modelo, cantidad_zs, max_step,
@@ -87,8 +90,9 @@ def integrador(cond_iniciales, params_modelo, cantidad_zs, max_step,
 
     t2 = time.time()
     if verbose == True:
-        print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
-        int((t2-t1) - 60*int((t2-t1)/60))))
+        pass
+#        print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
+#        int((t2-t1) - 60*int((t2-t1)/60))))
 
     return sol.t, hubbles
 
@@ -115,8 +119,8 @@ if __name__ == '__main__':
     sistema_ec=dX_dz
     z_inicial = 0
     z_final = 3
-    cantidad_zs = 3000
-    max_step = 0.01
+    cantidad_zs = 1000000
+    max_step = 1
     verbose = True
 
 
@@ -127,10 +131,13 @@ if __name__ == '__main__':
     r_0 = 41
     ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
     cond_iniciales = ci
-
+#%%
     #c1_true = 1
     #c2_true = 1/19
     #n=1
+    #Parametros problematicos
+    #params_modelo=[400.34475698232389, 100.48051181565308,1]
+    #params_modelo=[0.075, -0.25,1]
     params_modelo = [1,1/19,1]
 
 #%% Forma nueva de integrar
@@ -147,6 +154,9 @@ if __name__ == '__main__':
           int((t2-t1) - 60*int((t2-t1)/60))))
     plot_sol(sol)
     np.all(zs==sol.t)
+    print(max(sol.t))
+    print(max(zs))
+
 #%%
     plt.figure()
     #E=np.ones(len(sol. t))
@@ -156,7 +166,7 @@ if __name__ == '__main__':
     int_v =  cumtrapz((sol.y[2])/(1+sol.t),sol.t,initial=0)
     E = (1+sol.t)**2 * np.exp(-int_v)
     plt.plot(sol.t,E)
-#%% Forma vieja de integrar
+#%% Forma vieja de integrar (no integra bien, pero oculta el error!)
     plt.figure()
     t1 = time.time()
     zs = np.linspace(z_inicial,z_final,cantidad_zs)
@@ -166,7 +176,11 @@ if __name__ == '__main__':
         sol_1 = solve_ivp(sistema_ec,[z_inicial,zf], cond_iniciales,args=params_modelo, max_step=max_step)
         int_v = simps((sol_1.y[2])/(1+sol_1.t),sol_1.t) # integro desde 0 a z
         hubbles_1[i] = (1+zf)**2 * np.exp(-int_v)
+        np.all(zs==sol_1.t)
     t2 = time.time()
     print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
           int((t2-t1) - 60*int((t2-t1)/60))))
     plt.plot(zs,hubbles_1)
+
+    len(sol_1.t)
+    len(zs)

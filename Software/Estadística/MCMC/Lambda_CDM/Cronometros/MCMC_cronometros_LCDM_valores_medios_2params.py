@@ -21,25 +21,25 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_data import leer_data_cronometros
-from funciones_cronometros import  params_to_chi2
+from funciones_cronometros import params_to_chi2
 from funciones_LambdaCDM import params_to_chi2_cronometros
+
+np.random.seed(1)
 #%%
 
 os.chdir(path_git+'/Software/Estadística/Datos/')
 z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
 
 omega_m_true = 0.22
-#H0_true =  73.48 #Unidades de (km/seg)/Mpc
-H0_true =  69.01 #Unidades de (km/seg)/Mpc
+H0_true =  73.48 #Unidades de (km/seg)/Mpc
 
-#np.random.seed(4)
 nll = lambda theta: params_to_chi2_cronometros(theta,z_data,H_data,dH)
 initial = np.array([omega_m_true,H0_true])
-bnds = ((0, 0.7), (60,80))
+bnds = ((0, 0.9), (60,80))
 soln = minimize(nll, initial,bounds=None, options = {'eps': 0.001})
 #soln = minimize(nll, initial)#, options = {'eps': 0.001})
 omega_m_ml, H0_ml = soln.x
 print(omega_m_ml,H0_ml)
 
-os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
-np.savez('valores_medios_cronom_LCDM_2params', sol=soln.x)
+os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones/LCDM')
+np.savez('valores_medios_LCDM_cronom_2params', sol=soln.x)

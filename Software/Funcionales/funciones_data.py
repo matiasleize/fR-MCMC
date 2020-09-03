@@ -49,6 +49,13 @@ def leer_data_cronometros(archivo_cronometros):
     # leo la tabla de datos:
     z, h, dh = np.loadtxt(archivo_cronometros, usecols=(0,1,2), unpack=True)
     return z, h, dh
+
+
+#%%
+def leer_data_BAO(archivo_BAO):
+    z, valores_data, errores_data, rs_bool = np.loadtxt(archivo_BAO,
+    usecols=(0,1,2,4), unpack=True)
+    return z, valores_data, errores_data, rs_bool
 #%%
 if __name__ == '__main__':
 
@@ -67,7 +74,7 @@ if __name__ == '__main__':
     zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
     (Cinv)
     os.chdir(path_datos_global)
-    C_lucila = np.loadtxt('tabla.dat',unpack=True)
+    #C_lucila = np.loadtxt('tabla.dat',unpack=True)
 #%%
     tol = 5
     for i in range(0,1048):
@@ -88,3 +95,14 @@ if __name__ == '__main__':
     Cinv_1 = Cinv_1.reshape(len(zhel),len(zhel))
     np.all(Cinv_1==Cinv)
     zcmb = zcmb[mask]
+
+    #%%
+    os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
+#    lala = leer_data_BAO('datos_BAO.txt')
+    rs=1
+    initial = [1,7,12,14,15]
+    end = [6,11,13,14,17]
+    archivo_BAO='datos_BAO_H.txt'
+    z, valores_data, errores_data, rs_bool = np.loadtxt(archivo_BAO,
+    usecols=(0,1,2,4), unpack=True)
+    z, valores_data, errores_data, rs_bool

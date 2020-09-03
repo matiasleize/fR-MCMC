@@ -11,6 +11,7 @@ import emcee
 import corner
 from scipy.interpolate import interp1d
 import time
+np.random.seed(1)
 
 import sys
 import os
@@ -28,19 +29,15 @@ max_z = 3
 os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
 zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt'
                         ,min_z=min_z,max_z=max_z)
-os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-with np.load('valores_medios_supernovas_LCDM.npz') as data:
+
+os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/LCDM/')
+with np.load('valores_medios_LCDM_supernovas_2params.npz') as data:
     sol = data['sol']
 #%%
-#np.ramdom.seed(42)
 #Parametros a ajustar
-#M_true = -19.6
-#omega_m_true = 0.26
 H0_true = 73.48 #Unidades de (km/seg)/Mpc
-#H0_true = 67.74
-#np.random.seed(42)
 log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, H0_true, zcmb,
-                                                     zhel, Cinv, mb)
+                                                     zhel, Cinv, mb,fix_H0=True)
 
 #%% Definimos las gunciones de prior y el posterior
 
@@ -50,16 +47,6 @@ def log_prior(theta):
     if (-20 < M < -18.5 and  0 < omega_m < 1) :
         return 0.0
     return -np.inf
-
-#Prior gaussiano
-def log_prior_1(theta):
-    M, omega_m = theta
-    if not (-20 < M < -18.5 and  0 < omega_m < 1):
-        return -np.inf
-    #gaussian prior on a
-    mu = 0.3
-    sigma = 0.2
-    return np.log(1.0/(np.sqrt(2*np.pi)*sigma))-0.5*(omega_m-mu)**2/sigma**2
 
 def log_probability(theta):
     lp = log_prior(theta)
@@ -73,17 +60,18 @@ nwalkers, ndim = pos.shape
 #%%
 # Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/LDCM')
-filename = "sample_supernovas_LCDM_M_omega_1.h5"
+filename = "sample_LCDM_supernovas_2params.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
-textfile_witness = open('witness.txt','w+')
-textfile_witness.close()
+#textfile_witness = open('witness.txt','w+')
+#textfile_witness.close()
+
 #%%
 #Initialize the sampler
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend
         ,moves=[(emcee.moves.DEMove(), 0.3), (emcee.moves.DESnookerMove(), 0.3)
                 , (emcee.moves.KDEMove(), 0.4)])
-max_n = 100000
+max_n = 10000
 
 # This will be useful to testing convergence
 old_tau = np.inf
@@ -94,10 +82,10 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
         continue
 
     #os.chdir(path_datos_global+'/Resultados_cadenas/')
-    textfile_witness = open('witness.txt','w')
-    textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
-    textfile_witness.write('Tiempo: {}'.format(time.time()))
-    textfile_witness.close()
+    #textfile_witness = open('witness.txt','w')
+    #textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
+    #textfile_witness.write('Tiempo: {}'.format(time.time()))
+    #textfile_witness.close()
 
     # Compute the autocorrelation time so far
     # Using tol=0 means that we'll always get an estimate even

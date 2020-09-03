@@ -22,6 +22,8 @@ def H_LCDM(z, omega_m, H_0):
     H = H_0 * np.sqrt(omega_m * (1 + z)**3 + omega_lambda)
     return H
 
+#Supernovas
+
 def magn_aparente_teorica(z, H, zcmb, zhel):
     '''A partir de un array de redshift y un array de la magnitud E = H_0/H
     que salen de la integración numérica, se calcula el mu teórico que deviene
@@ -48,19 +50,22 @@ def chi_2_supernovas(muth, muobs, C_invertida):
 
 
 def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv, mb,
-                    cantidad_zs=int(10**5), Mfijo=False, omega_solo=False):
+                    cantidad_zs=int(10**5), fix_M=False,
+                     fix_H0=False, fix_M_H0=False):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
-    de supernovas. 1 parámetro fijo y 4 variables'''
+    de supernovas.'''
 
-    if Mfijo == True:
+    if fix_M == True:
         [omega_m, H_0] = theta
         Mabs = params_fijos
-    elif omega_solo == True:
+    elif fix_H0 == True:
+        [Mabs, omega_m] = theta
+        H_0 = params_fijos
+    elif fix_M_H0 == True:
         omega_m = theta
         [Mabs, H_0] = params_fijos
     else:
-        [Mabs, omega_m] = theta
-        H_0 = params_fijos
+        [Mabs, omega_m, H_0] = theta
 
     z = np.linspace(0, 3, cantidad_zs)
     H = H_LCDM(z, omega_m, H_0)
@@ -71,20 +76,6 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv, mb,
     chi = chi_2_supernovas(muth, muobs, Cinv)
     return chi
 
-def params_to_chi2_3params(theta, zcmb, zhel, Cinv, mb, cantidad_zs=10000):
-    '''Dados los parámetros del modelo devuelve un chi2 para los datos
-    de supernovas. 1 parámetro fijo y 4 variables'''
-
-    [Mabs, omega_m, H_0] = theta
-
-    z = np.linspace(0, 3, cantidad_zs)
-    H = H_LCDM(z, omega_m, H_0)
-
-    muth = magn_aparente_teorica(z, H, zcmb, zhel)
-    muobs =  mb - Mabs
-
-    chi = chi_2_supernovas(muth, muobs, Cinv)
-    return chi
 
 # Cronómetros
 def chi_2_cronometros(H_teo, H_data, dH):
@@ -92,7 +83,7 @@ def chi_2_cronometros(H_teo, H_data, dH):
     return chi2
 
 def params_to_chi2_cronometros(theta, z_data, H_data,
-                                dH, cantidad_zs=3000):
+                                dH, cantidad_zs=int(10**6)):
     '''Dados los parámetros libres del modelo (omega y H0), devuelve un chi2
      para los datos de los cronómetros cósmicos'''
 
@@ -103,6 +94,75 @@ def params_to_chi2_cronometros(theta, z_data, H_data,
     H_teo = H_int(z_data)
     chi = chi_2_cronometros(H_teo, H_data, dH)
     return chi
+
+# BAO
+def Hs_to_Ds(zs, Hs, z_data, index):
+    INT = cumtrapz(Hs**(-1), zs, initial=0)
+    DA = (c_luz_km/(1 + zs)) * INT
+    if index == 0: #DA
+        aux = DA
+    elif index == 1: #DH
+        aux = c_luz_km * (Hs**(-1))
+    elif index == 2: #DM
+        #aux = (1+zs) * DA
+        aux = c_luz_km * INT
+    elif index == 3: #DV
+        #aux = (((1 +zs) * DA)**2 * c_luz_km * zs * (Hs**(-1))) ** (1/3)
+        aux = c_luz_km * (INT**2 * zs * (Hs**(-1))) ** (1/3)
+    elif index == 4: #H
+        aux = Hs
+    output = interp1d(zs,aux)
+    return output(z_data)
+
+
+def chi_2_BAO(teo, data, errores):
+    chi2 = np.sum(((data-teo)/errores)**2)
+    return chi2
+
+def params_to_chi2_BAO(theta, params_fijos, dataset,
+                        cantidad_zs=int(10**6),num_datasets=5):
+    '''Dados los parámetros libres del modelo (omega, b y H0) y
+    los que quedan params_fijos (n), devuelve un chi2 para los datos
+    de BAO'''
+
+    if len(theta)==3:
+        [rd,omega_m,H_0] = theta
+    elif len(theta)==2:
+        [rd,omega_m] = theta
+        H_0 = params_fijos
+
+    zs = np.linspace(0.1,3,cantidad_zs)
+    H_teo = H_LCDM(zs, omega_m, H_0)
+    chies = np.zeros(num_datasets)
+
+    for i in range(num_datasets):
+        (z_data, valores_data, errores_data, rd_bool) = dataset[i]
+        #print(type(valores_data))
+        if isinstance(z_data,np.float64):
+            if rd_bool == 1:
+                vd = valores_data * rd
+                ed = errores_data * rd
+            else:
+                vd = valores_data
+                ed = errores_data
+            outs = Hs_to_Ds(zs, H_teo, z_data, i)
+            chies[i] = ((outs-vd)/ed)**2
+        elif isinstance(z_data,np.ndarray):
+            vd = np.zeros(len(valores_data))
+            ed = np.zeros(len(valores_data))
+            for j in range(len(z_data)):
+                if rd_bool[j] == 1:
+                    vd[j] = valores_data[j] * rd
+                    ed[j] = errores_data[j] * rd
+                else:
+                    vd[j] = valores_data[j]
+                    ed[j] = errores_data[j]
+            outs = Hs_to_Ds(zs, H_teo, z_data, i)
+            chies[i] = chi_2_BAO(outs, vd, ed)
+    #print(rd,omega_m,H_0)
+    #print(chies)
+    return np.sum(chies)
+
 
 #%%
 if __name__ == '__main__':
@@ -122,8 +182,13 @@ if __name__ == '__main__':
 
     z = np.linspace(0,3,1000)
     H_0 = 73.48
-    #omega_m = 0.3
+    omega_m = 0.3
 
+    lala = H_LCDM(z,omega_m,H_0)
+    print(c_luz_km * lala**(-1))
+    z
+
+#%%
     M_abs = -18
     muobs =  mb - M_abs
     plt.figure()
