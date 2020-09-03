@@ -15,53 +15,37 @@ os.chdir(path_git+'/Software/Estadística/Datos/')
 z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
 
 #%%
+
 def Taylor_HS(z,omega_m,b,H0):
     '''Calculo del H(z) sugerido por Basilakos para el modelo de Hu-Sawicki
     N!=a, N=ln(a)=-ln(1+z)'''
-
+    omega_r=0
     N = sym.Symbol('N')
+    Hs_tay=N
+    Hs_tay = (H0**2*(1/((omega_m-4*math.e**(3*N)*(omega_m+omega_r-1))**8) * (b**2)*(math.e**(5*N))*((omega_m+omega_r-1)**3) *(37*math.e**(N)*omega_m**6-4656*math.e**(4*N)*omega_m**5*(omega_m+omega_r-1)-
+    7452*math.e**(7*N)*omega_m**4*(omega_m+omega_r-1)**2-
+    8692*math.e**(3*N)*omega_m**4*omega_r*(omega_m+omega_r-1)-
+    4032*math.e**(2*N)*omega_m**3*omega_r**2*(omega_m+omega_r-1)+
+    25408*math.e**(10*N)*omega_m**3*(omega_m+omega_r-1)**3-
+    25728*math.e**(6*N)*omega_m**3*omega_r*(omega_m+omega_r-1)**2-
+    17856*math.e**(5*N)*omega_m**2*omega_r**2*(omega_m+omega_r-1)**2-
+    22848*math.e**(13*N)*omega_m**2*(omega_m+omega_r-1)**4+
+    22016*math.e**(9*N)*omega_m**2*omega_r*(omega_m+omega_r-1)**3-
+    9216*math.e**(8*N)*omega_m*omega_r**2*(omega_m+omega_r-1)**3+
+    9216*math.e**(16*N)*omega_m*(omega_m+omega_r-1)**5-
+    2048*math.e**(12*N)*omega_m*omega_r*(omega_m+omega_r-1)**4+
+    1024*math.e**(19*N)*(omega_m+omega_r-1)**6+
+    3072*math.e**(15*N)*omega_r*(omega_m+omega_r-1)**5+40*omega_m**5*omega_r)+
+    ((2*b*math.e**(2*N)*(omega_m+omega_r-1)**2*(-6*math.e**(N)*omega_m**2+3*math.e**(4*N)*omega_m*(omega_m+omega_r-1)+12*math.e**(7*N)*(omega_m+omega_r-1)**2+4*math.e**(3*N)*omega_r*(omega_m+omega_r-1)-7*omega_m*omega_r))/(4*math.e**(3*N)*(omega_m+omega_r-1)-omega_m)**3)+
+    (math.e**(-3*N)-1)*omega_m + (math.e**(-4*N)-1)*omega_r+1))**(0.5)
 
-    HL = H0 * (omega_m * (math.e**(-3*N)) + (1 - omega_m))**(0.5)
-
-    #Calculo las derivadas
-    HL_N = sym.diff(HL,N)
-    HL_2N = sym.diff(HL_N,N)
-    HL_3N = sym.diff(HL_2N,N)
-    HL_4N = sym.diff(HL_3N,N)
-
-    #Calculo los términos del taylor
-    dE21 =  ((H0**2 * (-1 + omega_m)**2 * (6 * HL**2 + 4 * HL_N**2 + HL * (15 * HL_N + 2 * HL_2N))) / (2 * HL * (2 * HL + HL_N)**3))
-
-    #REVISAR
-    t1 = ((-1 + omega_m) * H0**2)
-
-    t2 = (540 * t1 * HL_N**2 + 124 * HL_N**4 + 12*HL_N**3 * HL_2N
-    + 3 * t1 * HL_2N * (17 * HL_2N + 4 * HL_3N) + 2 * t1 * HL_N * (129*HL_2N
-    + 12*HL_3N - HL_4N))
-
-    t3 = (84 * t1 * HL_N**3 - 53 * HL_N**5
-    - 3 * HL_N**4 * HL_2N + 21 * t1 * HL_2N**3 + 3 * t1 * HL_N * HL_2N * (41*HL_2N - 4*HL_3N)
-    + t1 * HL_N**2 * (217 * HL_2N - 42 * HL_3N
-    + HL_4N))
-
-
-    dE22 = ((H0**4 * (-1 + omega_m)**3  * (128 * HL**8 - 32 * t1 * HL_N**6
-            + 32 * HL**7 * (25*HL_N + 3*HL_2N) - 2 * t1 * HL * HL_N**4 * (139*HL_N + 22*HL_2N)
-            + 16 * HL**6 * (9 * t1 + 89*HL_N**2 + 12 * HL_N * HL_2N)
-            + HL**2 * HL_N**2 * (-749 * t1 * HL_N**2 + 9 * HL_N**4 - 48 * t1 * HL_2N**2
-            - 4 * t1 * HL_N * (74*HL_2N - 3*HL_3N)) + 8 * HL**5 * (144 * t1 * HL_N
-            + 146 * HL_N**3 + 18 * HL_N**2 * HL_2N + t1 * (15*HL_2N - 6*HL_3N - 4*HL_4N))
-            + 4 * HL**4 * t2 - 2 * HL**3 * t3
-            )) / (4*HL**4 * (2*HL + HL_N)**8))
-
-    EL2 = (omega_m * (math.e**(-3*N)) + (1 - omega_m))
-
-    HS_tay = H0 * (EL2 - b * dE21 - (b**2) * dE22)**(0.5)
-    func = lambdify(N, HS_tay,'numpy') # returns a numpy-ready function
+    func = lambdify(N, Hs_tay,'numpy') # returns a numpy-ready function
 
     N_dato = -np.log(1+z)
     numpy_array_of_results = func(N_dato)
     return numpy_array_of_results
+
+
 
 
 #%%
