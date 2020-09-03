@@ -11,6 +11,7 @@ import emcee
 import corner
 from scipy.interpolate import interp1d
 import time
+np.random.seed(1)
 
 import sys
 import os
@@ -25,22 +26,19 @@ from funciones_LambdaCDM import params_to_chi2_cronometros
 
 os.chdir(path_git+'/Software/Estadística/Datos/')
 z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
-os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-with np.load('valores_medios_cronom_LCDM_2params.npz') as data:
+
+os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/LCDM')
+with np.load('valores_medios_LCDM_cronom_2params.npz') as data:
     sol = data['sol']
-#%%
-#Parametros a ajustar
-#omega_m_true = 0.26
-#np.random.seed(42)
+
 log_likelihood = lambda theta: -0.5 * params_to_chi2_cronometros(theta,z_data,H_data,dH)
 
-#%% Definimos las gunciones de prior y el posterior
+#%% Definimos las funciones de prior y el posterior
 def log_prior(theta):
     omega_m, H0 = theta
     if (0 < omega_m < 1 and 50 < H0 < 85) :
         return 0.0
     return -np.inf
-
 
 def log_probability(theta):
     lp = log_prior(theta)
@@ -54,11 +52,13 @@ nwalkers, ndim = pos.shape
 #%%
 # Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/LDCM')
-filename = "sample_cronometros_LCDM_M_omega_1.h5"
+filename = "sample_LCDM_cronom_2params.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
 textfile_witness = open('witness.txt','w+')
 textfile_witness.close()
+
+
 #%%
 #Initialize the sampler
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend
@@ -67,6 +67,7 @@ sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend
 max_n = 10000
 # This will be useful to testing convergence
 old_tau = np.inf
+
 
 # Now we'll sample for up to max_n steps
 for sample in sampler.sample(pos, iterations=max_n, progress=True):
@@ -90,8 +91,8 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     #También pido que tau se mantenga relativamente constante:
     converged_2 = np.all((np.abs(old_tau - tau)) < 0.001)
     if (converged_1 and converged_2):
-    #    textfile_witness = open('witness.txt','a')
-    #    textfile_witness.write('Convergió!')
-    #    textfile_witness.close()
+        textfile_witness = open('witness.txt','a')
+        textfile_witness.write('Convergió!')
+        textfile_witness.close()
         break
     old_tau = tau
