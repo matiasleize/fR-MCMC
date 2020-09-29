@@ -16,6 +16,40 @@ z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
 
 #%%
 
+def Taylor_ST(z,omega_m,b,H0):
+    '''Calculo del H(z) sugerido por Basilakos para el modelo de Starobinsky
+    N!=a, N=ln(a)=-ln(1+z)'''
+    omega_r=0
+    N = sym.Symbol('N')
+    St_tay = H0*(1+(-1+math.e**(-3*N))*omega_m+(-1+math.e**(-4*N))*omega_r+
+    (b**2*math.e**(5*N)*(-1+omega_m+omega_r)**3*(-37*math.e**N*omega_m**2-40*omega_m*omega_r+
+    32*math.e**(4*N)*omega_m*(-1+omega_m+omega_r)+
+    16*math.e**(3*N)*omega_r*(-1+omega_m+omega_r)+
+    32*math.e**(7*N)*(-1+omega_m+omega_r)**2))/(omega_m-
+    4*math.e**(3*N)*(-1+omega_m+omega_r))**4+
+    b**4*math.e**(11*N)*(-1+omega_m+omega_r)**5*(123*math.e**N*omega_m**6+128*omega_m**5*omega_r-
+    82748*math.e**(4*N)*omega_m**5*(-1+omega_m+omega_r)-
+    160440*math.e**(3*N)*omega_m**4*omega_r*(-1+omega_m+omega_r)-
+    77760*math.e**(2*N)*omega_m**3*omega_r**2*(-1+omega_m+omega_r)-
+    44552*math.e**(7*N)*omega_m**4*(-1+omega_m+omega_r)**2-
+    277568*math.e**(6*N)*omega_m**3*omega_r*(-1+omega_m+omega_r)**2-
+    228096*math.e**(5*N)*omega_m**2*omega_r**2*(-1+omega_m+omega_r)**2+
+    289024*math.e**(10*N)*omega_m**3*(-1+omega_m+omega_r)**3+
+    310144*math.e**(9*N)*omega_m**2*omega_r*(-1+omega_m+omega_r)**3-
+    82944*math.e**(8*N)*omega_m*omega_r**2*(-1+omega_m+omega_r)**3-
+    234880*math.e**(13*N)*omega_m**2*(-1+omega_m+omega_r)**4-
+    6144*math.e**(12*N)*omega_m*omega_r*(-1+omega_m+omega_r)**4+
+    63488*math.e**(16*N)*omega_m*(-1+omega_m+omega_r)**5+
+    20480*math.e**(15*N)*omega_r*(-1+omega_m+omega_r)**5+
+    20480*math.e**(19*N)*(-1+omega_m+omega_r)**6)/(omega_m-
+    4*math.e**(3*N)*(-1+omega_m+omega_r))**10)**0.5
+
+    func = lambdify(N, St_tay,'numpy') # returns a numpy-ready function
+
+    N_dato = -np.log(1+z)
+    numpy_array_of_results = func(N_dato)
+    return numpy_array_of_results
+
 def Taylor_HS(z,omega_m,b,H0):
     '''Calculo del H(z) sugerido por Basilakos para el modelo de Hu-Sawicki
     N!=a, N=ln(a)=-ln(1+z)'''
@@ -45,26 +79,44 @@ def Taylor_HS(z,omega_m,b,H0):
     numpy_array_of_results = func(N_dato)
     return numpy_array_of_results
 
-
-
-
 #%%
 if __name__ == '__main__':
+    from matplotlib import pyplot as plt
+
     def H_LCDM(z, omega_m, H_0):
         omega_lambda = 1 - omega_m
         H = H_0 * np.sqrt(omega_m * (1 + z)**3 + omega_lambda)
         return H
-
+    #%% Hu-Sawicki
     #Parámetros
-    from matplotlib import pyplot as plt
-    %matplotlib qt5
+    #%matplotlib qt5
+    omega_m = 0.24
+    b = 2
+    H0 = 73.48
+
+    zs = np.linspace(0,10,10000);
+    HL_posta = H_LCDM(zs,omega_m,H0)
+    H_taylor = Taylor_HS(zs,omega_m,b,H0)
+
+    plt.close()
+    plt.figure()
+    plt.grid(True)
+    plt.xlabel('z (redshift)')
+    plt.ylabel('H(z)')
+    #plt.hlines(0, xmin=0 ,xmax = 2)
+    plt.plot(zs,HL_posta/H0,label='LCDM')
+    plt.plot(zs,H_taylor/H0,'-.',label='Taylor')
+    #plt.plot(z_data,H_data,'.',label='Cronometros')
+    plt.legend(loc='best')
+    plt.show()
+    #%% Starobinsky
     omega_m = 0.24
     b = 2
     H0 = 73.48
 
     zs = np.linspace(0,2,10000);
     HL_posta = H_LCDM(zs,omega_m,H0)
-    H_taylor = Taylor_HS(zs,omega_m,b,H0)
+    H_taylor = Taylor_ST(zs,omega_m,b,H0)
 
     plt.close()
     plt.figure()
