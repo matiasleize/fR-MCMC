@@ -33,12 +33,13 @@ omega_m_true = 0.3
 b_true = 0
 H0_true =  73.48 #Unidades de (km/seg)/Mpc
 
-nll = lambda theta: params_to_chi2_taylor(theta,n,z_data,H_data,dH)
+nll = lambda theta: params_to_chi2_taylor(theta,n,z_data,H_data,dH,chi_riess=False)
 initial = np.array([omega_m_true,b_true,H0_true])
-bnds = ((0.05, 0.5), (-4,4), (50,100))
+bnds = ((0.05, 0.5), (-1,1), (50,100))
 soln = minimize(nll, initial,bounds=bnds, options = {'eps': 0.001})
 omega_m_ml, b_ml, H0_ml = soln.x
 print(omega_m_ml,b_ml,H0_ml)
 
 os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
-np.savez('valores_medios_HS_cronom_3params_taylor', sol=soln.x)
+#np.savez('valores_medios_HS_cronom_3params_taylor', sol=soln.x)
+np.savez('valores_medios_HS_cronom_3params_sin_riess_taylor', sol=soln.x)

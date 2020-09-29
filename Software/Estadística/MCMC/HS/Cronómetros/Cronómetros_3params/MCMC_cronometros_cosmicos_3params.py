@@ -4,12 +4,9 @@ Created on Wed Feb  5 16:07:35 2020
 @author: matias
 """
 import numpy as np
-from matplotlib import pyplot as plt
 np.random.seed(42)
 from scipy.optimize import minimize
 import emcee
-import corner
-from scipy.interpolate import interp1d
 import time
 
 
@@ -27,30 +24,21 @@ from funciones_cronometros import params_to_chi2
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 #%% Predeterminados:
 n = 1
-#Coindiciones iniciales e intervalo
-x_0 = -0.339
-y_0 = 1.246
-v_0 = 1.64
-w_0 = 1 + x_0 + y_0 - v_0
-r_0 = 41
-ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
 #%%
 
 os.chdir(path_git+'/Software/Estadística/Datos/')
 z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
-log_likelihood = lambda theta: -0.5 * params_to_chi2(ci,theta,n,z_data,H_data,dH)
+log_likelihood = lambda theta: -0.5 * params_to_chi2(theta,n,z_data,H_data,dH)
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_HS_cronom_3params.npz') as data:
     sol = data['sol']
-np.min(z_data)
-sol[1] = 0
 print(sol)
 
 
 #%%
 def log_prior(theta):
     omega_m, b, H_0 = theta
-    if (0.01 < omega_m < 0.4 and -2 < b < 2 and 50 < H_0 < 90):
+    if (0.05 < omega_m < 0.4 and 0 < b < 4 and 50 < H_0 < 90):
         return 0.0
     return -np.inf
 

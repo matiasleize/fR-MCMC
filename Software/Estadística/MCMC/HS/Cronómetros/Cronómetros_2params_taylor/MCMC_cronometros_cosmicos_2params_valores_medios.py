@@ -31,14 +31,16 @@ z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
 
 omega_m_true = 0.3
 b_true = 0
-H0_true =  70.5 #Unidades de (km/seg)/Mpc
+H0_true =  73.48 #Unidades de (km/seg)/Mpc
 
 nll = lambda theta: params_to_chi2_taylor(theta,[H0_true,n],z_data,H_data,dH)
 initial = np.array([omega_m_true,b_true])
-bnds = ((0.1, 0.8), (-5,5))
-soln = minimize(nll, initial,bounds=bnds, options = {'eps': 0.001})
+bnds = ((0.1, 0.3), (-1,1))
+soln = minimize(nll, initial,bounds=bnds)#, options = {'eps': 0.01})
 omega_m_ml, b_ml = soln.x
 print(omega_m_ml,b_ml)
 
 os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
 np.savez('valores_medios_HS_cronom_2params_taylor', sol=soln.x)
+
+soln.fun/(len(z_data)-2) #0.54

@@ -26,9 +26,9 @@ from funciones_supernovas import params_to_chi2_taylor
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
 #%% Predeterminados:
-M_true = -18.6
-omega_m_true = 0.26
-b_true = 0
+M_true = -19.2
+omega_m_true = 0.4
+b_true = -0.5
 H0_true =  73.48 #Unidades de (km/seg)/Mpc
 n = 1
 
@@ -48,7 +48,7 @@ zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
 #Parametros a ajustar
 nll = lambda theta: params_to_chi2_taylor(ci, theta, params_fijos, zcmb, zhel, Cinv, mb)
 initial = np.array([M_true,omega_m_true,b_true])
-soln = minimize(nll, initial, options = {'eps': 0.01}, bounds =((-25,-16),(0.1,0.6),(-5, 5)))
+soln = minimize(nll, initial, options = {'eps': 0.01}, bounds =((-20,-18),(0.1,0.5),(-1, 1)))
 M_ml, omega_m_ml, b_ml = soln.x
 
 print(M_ml,omega_m_ml,b_ml)

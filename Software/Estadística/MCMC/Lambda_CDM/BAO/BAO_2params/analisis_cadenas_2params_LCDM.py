@@ -30,11 +30,11 @@ print(tau)
 #%%
 %matplotlib qt5
 graficar_cadenas(reader,
-                labels = ['rd/rd_fid','omega_m'])
+                labels = ['omega_m','b'])
  #%%
 burnin=100
 graficar_contornos(reader,params_truths=sol,discard=burnin,#thin=thin,
-                    labels = ['rd/rd_fid','omega_m'])
+                    labels = ['omega_m','b'])
 #%%
 #Ojo, siempre muestra que convergio, aun cuando no
 plt.figure()
@@ -43,7 +43,7 @@ graficar_taus_vs_n(reader,num_param=1,threshold=1000)
 #%% Printeo los valores!
 from IPython.display import display, Math
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
-labels = ['r_{d}/r_{d}^{fid}','\Omega_m']
+labels = ['omega_m','b']
 len_chain,nwalkers,ndim=reader.get_chain().shape
 print(len_chain)
 for i in range(ndim):

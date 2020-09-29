@@ -11,7 +11,6 @@ import emcee
 import corner
 from scipy.interpolate import interp1d
 import time
-np.random.seed(1)
 
 import sys
 import os
@@ -20,28 +19,37 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
-from funciones_data import leer_data_BAO
-from funciones_LambdaCDM import params_to_chi2_BAO
+from funciones_data import leer_data_pantheon
+from funciones_supernovas import params_to_chi2
 
-os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
-dataset = []
-archivo_BAO = ['datos_BAO_da.txt','datos_BAO_dh.txt','datos_BAO_dm.txt',
-                'datos_BAO_dv.txt','datos_BAO_H.txt']
-for i in range(5):
-    aux = leer_data_BAO(archivo_BAO[i])
-    dataset.append(aux)
+#ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
-os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/LCDM')
-with np.load('valores_medios_LCDM_BAO_3params.npz') as data:
+#%% Predeterminados:
+n = 1
+#Coindiciones iniciales e intervalo
+x_0 = -0.339
+y_0 = 1.246
+v_0 = 1.64
+w_0 = 1 + x_0 + y_0 - v_0
+r_0 = 41
+ci = [x_0, y_0, v_0, w_0, r_0] #Condiciones iniciales
+#%%
+
+os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
+zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
+os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
+with np.load('valores_medios_ST_supernovas_4params.npz') as data:
     sol = data['sol']
+sol[2] = 0
+#Parche para salir desde un H0 razonable
 print(sol)
-sol[2] = 73.48
-log_likelihood = lambda theta: -0.5 * params_to_chi2_BAO(theta,[], dataset)
+np.random.seed(42)
+log_likelihood = lambda theta: -0.5 * params_to_chi2(ci, theta, n, zcmb, zhel, Cinv, mb,model='ST')
+#%% Definimos las gunciones de prior y el posterior
 
-#%% Definimos las funciones de prior y el posterior
 def log_prior(theta):
-    rd, omega_m, H0 = theta
-    if (0.8 < rd < 1.1 and 0.2 < omega_m < 0.42 and 68 < H0 < 75):
+    M, omega_m, b, H0 = theta
+    if (-20 < M < -18 and  0.01 < omega_m < 0.4 and -5 < b < 5 and 60 < H0 < 80):
         return 0.0
     return -np.inf
 
@@ -51,36 +59,32 @@ def log_probability(theta):
         return -np.inf
     return lp + log_likelihood(theta)
 
-pos = sol + 1e-4 * np.random.randn(20, 3) #Defino la cantidad de caminantes.
+
+pos = sol + 1e-4 * np.random.randn(20, 4) #Defino la cantidad de caminantes.
 nwalkers, ndim = pos.shape
 
 #%%
 # Set up the backend
-os.chdir(path_datos_global+'/Resultados_cadenas/LDCM')
-filename = "sample_LCDM_BAO_3params.h5"
+os.chdir(path_datos_global+'/Resultados_cadenas/')
+filename = "sample_ST_supernovas_4params.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
-textfile_witness = open('witness_1.txt','w+')
+textfile_witness = open('witness.txt','w+')
 textfile_witness.close()
-
-
 #%%
 #Initialize the sampler
-sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend
-        ,moves=[(emcee.moves.DEMove(), 0.3), (emcee.moves.DESnookerMove(), 0.3)
-                , (emcee.moves.KDEMove(), 0.4)])
+sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
 max_n = 10000
 # This will be useful to testing convergence
 old_tau = np.inf
 
-
 # Now we'll sample for up to max_n steps
 for sample in sampler.sample(pos, iterations=max_n, progress=True):
-    # Only check convergence every 100 steps (o 50)
-    if sampler.iteration % 20: #20 es cada cuanto chequea convergencia
+    # Only check convergence every 100 steps
+    if sampler.iteration % 5: #100 es cada cuanto chequea convergencia
         continue
 
-    #os.chdir(path_datos_global+'/Resultados_cadenas/')
+    os.chdir(path_datos_global+'/Resultados_cadenas/')
     textfile_witness = open('witness_1.txt','w')
     textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
     textfile_witness.write('Tiempo: {}'.format(time.time()))
@@ -92,10 +96,10 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     tau = sampler.get_autocorr_time(tol=0)
 
     # Check convergence
-    converged_1 = np.all(tau * 100 < sampler.iteration) #100 es el threshold de convergencia
+    converged = np.all(tau * 100 < sampler.iteration) #100 es el threshold de convergencia
     #También pido que tau se mantenga relativamente constante:
-    converged_2 = np.all((np.abs(old_tau - tau)) < 0.01)
-    if (converged_1 and converged_2):
+    converged &= np.all((np.abs(old_tau - tau) / tau) < 0.01)
+    if converged:
         textfile_witness = open('witness_1.txt','a')
         textfile_witness.write('Convergió!')
         textfile_witness.close()

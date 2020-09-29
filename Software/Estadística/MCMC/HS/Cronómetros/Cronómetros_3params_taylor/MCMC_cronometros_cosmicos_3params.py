@@ -31,14 +31,15 @@ n = 1
 
 os.chdir(path_git+'/Software/Estadística/Datos/')
 z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
-log_likelihood = lambda theta: -0.5 * params_to_chi2_taylor(theta,n,z_data,H_data,dH)
+log_likelihood = lambda theta: -0.5 * params_to_chi2_taylor(theta,n,z_data,H_data,dH,chi_riess=False)
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-with np.load('valores_medios_HS_cronom_3params_taylor.npz') as data:
+#with np.load('valores_medios_HS_cronom_3params_taylor.npz') as data:
+with np.load('valores_medios_HS_cronom_3params_sin_riess_taylor.npz') as data:
     sol = data['sol']
 #%%
 def log_prior(theta):
     omega_m, b, H_0 = theta
-    if (0.05 < omega_m < 0.8 and -4 < b < 4 and 45 < H_0 < 100):
+    if (0.05 < omega_m < 0.5 and -2 < b < 2 and 50 < H_0 < 90):
         return 0.0
     return -np.inf
 
@@ -54,7 +55,8 @@ nwalkers, ndim = pos.shape
 #%%
 # Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/')
-filename = "sample_HS_cronom_3params_taylor_prior_om_agrandado.h5"
+#filename = "sample_HS_cronom_3params_taylor.h5"
+filename = "sample_HS_cronom_3params_sin_riess_taylor.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
 textfile_witness = open('witness_1.txt','w+')

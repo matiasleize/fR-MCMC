@@ -36,6 +36,7 @@ with np.load('valores_medios_LCDM_BAO_2params.npz') as data:
     sol = data['sol']
 print(sol)
 H0_true =  73.48
+
 log_likelihood = lambda theta: -0.5 * params_to_chi2_BAO(theta,H0_true, dataset)
 
 #%% Definimos las funciones de prior y el posterior

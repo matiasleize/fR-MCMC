@@ -40,7 +40,7 @@ print(sol)
 #%%
 def log_prior(theta):
     omega_m, b = theta
-    if (0.1 < omega_m < 0.5 and -4 < b < 4):
+    if (0.1 < omega_m < 0.5 and -2 < b < 2):
         return 0.0
     return -np.inf
 

@@ -21,7 +21,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_data import leer_data_BAO
-from funciones_LambdaCDM import params_to_chi2_BAO
+from funciones_BAO import params_to_chi2_taylor
 
 np.random.seed(1)
 #%%
@@ -34,17 +34,18 @@ for i in range(5):
     dataset.append(aux)
 
 #%% Predeterminados:
-rd_true = 1
-omega_m_true = 0.27
-H0_true =  73.48 #Unidades de (km/seg)/Mpc
-
-
-nll = lambda theta: params_to_chi2_BAO(theta,[], dataset)
-initial = np.array([rd_true,omega_m_true,H0_true])
-bnds = ((0.80, 1.1), (0.2,0.40),(68,75))
-soln = minimize(nll, initial, bounds=bnds, options = {'eps': 0.01})
-rd_ml, omega_m_ml, H0_ml = soln.x
-print(rd_ml,omega_m_ml,H0_ml)
+omega_m_true = 0.24
+b_true = 0.01
+H0_true = 73.48 #Unidades de (km/seg)/Mpc
+n = 1
+#%%
+nll = lambda theta: params_to_chi2_taylor(theta, [H0_true,n], dataset)
+initial = np.array([omega_m_true,b_true])
+bnds = ((0.1,0.5),(-2,2))
+soln = minimize(nll, initial, bounds=bnds)#, options = {'eps': 0.01})
+omega_m_ml, b_ml = soln.x
+print(omega_m_ml, b_ml)
 
 os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones/LCDM')
-np.savez('valores_medios_LCDM_BAO_3params', sol=soln.x)
+np.savez('valores_medios_HS_BAO_2params_taylor', sol=soln.x)
+soln.fun/(17-2)#1.04922645469453 , omega=0.2139221149253973 b=0.9874453778045829

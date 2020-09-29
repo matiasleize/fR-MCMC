@@ -12,41 +12,42 @@ os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_analisis_cadenas import graficar_cadenas,graficar_contornos,graficar_taus_vs_n
 #%%
-os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/LCDM')
-
-with np.load('valores_medios_LCDM_BAO_3params.npz') as data:
+os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
+with np.load('valores_medios_ST_cronom_2params_omega_fijo_taylor.npz') as data:
     sol = data['sol']
+sol
 #%%
-os.chdir(path_datos_global+'/Resultados_cadenas/LDCM')
-filename = "sample_LCDM_BAO_3params.h5"
-
+os.chdir(path_datos_global+'/Resultados_cadenas')
+filename = "sample_ST_cronom_2params_omega_fijo_taylor.h5"
 reader = emcee.backends.HDFBackend(filename)
 # Algunos valores
+nwalkers, ndim = reader.shape
 tau = reader.get_autocorr_time()
 burnin = int(2 * np.max(tau))
 thin = int(0.5 * np.min(tau))
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
+print(nwalkers,ndim)
+print(samples.shape[0])#numero de pasos
 print(tau)
 #%%
 %matplotlib qt5
 graficar_cadenas(reader,
-                labels = ['rd/rd_fid','omega_m', 'H0'])
- #%%
-burnin=60
-graficar_contornos(reader,params_truths=sol,discard=burnin,#thin=thin,
-                    labels = ['rd/rd_fid','omega_m', 'H0'])
+                labels = ['b','$H_0$'],title='CC ST (Taylor) $\Omega_m=0.24$')
 #%%
-#Ojo, siempre muestra que convergio, aun cuando no
+#burnin=100
+burnin = int(2 * np.max(tau))
+thin = int(0.5 * np.min(tau))
+graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,
+                    labels = ['b','$H_0$'],title='CC ST (Taylor) $\Omega_m=0.24$')
+#%%
 plt.figure()
-graficar_taus_vs_n(reader,num_param=0,threshold=1000)
-graficar_taus_vs_n(reader,num_param=1,threshold=1000)
-graficar_taus_vs_n(reader,num_param=2,threshold=1000)
+graficar_taus_vs_n(reader,num_param=0)
+graficar_taus_vs_n(reader,num_param=1)
 #%% Printeo los valores!
 from IPython.display import display, Math
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
-labels = ['r_{d}/r_{d}^{fid}','\Omega_m', 'H_{0}']
+labels = ['b','H_0']
 len_chain,nwalkers,ndim=reader.get_chain().shape
-print(len_chain)
 for i in range(ndim):
     mcmc = np.percentile(samples[:, i], [16, 50, 84])
     mcmc[1]=sol[i] #Correción de mati: En vez de percentil 50 poner el mu

@@ -30,7 +30,7 @@ print(tau)
 graficar_cadenas(reader,
                 labels = ['M_abs','omega_m','b'])
 #%%
-burnin=100
+burnin=300
 #burnin = int(2 * np.max(tau))
 #thin = int(0.5 * np.min(tau))
 graficar_contornos(reader,params_truths=sol,discard=burnin,#thin=thin
