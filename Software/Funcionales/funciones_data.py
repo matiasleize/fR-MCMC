@@ -53,9 +53,9 @@ def leer_data_cronometros(archivo_cronometros):
 
 #%%
 def leer_data_BAO(archivo_BAO):
-    z, valores_data, errores_data, rs_bool = np.loadtxt(archivo_BAO,
+    z, valores_data, errores_data, rd_fid = np.loadtxt(archivo_BAO,
     usecols=(0,1,2,4), unpack=True)
-    return z, valores_data, errores_data, rs_bool
+    return z, valores_data, errores_data, rd_fid
 #%%
 if __name__ == '__main__':
 
