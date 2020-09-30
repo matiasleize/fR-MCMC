@@ -36,7 +36,7 @@ def leer_data_pantheon(archivo_pantheon,min_z = 0,max_z = 3):
 
     return zcmb,zhel, Cinv, mb
 
-#%%
+
 def leer_data_cronometros(archivo_cronometros):
 
     '''Toma la data de Pantheon y extrae la data de los redshifts zcmb y zhel
@@ -51,15 +51,13 @@ def leer_data_cronometros(archivo_cronometros):
     return z, h, dh
 
 
-#%%
 def leer_data_BAO(archivo_BAO):
     z, valores_data, errores_data, rd_fid = np.loadtxt(archivo_BAO,
     usecols=(0,1,2,4), unpack=True)
     return z, valores_data, errores_data, rd_fid
+    
 #%%
 if __name__ == '__main__':
-
-    import numpy as np
     import sys
     import os
     from os.path import join as osjoin
@@ -67,42 +65,20 @@ if __name__ == '__main__':
 
     path_git, path_datos_global = definir_path()
     os.chdir(path_git)
-    sys.path.append('./Software/Funcionales/')
-    from funciones_data import leer_data_pantheon
-    #%%
+
+    #%% Supernovas
     os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
-    zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
-    (Cinv)
-    os.chdir(path_datos_global)
-    #C_lucila = np.loadtxt('tabla.dat',unpack=True)
-#%%
-    tol = 5
-    for i in range(0,1048):
-        for j in range(0,1048):
-            if round(Cinv[i,j],tol) != round(C_lucila[i,j],tol):
-                print(round(Cinv[i,j],tol), round(C_lucila[i,j],tol))
-    #Hasta tol=4 anda piolita
-#%%
-    min_z = 0
-    max_z = 3
+    zcmb, zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
+    #zcmb, zhel, Cinv, mb
 
-    mask = ma.masked_where((zcmb <= max_z) & ((zcmb >= min_z)) , zcmb).mask
-    mask_1 = mask[np.newaxis, :] & mask[:, np.newaxis]
+    #%% Cronómetros
+    os.chdir(path_git+'/Software/Estadística/Datos/')
+    z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
+    #z_data, H_data, dH
 
-    zhel = zhel[mask]
-    mb = mb[mask]
-    Cinv_1 = Cinv[mask_1]
-    Cinv_1 = Cinv_1.reshape(len(zhel),len(zhel))
-    np.all(Cinv_1==Cinv)
-    zcmb = zcmb[mask]
-
-    #%%
+    #%% BAO
     os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
-#    lala = leer_data_BAO('datos_BAO.txt')
-    rs=1
-    initial = [1,7,12,14,15]
-    end = [6,11,13,14,17]
     archivo_BAO='datos_BAO_H.txt'
     z, valores_data, errores_data, rs_bool = np.loadtxt(archivo_BAO,
     usecols=(0,1,2,4), unpack=True)
-    z, valores_data, errores_data, rs_bool
+    #z, valores_data, errores_data, rs_bool

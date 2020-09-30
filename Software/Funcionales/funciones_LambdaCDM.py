@@ -10,11 +10,10 @@ from matplotlib import pyplot as plt
 import time
 
 from scipy.integrate import solve_ivp
-from scipy.integrate import simps as simps
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.interpolate import interp1d
 from scipy.constants import c as c_luz #metros/segundos
-c_luz_km = c_luz/1000 #km/seg
+c_luz_km = c_luz/1000
 #%%
 
 def H_LCDM(z, omega_m, H_0):
@@ -125,154 +124,46 @@ def params_to_chi2_BAO(theta, params_fijos, dataset,
     los que quedan params_fijos (n), devuelve un chi2 para los datos
     de BAO'''
 
-    if len(theta)==3:
-        [rd,omega_m,H_0] = theta
-    elif len(theta)==2:
-        [rd,omega_m] = theta
-        H_0 = params_fijos
+    [omega_m, H_0] = theta
 
-    zs = np.linspace(0.1,3,cantidad_zs)
+    zs = np.linspace(0.01, 3, cantidad_zs)
     H_teo = H_LCDM(zs, omega_m, H_0)
+
+    h = H_0/100
+    omega_b = 0.05 #(o algo asi)
+    cte = 0.02 #(omega_B * h**2)
+
+    #Calculo del rd:
+    zs_int = np.linspace(1100,3600,100000)
+    H_int = H_LCDM(zs_int, omega_m, H_0)
+    R_bar = 31500 * cte * (2.726/2.7)**(-4)
+    #cs = c_luz_km / (np.sqrt(3*(1 + R_bar/(1 + zs_int))))
+    #integrando = cs/H_int
+    integrando = c_luz_km / (H_int * np.sqrt(3*(1 + R_bar/(1 + zs_int))))
+    rd = simps(integrando,zs_int)
+
     chies = np.zeros(num_datasets)
 
     for i in range(num_datasets):
-        (z_data, valores_data, errores_data, rd_bool) = dataset[i]
+        (z_data, valores_data, errores_data, rd_fid) = dataset[i]
         #print(type(valores_data))
         if isinstance(z_data,np.float64):
-            if rd_bool == 1:
-                vd = valores_data * rd
-                ed = errores_data * rd
+            if (rd_fid == 1):
+                pass
             else:
-                vd = valores_data
-                ed = errores_data
-            outs = Hs_to_Ds(zs, H_teo, z_data, i)
-            chies[i] = ((outs-vd)/ed)**2
+                valores_data = valores_data * (rd/rd_fid)
+                errores_data = errores_data * (rd/rd_fid)
         elif isinstance(z_data,np.ndarray):
-            vd = np.zeros(len(valores_data))
-            ed = np.zeros(len(valores_data))
             for j in range(len(z_data)):
-                if rd_bool[j] == 1:
-                    vd[j] = valores_data[j] * rd
-                    ed[j] = errores_data[j] * rd
+                if (rd_fid[j] == 1):
+                        pass
                 else:
-                    vd[j] = valores_data[j]
-                    ed[j] = errores_data[j]
-            outs = Hs_to_Ds(zs, H_teo, z_data, i)
-            chies[i] = chi_2_BAO(outs, vd, ed)
-    #print(rd,omega_m,H_0)
-    #print(chies)
+                    valores_data[j] = valores_data[j] * (rd/rd_fid[j])
+                    errores_data[j] = errores_data[j] * (rd/rd_fid[j])
+        outs = Hs_to_Ds(zs,H_teo,z_data,i)
+        chies[i] = chi_2_BAO(outs,valores_data,errores_data)
+    if np.isnan(sum(chies))==True:
+        print('Hay errores!')
+        print(omega_m,H_0,rd)
+
     return np.sum(chies)
-
-
-#%%
-if __name__ == '__main__':
-    ##%matplotlib qt5
-    import sys
-    import os
-    from os.path import join as osjoin
-    from pc_path import definir_path
-    path_git, path_datos_global = definir_path()
-
-    os.chdir(path_git)
-    sys.path.append('./Software/Funcionales/')
-    from funciones_data import leer_data_pantheon
-
-    os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
-    zcmb, zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
-
-    z = np.linspace(0,3,1000)
-    H_0 = 73.48
-    omega_m = 0.3
-
-    lala = H_LCDM(z,omega_m,H_0)
-    print(c_luz_km * lala**(-1))
-    z
-
-#%%
-    M_abs = -18
-    muobs =  mb - M_abs
-    plt.figure()
-    plt.errorbar(zcmb,muobs, fmt='.k',label='observado')
-
-    for omega_m in (np.linspace(0,1,10)):
-        H = H_LCDM(z,omega_m,H_0)
-        #plt.plot(z,H_0 * E)
-        #aux = np.zeros(len(E))
-        d_c = cumtrapz(1/H,z,initial=0) #Paso c_luz a km/seg
-        dc_int = interp1d(z,d_c) #Interpolamos
-        d_L = (1+zhel) * dc_int(zcmb) #Obs, Caro multiplica por Zhel, con Zobs da un poquin mejor
-        ##Magnitud aparente teorica
-        muth = 25.0 + 5.0 * np.log10(d_L)
-        sn = len(muth)
-        plt.plot(zcmb,muth,'.',label='omega={}'.format(omega_m))
-        deltamu = muobs - muth
-        plt.legend(loc='best')
-
-        print(muth)
-        #%%
-        plt.figure()
-        z = np.linspace(0,0.5,1000)
-        for omega_m in (np.linspace(0,1,10)):
-            H = H_LCDM(z,omega_m,H_0)
-            plt.plot(z, H)
-            plt.plot(z,H,label='omega={}'.format(omega_m))
-            plt.legend(loc='best')
-#%%
-        plt.close()
-        plt.figure()
-        z = np.linspace(0,3,int(10**6))
-        for omega_m in (np.linspace(0.2,0.4,3)):
-            H = H_LCDM(z,omega_m,H_0=1)
-            aux = cumtrapz(H**(-1),z,initial=0)
-            plt.plot(z, aux,label='omega={}'.format(omega_m))
-            #d_L = (1+z) * 0.001 * c_luz * cumtrapz(1/H,z,initial=0)
-            #plt.plot(z, d_L)
-            #plt.plot(z,H,label='omega={}'.format(omega_m))
-            plt.legend(loc='best')
-#%%
-    def integral(omega_m,z):
-        zs = np.linspace(0,z,100000)
-        H = H_LCDM(zs,omega_m,H_0=1)
-        aux = cumtrapz(H**(-1),zs,initial=0)
-        return aux[-1]
-
-    Z = 0.01
-    omega_m=0.2
-    H = H_LCDM(z,omega_m,H_0=1)
-    aux = cumtrapz(H**(-1),z,initial=0)
-    dc_int = interp1d(z,aux) #Interpolamos
-    #%%
-    print(dc_int(Z))
-    #%%
-    dc = np.zeros(len(zcmb))
-    for i,z in enumerate (zcmb):
-        dc[i]=integral(0.2,z)
-    plt.plot(zcmb,dc_int(zcmb),'.')
-    plt.plot(zcmb,dc+0.001,'.')
-
-    #plt.figure()
-    #plt.plot(zcmb,deltamu,'.')
-    #plt.plot(zcmb,(muth-muobs)/muobs,'r.')
-#%%
-
-    import sys
-    import os
-    from os.path import join as osjoin
-    from pc_path import definir_path
-    path_git, path_datos_global = definir_path()
-    os.chdir(path_git)
-    sys.path.append('./Software/Funcionales/')
-    from funciones_data import leer_data_pantheon
-    from funciones_LambdaCDM import params_to_chi2
-    os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
-    zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
-    #caro
-    theta = [-19.38,0.299]
-    params_fijos = 69.01
-    #minimizacion
-    theta = [-19.380657833554064, 0.2981498895755162]
-    params_fijos = 69.01
-    #0.9798300382238752
-
-    params_to_chi2(theta,params_fijos,zcmb, zhel, Cinv, mb,
-                        cantidad_zs=int(10**6))
