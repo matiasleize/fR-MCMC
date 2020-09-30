@@ -1,2 +1,4 @@
 #Ignora la cache.
 __pycache__/
+
+backups/
