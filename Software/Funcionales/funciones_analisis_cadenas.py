@@ -9,7 +9,49 @@ from matplotlib import pyplot as plt
 import time
 import emcee
 import corner
+import seaborn as sns
+import pandas as pd
 
+
+def graficar_cadenas(sampler,labels= ['omega_m','b'],title=None):
+	'''Esta función grafica las cadenas en función del largo de las mismas.'''
+	samples = sampler.get_chain()
+	len_chain,nwalkers,ndim=sampler.get_chain().shape
+	fig, axes = plt.subplots(ndim, figsize=(10, 7), sharex=True)
+	for i in range(ndim):
+	    ax = axes[i]
+	    ax.plot(samples[:, :, i], "k", alpha=0.3)
+	    ax.set_xlim(0, len(samples))
+	    ax.set_ylabel(labels[i])
+	ax.yaxis.set_label_coords(-0.1, 0.5)
+	axes[-1].set_xlabel("step number");
+	if not title==None:
+		fig.suptitle(title);
+
+def graficar_contornos(sampler,params_truths,discard=20,
+						thin=1,labels= ['omega_m','b'],title=None,
+						poster=False,color='b'):
+	'''Grafica los contornos de confianza.'''
+	if poster==True:
+		flat_samples = sampler.get_chain(discard=discard, flat=True, thin=thin)
+		df = pd.DataFrame(flat_samples,columns=labels)
+		sns.set(style='darkgrid', palette="muted", color_codes=True)
+		sns.set_context("paper", font_scale=1.5, rc={"font.size":10,"axes.labelsize":17})
+
+		g = sns.PairGrid(df, diag_sharey=False, corner=True)
+		g.map_diag(sns.kdeplot, lw=2, shade=True,color=color)
+		g.map_lower(sns.kdeplot,levels=5,shade=True,shade_lowest=False,color=color)
+		g.fig.set_size_inches(8,8)
+		if not title==None:
+			# Access the Figure
+			g.fig.suptitle(title, fontsize=20)
+	else:
+		flat_samples = sampler.get_chain(discard=discard, flat=True, thin=thin)
+		print(flat_samples.shape)
+		fig = corner.corner(flat_samples, labels=labels, truths=params_truths,
+			 plot_datapoints=False,quantiles=(0.16, 0.84));
+		if not title==None:
+			fig.suptitle(title);
 
 def graficar_taus_vs_n(sampler, num_param=0,threshold=100.0):
 	'''Esta función grafica el tiempo de autocorrelación integraodo
@@ -34,25 +76,74 @@ def graficar_taus_vs_n(sampler, num_param=0,threshold=100.0):
 	plt.ylabel(r"$\tau$ estimates")
 	plt.legend(fontsize=14);
 
-def graficar_cadenas(sampler,labels= ['omega_m','b']):
-	'''Esta función grafica las cadenas en función del largo de las mismas.'''
-	samples = sampler.get_chain()
-	len_chain,nwalkers,ndim=sampler.get_chain().shape
-	fig, axes = plt.subplots(ndim, figsize=(10, 7), sharex=True)
-	for i in range(ndim):
-	    ax = axes[i]
-	    ax.plot(samples[:, :, i], "k", alpha=0.3)
-	    ax.set_xlim(0, len(samples))
-	    ax.set_ylabel(labels[i])
-	ax.yaxis.set_label_coords(-0.1, 0.5)
-	axes[-1].set_xlabel("step number");
 
-def graficar_contornos(sampler,params_truths,discard=20,thin=None,labels= ['omega_m','b']):
-	'''Grafica los contornos de confianza.'''
-	if thin == None:
-		flat_samples = sampler.get_chain(discard=discard, flat=True)
-	else:
-		flat_samples = sampler.get_chain(discard=discard, flat=True, thin=thin)
-	print(flat_samples.shape)
-	fig = corner.corner(flat_samples, labels=labels, truths=params_truths,
-		 plot_datapoints=False,quantiles=(0.16, 0.84));
+#%%
+if __name__ == '__main__':
+	import numpy as np
+	import emcee
+	import seaborn as sns
+	from matplotlib import pyplot as plt
+	import corner
+	import sys
+	import os
+	import time
+	import pandas as pd
+
+	from pc_path import definir_path
+	path_git, path_datos_global = definir_path()
+	os.chdir(path_git)
+	#%%
+	os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
+	with np.load('valores_medios_HS_cronom_2params_taylor.npz') as data:
+	    sol = data['sol']
+	#%%
+	os.chdir(path_datos_global+'/Resultados_cadenas')
+	filename = "sample_HS_cronom_2params_taylor.h5"
+	reader = emcee.backends.HDFBackend(filename)
+	# Algunos valores
+	nwalkers, ndim = reader.shape
+	tau = reader.get_autocorr_time()
+	burnin = int(2 * np.max(tau))
+	thin = int(0.5 * np.min(tau))
+	samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
+	print(nwalkers,ndim)
+	print(samples.shape[0])#numero de pasos
+	print(tau)
+
+	#%%
+	burnin=100
+	burnin = int(2 * np.max(tau))
+	thin = int(0.5 * np.min(tau))
+	graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,
+	                    labels= ['omega_m','b'])
+	#%%
+	#%matplotlib qt5
+	labels= ['$\Omega_{m}$','b']
+	title='HS Taylor (H0 fijo)'
+	data=reader.get_chain(flat=True)
+	df = pd.DataFrame(data,columns=labels)
+	#%%
+	#sns.set()
+	sns.set(style='darkgrid', palette="muted", color_codes=True)
+	sns.set_context("paper", font_scale=1.5, rc={"font.size":10,"axes.labelsize":17})
+	#font_scale: numeros de los ejes
+	#font.size:
+	#axes.labelsize: tamano de las labels
+
+	g = sns.PairGrid(df, diag_sharey=False, corner=True)
+	#g.map_diag(sns.kdeplot, lw=2, shade=True,color='r')
+	g.map_lower(sns.kdeplot,
+				shade=True,
+				shade_lowest=False,
+				levels=6,
+				color='r')
+	#g.map_lower(sns.kdeplot,
+#				levels=[1-np.exp(-0.5),0.9],
+	#			levels=[0.01,0.4],
+#				color='b')
+
+	# Access the Figure
+	#g.add_legend()
+	g.fig.set_size_inches(8,8)
+	g.fig.suptitle(title, fontsize=20)
+	#df['b'].to_numpy()
