@@ -3,17 +3,6 @@ from sympy.utilities.lambdify import lambdify
 import numpy as np
 import math
 
-import sys
-import os
-from os.path import join as osjoin
-from pc_path import definir_path
-path_git, path_datos_global = definir_path()
-os.chdir(path_git)
-sys.path.append('./Software/Funcionales/')
-from funciones_data import leer_data_cronometros
-os.chdir(path_git+'/Software/Estadística/Datos/')
-z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
-
 #%%
 
 def Taylor_ST(z,omega_m,b,H0):
@@ -82,50 +71,36 @@ def Taylor_HS(z,omega_m,b,H0):
 #%%
 if __name__ == '__main__':
     from matplotlib import pyplot as plt
-
-    def H_LCDM(z, omega_m, H_0):
-        omega_lambda = 1 - omega_m
-        H = H_0 * np.sqrt(omega_m * (1 + z)**3 + omega_lambda)
-        return H
-    #%% Hu-Sawicki
-    #Parámetros
     #%matplotlib qt5
+
+    import sys
+    import os
+    from os.path import join as osjoin
+    from pc_path import definir_path
+    path_git, path_datos_global = definir_path()
+    os.chdir(path_git)
+    sys.path.append('./Software/Funcionales/')
+    from funciones_LambdaCDM import H_LCDM
+
     omega_m = 0.24
     b = 2
     H0 = 73.48
+    zs = np.linspace(0,3,10000);
+    H_LCDM = H_LCDM(zs,omega_m,H0)
 
-    zs = np.linspace(0,10,10000);
-    HL_posta = H_LCDM(zs,omega_m,H0)
-    H_taylor = Taylor_HS(zs,omega_m,b,H0)
+    # Hu-Sawicki
+    H_HS_taylor = Taylor_HS(zs,omega_m,b,H0)
+
+    # Starobinsky
+    H_ST_taylor = Taylor_ST(zs,omega_m,b,H0)
 
     plt.close()
     plt.figure()
     plt.grid(True)
     plt.xlabel('z (redshift)')
     plt.ylabel('H(z)')
-    #plt.hlines(0, xmin=0 ,xmax = 2)
-    plt.plot(zs,HL_posta/H0,label='LCDM')
-    plt.plot(zs,H_taylor/H0,'-.',label='Taylor')
-    #plt.plot(z_data,H_data,'.',label='Cronometros')
-    plt.legend(loc='best')
-    plt.show()
-    #%% Starobinsky
-    omega_m = 0.24
-    b = 2
-    H0 = 73.48
-
-    zs = np.linspace(0,2,10000);
-    HL_posta = H_LCDM(zs,omega_m,H0)
-    H_taylor = Taylor_ST(zs,omega_m,b,H0)
-
-    plt.close()
-    plt.figure()
-    plt.grid(True)
-    plt.xlabel('z (redshift)')
-    plt.ylabel('H(z)')
-    #plt.hlines(0, xmin=0 ,xmax = 2)
-    plt.plot(zs,HL_posta/H0,label='LCDM')
-    plt.plot(zs,H_taylor/H0,'-.',label='Taylor')
-    #plt.plot(z_data,H_data,'.',label='Cronometros')
+    plt.plot(zs,H_LCDM/H0,label='LCDM')
+    plt.plot(zs,H_HS_taylor/H0,'-.',label='HS')
+    plt.plot(zs,H_ST_taylor/H0,'-.',label='ST')
     plt.legend(loc='best')
     plt.show()
