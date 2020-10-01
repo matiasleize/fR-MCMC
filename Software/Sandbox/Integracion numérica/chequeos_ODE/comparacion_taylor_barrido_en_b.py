@@ -22,7 +22,7 @@ for i, b in enumerate(bs):
     print(i)
     params_fisicos = [omega_m,b,H0]
 
-    zs, H_ode = integrador(params_fisicos, cantidad_zs=int(10**6), max_step=0.001)
+    zs, H_ode = integrador(params_fisicos, cantidad_zs=int(10**5), max_step=0.0005)
     H_taylor = Taylor_HS(zs,omega_m,b,H0)
 
     error_b[i] = 100*np.abs(np.mean(1-(H_taylor/H_ode)))

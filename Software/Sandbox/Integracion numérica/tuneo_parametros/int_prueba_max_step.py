@@ -21,33 +21,41 @@ from funciones_int import integrador
 
 #%%
 omega_m = 0.24
-b = 1
+b = 0.1
 H0 = 73.48
 params_fisicos = [omega_m,b,H0]
 
-cantidad_zs = int(10**6)
+cantidad_zs = int(10**5)
 
-max_steps = np.linspace(0.001,1,5)#1000
+max_steps = np.linspace(0.01,0.001,100)
 Hs = []
 for maxs in max_steps:
     zs, H_ode = integrador(params_fisicos, n=1, cantidad_zs=cantidad_zs,
-    max_step=maxs)
+                max_step=maxs)
+    #f=interp1d(zs,H_ode)
+    #Hs.append(f(np.linspace(0,3,100000)))
     Hs.append(H_ode)
-
-final = []
+final = np.zeros(len(Hs))
 for j in range(1,len(Hs)):
-    aux = np.mean((Hs[j]-Hs[j-1])/Hs[j]);
-    final.append(aux);
+    aux = np.mean(Hs[j]-Hs[j-1]);
+    #aux = np.mean((1-Hs[j]/Hs[j-1]));
+    final[j]=aux;
 #%%
 %matplotlib qt5
 plt.close()
 plt.figure()
 plt.grid(True)
 plt.xlabel('max_steps')
-plt.ylabel('%Hs')
-plt.plot(max_steps[1:],np.array(final)*100,'.');
+plt.ylabel('$\Delta$Hs')
+plt.plot(max_steps[::-1],np.array(final)[::-1],'.-');
 #plt.legend(loc='best')
+plt.gca().invert_xaxis()
 plt.show()
+index=np.where(abs(final)<=float(10**(-10)))[0][1]
+max_steps[index+1]
+final[index+1]
 
-final
 max_steps
+final
+#Delta H = 10**(-10)
+#Delta h = 10**(-12/13)
