@@ -16,7 +16,7 @@ from funciones_condiciones_iniciales import condiciones_iniciales
 from funciones_cambio_parametros import params_fisicos_to_modelo
 #%%
 
-def dX_dz(z, variables,*params_modelo):
+def dX_dz(z, variables,*params_modelo,model='HS'):
     '''Defino el sistema de ecuaciones a resolver. El argumento params_modelo
     es una lista donde los primeros n-1 elementos son los parametros del sistema,
     mientras que el útimo argumento especifica el modelo en cuestión,
@@ -57,7 +57,7 @@ def dX_dz(z, variables,*params_modelo):
     return [s0,s1,s2,s3,s4]
 
 
-def integrador(params_fisicos, n=1, cantidad_zs=int(10**5), max_step=0.001,
+def integrador(params_fisicos, n=1, cantidad_zs=int(10**5), max_step=0.003,
                 z_inicial=30, z_final=0, sistema_ec=dX_dz, verbose=False,
                 model='HS'):
 
