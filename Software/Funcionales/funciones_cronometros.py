@@ -31,7 +31,7 @@ def chi_2_cronometros(H_teo,H_data, dH):
 
 def params_to_chi2(theta, params_fijos, z_data, H_data, dH,
                     cantidad_zs=10000, max_step=0.005,
-                    verbose=True, model='HS'):
+                    verbose=True, model='HS', chi_riess=True):
     '''Dados los parámetros libres del modelo (omega, b y H0) y los que quedan params_fijos (n),
     devuelve un chi2 para los datos de los
     cronómetros cósmicos'''
@@ -57,7 +57,12 @@ def params_to_chi2(theta, params_fijos, z_data, H_data, dH,
         H_teo = H_int(z_data)
 
     chi = chi_2_cronometros(H_teo,H_data,dH)
-    return chi+chi2_H0
+
+
+    if chi_riess==True:
+        return chi+chi_H0
+    else:
+        return chi
 
 
 def params_to_chi2_taylor(theta, params_fijos, z_data, H_data, dH,
