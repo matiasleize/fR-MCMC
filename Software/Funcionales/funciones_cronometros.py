@@ -4,12 +4,12 @@ Created on Sun Feb  2 13:28:48 2020
 @author: matias
 """
 import numpy as np
+from scipy.interpolate import interp1d
+
+
 import sys
 import os
 from os.path import join as osjoin
-from scipy.interpolate import interp1d
-
-from scipy.constants import c as c_luz #metros/segundos
 from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 
