@@ -38,11 +38,11 @@ def params_to_chi2(theta, params_fijos, z_data, H_data, dH,
     if len(theta)==3:
         [omega_m,b,H_0] = theta
         n = params_fijos
-        chi2_H0 = ((H_0-73.48)/1.66)**2
+        chi_H0 = ((H_0-73.48)/1.66)**2
     elif len(theta)==2:
         [omega_m,b] = theta
         [H_0,n] = params_fijos
-        chi2_H0 = 0
+        chi_H0 = 0
 
     if (0 <= b < 0.1):
         if model=='HS':
@@ -66,7 +66,7 @@ def params_to_chi2(theta, params_fijos, z_data, H_data, dH,
 
 
 def params_to_chi2_taylor(theta, params_fijos, z_data, H_data, dH,
-                            cantidad_zs=10000,omega_fijo=False,model='HS',chi_riess=True):
+                            omega_fijo=False,model='HS',chi_riess=True):
     '''Dados los parámetros libres del modelo (omega, b y H0) y los que quedan params_fijos (n),
     devuelve un chi2 para los datos de cronómetros cósmicos'''
 
