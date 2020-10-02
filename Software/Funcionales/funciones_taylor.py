@@ -31,7 +31,7 @@ def Taylor_ST(z,omega_m,b,H0):
     63488*math.e**(16*N)*omega_m*(-1+omega_m+omega_r)**5+
     20480*math.e**(15*N)*omega_r*(-1+omega_m+omega_r)**5+
     20480*math.e**(19*N)*(-1+omega_m+omega_r)**6)/(omega_m-
-    4*math.e**(3*N)*(-1+omega_m+omega_r))**10)**0.5
+    4*math.e**(3*N)*(-1+omega_m+omega_r))**10)**(0.5)
 
     func = lambdify(N, St_tay,'numpy') # returns a numpy-ready function
 
