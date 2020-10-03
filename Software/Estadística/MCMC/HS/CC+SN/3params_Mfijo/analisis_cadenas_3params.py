@@ -14,12 +14,10 @@ from funciones_analisis_cadenas import graficar_cadenas,graficar_contornos,grafi
 #%%
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_HS_CC+SN_3params_M_fijo.npz') as data:
-#with np.load('valores_medios_HS_cron+SN_3params_M_fijo_sin_riess.npz') as data:
     sol = data['sol']
 #%%
 os.chdir(path_datos_global+'/Resultados_cadenas')
 filename = "sample_HS_CC+SN_3params_M_fijo.h5"
-#filename = "sample_HS_cron+SN_3params_M_fijo_sin_riess_taylor.h5"
 reader = emcee.backends.HDFBackend(filename)
 # Algunos valores
 tau = reader.get_autocorr_time()

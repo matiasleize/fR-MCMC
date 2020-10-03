@@ -13,11 +13,12 @@ sys.path.append('./Software/Funcionales/')
 from funciones_analisis_cadenas import graficar_cadenas,graficar_contornos,graficar_taus_vs_n
 #%%
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-with np.load('valores_medios_HS_CC+H0_3params.npz') as data:
+with np.load('valores_medios_HS_CC+H0_3params_taylor_nunes.npz') as data:
     sol = data['sol']
 #%%
 os.chdir(path_datos_global+'/Resultados_cadenas')
-filename = 'sample_HS_CC+H0_3params.h5'
+filename = "sample_HS_CC+H0_3params_taylor_nunes.h5"
+
 reader = emcee.backends.HDFBackend(filename)
 # Algunos valores
 tau = reader.get_autocorr_time()
@@ -30,21 +31,19 @@ print(tau)
 graficar_cadenas(reader,
                 labels = ['omega_m','b', 'H0'])
 #%%
-burnin=100
+burnin=1000
 burnin = int(2 * np.max(tau))
 thin = int(0.5 * np.min(tau))
-graficar_contornos(reader,params_truths=sol,discard=burnin,#thin=thin
-                    labels= ['omega_m','b','H0'])
-#%%
-plt.figure()
-graficar_taus_vs_n(reader,num_param=0)
-graficar_taus_vs_n(reader,num_param=1)
-graficar_taus_vs_n(reader,num_param=2)
+graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,
+                    labels= ['omega_m','b','H0'],
+                    title='CC+H0'#,
+                    #poster=True,color='b'
+                    )
 
 #%% Printeo los valores!
 from IPython.display import display, Math
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
-labels = ['omega_m', 'b', 'H0']
+labels = ['omega_m','b', 'H0']
 len_chain,nwalkers,ndim=reader.get_chain().shape
 for i in range(ndim):
     mcmc = np.percentile(samples[:, i], [16, 50, 84])
@@ -53,3 +52,9 @@ for i in range(ndim):
     txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{{2:.3f}}}"
     txt = txt.format(mcmc[1], q[0], q[1], labels[i])
     display(Math(txt))
+
+#%%
+plt.figure()
+graficar_taus_vs_n(reader,num_param=2)
+graficar_taus_vs_n(reader,num_param=0)
+graficar_taus_vs_n(reader,num_param=1)

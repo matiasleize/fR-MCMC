@@ -22,7 +22,7 @@ from funciones_cronometros import  params_to_chi2
 #%% Predeterminados:
 n = 1
 omega_m_true = 0.3
-b_true = 0.1
+b_true = 2
 H0_true =  73.48 #Unidades de (km/seg)/Mpc
 #%%
 

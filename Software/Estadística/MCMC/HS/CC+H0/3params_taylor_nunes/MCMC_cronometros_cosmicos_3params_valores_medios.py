@@ -27,13 +27,13 @@ from funciones_cronometros import  params_to_chi2_taylor
 n = 1
 
 os.chdir(path_git+'/Software/Estadística/Datos/')
-z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
+z_data, H_data, dH  = leer_data_cronometros('datos_cronometros_nunes.txt')
 
 omega_m_true = 0.23
 b_true = 0.1
 H0_true =  73.48 #Unidades de (km/seg)/Mpc
 
-nll = lambda theta: params_to_chi2_taylor(theta,n,z_data,H_data,dH)
+nll = lambda theta: params_to_chi2_taylor(theta,n,z_data,H_data,dH,nunes=True)
 initial = np.array([omega_m_true,b_true,H0_true])
 bnds = ((0.05, 0.5), (-1,1), (60,100))
 soln = minimize(nll, initial,bounds=bnds, options = {'eps': 0.001})
@@ -41,4 +41,4 @@ omega_m_ml, b_ml, H0_ml = soln.x
 print(omega_m_ml,b_ml,H0_ml)
 
 os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
-np.savez('valores_medios_HS_CC+H0_3params_taylor', sol=soln.x)
+np.savez('valores_medios_HS_CC+H0_3params_taylor_nunes', sol=soln.x)

@@ -39,11 +39,7 @@ graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,
                     title='CC+H0'#,
                     #poster=True,color='b'
                     )
-#%%
-plt.figure()
-graficar_taus_vs_n(reader,num_param=0)
-graficar_taus_vs_n(reader,num_param=1)
-graficar_taus_vs_n(reader,num_param=2)
+
 #%% Printeo los valores!
 from IPython.display import display, Math
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
@@ -56,3 +52,9 @@ for i in range(ndim):
     txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{{2:.3f}}}"
     txt = txt.format(mcmc[1], q[0], q[1], labels[i])
     display(Math(txt))
+
+#%%
+plt.figure()
+graficar_taus_vs_n(reader,num_param=2)
+graficar_taus_vs_n(reader,num_param=0)
+graficar_taus_vs_n(reader,num_param=1)
