@@ -55,7 +55,7 @@ def leer_data_BAO(archivo_BAO):
     z, valores_data, errores_data, rd_fid = np.loadtxt(archivo_BAO,
     usecols=(0,1,2,4), unpack=True)
     return z, valores_data, errores_data, rd_fid
-    
+
 #%%
 if __name__ == '__main__':
     import sys
@@ -73,7 +73,8 @@ if __name__ == '__main__':
 
     #%% Cronómetros
     os.chdir(path_git+'/Software/Estadística/Datos/')
-    z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
+#    z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
+    z_data, H_data, dH  = leer_data_cronometros('datos_cronometros_nunes.txt')
     #z_data, H_data, dH
 
     #%% BAO

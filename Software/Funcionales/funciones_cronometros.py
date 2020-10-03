@@ -66,7 +66,8 @@ def params_to_chi2(theta, params_fijos, z_data, H_data, dH,
 
 
 def params_to_chi2_taylor(theta, params_fijos, z_data, H_data, dH,
-                            omega_fijo=False,model='HS',chi_riess=True):
+                            omega_fijo=False,model='HS',chi_riess=True,
+                            nunes=False):
     '''Dados los parámetros libres del modelo (omega, b y H0) y los que quedan params_fijos (n),
     devuelve un chi2 para los datos de cronómetros cósmicos'''
 
@@ -74,16 +75,22 @@ def params_to_chi2_taylor(theta, params_fijos, z_data, H_data, dH,
     if len(theta)==3:
         [omega_m,b,H_0] = theta
         n = params_fijos
-        chi2_H0 = ((H_0-73.48)/1.66)**2
+        if nunes==True:
+            chi_H0 = ((H_0-73.02)/1.79)**2 #El que usa Nunes
+        else:
+            chi2_H0 = ((H_0-73.48)/1.66)**2
     elif len(theta)==2:
         if omega_fijo==True:
             [b,H_0] = theta
             [omega_m,n] = params_fijos
-            chi2_H0 = ((H_0-73.48)/1.66)**2
+            if nunes==True:
+                chi_H0 = ((H_0-73.02)/1.79)**2 #El que usa Nunes
+            else:
+                chi2_H0 = ((H_0-73.48)/1.66)**2
         else:
             [omega_m,b] = theta
             [H_0,n] = params_fijos
-            chi2_H0 = 0
+            chi_H0 = 0
 
     if model=='HS':
         H_teo = Taylor_HS(z_data, omega_m, b, H_0)
@@ -93,6 +100,6 @@ def params_to_chi2_taylor(theta, params_fijos, z_data, H_data, dH,
     chi = chi_2_cronometros(H_teo,H_data,dH)
 
     if chi_riess==True:
-        return chi+chi2_H0
+        return chi+chi_H0
     else:
         return chi
