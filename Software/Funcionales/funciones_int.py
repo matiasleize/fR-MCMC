@@ -1,6 +1,5 @@
 import time
 import numpy as np
-from matplotlib import pyplot as plt
 from scipy.integrate import solve_ivp
 from scipy.constants import c as c_luz #metros/segundos
 c_luz_norm = c_luz/1000;
@@ -12,6 +11,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
+
 from funciones_condiciones_iniciales import condiciones_iniciales
 from funciones_cambio_parametros import params_fisicos_to_modelo
 #%%
@@ -105,19 +105,21 @@ def integrador(params_fisicos, n=1, cantidad_zs=int(10**5), max_step=0.003,
 
 #%%
 if __name__ == '__main__':
+    from matplotlib import pyplot as plt
 
-    omega_m = 0.24
+    omega_m = .24 #Con valores mas altos de omega deja de andar para b=0.01! Hacer
+    #mapa de paparams para Hs n=2
     b = 2
     H0 = 73.48
     params_fisicos = [omega_m,b,H0]
 
     z_inicial = 30
     z_final = 0
-    cantidad_zs = int(10**6)
-    max_step = 0.01
+    cantidad_zs = int(10**4)
+    max_step = 0.003
 
-    zs, H_ode = integrador(params_fisicos, n=1, cantidad_zs=int(10**6),
-                max_step=0.01, z_inicial=30, z_final=0, sistema_ec=dX_dz,
+    zs, H_ode = integrador(params_fisicos, n=1, cantidad_zs=cantidad_zs,
+                max_step=max_step, z_inicial=30, z_final=0, sistema_ec=dX_dz,
                 verbose=True)
 
     #%matplotlib qt5
@@ -129,3 +131,30 @@ if __name__ == '__main__':
     plt.ylabel('H(z)')
     plt.plot(zs,H_ode,label='ODE')
     plt.legend(loc='best')
+
+
+#%% Testeamos el cumtrapz comparado con simpson para la integral de 1/H
+    from scipy.integrate import simps,trapz
+
+    def integrals(ys, xs):
+        x_range = []
+        y_range = []
+        results = []
+        for i in range(len(xs)):
+            x_range.append(xs[i])
+            y_range.append(ys[i])
+            integral = simps(y_range, x_range) #Da un error relativo de 10**(-7)
+            #integral = trapz(y_range, x_range) #Da un error relativo de 10**(-15)
+            results.append(integral)
+        return np.array(results)
+
+    integral = cumtrapz(H_ode**(-1),zs, initial=0)
+    integral_1 = integrals(H_ode**(-1),zs)
+
+    #%matplotlib qt5
+#    plt.figure(1)
+    plt.plot(zs,H_ode**(-1))
+    plt.plot(zs,integral)
+    #plt.plot(zs,integral_1)
+    plt.figure(2)
+    plt.plot(zs,1-integral_1/integral) #Da un warning xq da 0/0 en z=0
