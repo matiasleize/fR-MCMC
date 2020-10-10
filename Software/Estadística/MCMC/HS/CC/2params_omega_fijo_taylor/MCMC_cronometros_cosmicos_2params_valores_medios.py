@@ -20,7 +20,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_data import leer_data_cronometros
-from funciones_cronometros import  params_to_chi2_taylor
+from funciones_cronometros import  params_to_chi2
 
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 #%% Predeterminados:
@@ -33,8 +33,8 @@ omega_m_true = 0.24
 b_true = 0
 H0_true =  73.48 #Unidades de (km/seg)/Mpc
 
-nll = lambda theta: params_to_chi2_taylor(theta,[omega_m_true,n],z_data,H_data
-                    ,dH,omega_fijo=True,chi_riess=False)
+nll = lambda theta: params_to_chi2(theta,[omega_m_true,n],z_data,H_data
+                    ,dH,omega_fijo=True,chi_riess=False,taylor=True)
 initial = np.array([b_true,H0_true])
 bnds = ((-1,1), (60,80))
 soln = minimize(nll, initial,bounds=bnds)#, options = {'eps': 0.01})
