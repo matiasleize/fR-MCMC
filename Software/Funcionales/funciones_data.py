@@ -34,7 +34,27 @@ def leer_data_pantheon(archivo_pantheon,min_z = 0,max_z = 3):
     Cinv = Cinv.reshape(len(zhel),len(zhel))
     zcmb = zcmb[mask]
 
-    return zcmb,zhel, Cinv, mb
+    return zcmb, zhel, Cinv, mb
+
+def leer_data_pantheon_2(archivo_pantheon,archivo_pantheon_2):
+    # leo la tabla de datos:
+    zcmb0,zhel0,dz0,mb0,dmb0=np.loadtxt(archivo_pantheon
+                    , usecols=(1,2,3,4,5),unpack=True)
+    zcmb_1,hmass,x1,cor=np.loadtxt(archivo_pantheon_2,usecols=(7,13,20,22),
+                        unpack=True)
+    #creamos la matriz diagonal con los errores de mB. ojo! esto depende de alfa y beta:
+    Dstat=np.diag(dmb0**2.)
+
+    # hay que leer la matriz de los errores sistematicos que es de NxN
+    sn=len(zcmb0)
+    Csys=np.loadtxt('lcparam_full_long_sys.txt',unpack=True)
+    Csys=Csys.reshape(sn,sn)
+    #armamos la matriz de cov final y la invertimos:
+    Ccov=Csys+Dstat
+    Cinv=inv(Ccov)
+
+    return zcmb0, zcmb_1, zhel0, Cinv, mb0, x1, cor, hmass
+
 
 
 def leer_data_cronometros(archivo_cronometros):
