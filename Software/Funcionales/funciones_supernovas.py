@@ -19,7 +19,7 @@ sys.path.append('./Software/Funcionales/')
 from funciones_cambio_parametros import params_fisicos_to_modelo
 from funciones_int import integrador
 from funciones_taylor import Taylor_HS, Taylor_ST
-
+from funciones_LambdaCDM import H_LCDM
 
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.interpolate import interp1d
@@ -37,7 +37,7 @@ def magn_aparente_teorica(zs, Hs, zcmb, zhel):
 
     d_c =  c_luz_km * cumtrapz(Hs**(-1), zs, initial=0)
     dc_int = interp1d(zs, d_c) #Interpolamos
-    d_L = (1 + zhel) * dc_int(zcmb) #Obs, Caro multiplica por Zhel, con Zobs da un poquin mejor
+    d_L = (1 + zhel) * dc_int(zcmb) #Obs, Caro multiplica por Zhel, con Zcmb da un poquin mejor
     #Magnitud aparente teorica
     muth = 25.0 + 5.0 * np.log10(d_L)
     return muth
@@ -55,7 +55,8 @@ def chi_2_supernovas(muth,magn_aparente_obs,M_abs,C_invertida):
     return chi2
 
 def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
-                    mb,cantidad_zs=10000, max_step=0.1, verbose=True,model='HS'):
+                    mb,cantidad_zs=100000, verbose=True,model='HS',
+                    taylor=False,lcdm=False):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
     de supernovas. 1 parámetro fijo y 4 variables'''
 
@@ -66,98 +67,145 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
         [Mabs,omega_m,b] = theta
         [H_0,n] = params_fijos
 
-    zs = np.linspace(0,3,cantidad_zs)
-
-    if (0 <= b < 0.1):
+    if taylor == True:
+        zs = np.linspace(0,3,cantidad_zs)
         if model=='HS':
             H_modelo = Taylor_HS(zs, omega_m, b, H_0)
         else:
             H_modelo = Taylor_ST(zs, omega_m, b, H_0)
-
     else:
-        params_fisicos = [omega_m,b,H_0]
-        z, H = integrador(params_fisicos, n)
-        H_int = interp1d(z,H)
-        H_modelo = H_int(z_data)
+        if (0 <= b < 0.1):
+            zs = np.linspace(0,3,cantidad_zs)
+            if model=='HS':
+                H_modelo = Taylor_HS(zs, omega_m, b, H_0)
+            else:
+                H_modelo = Taylor_ST(zs, omega_m, b, H_0)
+        else:
+            params_fisicos = [omega_m,b,H_0]
+            zs, H_modelo = integrador(params_fisicos, n)
 
     muth = magn_aparente_teorica(zs,H_modelo,zcmb,zhel)
     chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
     return chi
 
-
-def params_to_chi2_taylor(cond_iniciales, theta, params_fijos, zcmb, zhel, Cinv,
-                    mb,cantidad_zs=10000, verbose=True,model='HS'):
+def testeo_supernovas(theta, params_fijos, zcmb, zhel, Cinv,
+                      mb0, x1, color, hmass, cantidad_zs=int(10**5),
+                      model='HS',lcdm=False):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
     de supernovas. 1 parámetro fijo y 4 variables'''
 
-    if len(theta)==4:
-        [Mabs,omega_m,b,H_0] = theta
-        n = params_fijos
-    elif len(theta)==3:
-        [Mabs,omega_m,b] = theta
-        [H_0,n] = params_fijos
+    if lcdm == True:
+        if len(theta)==5:
+            [Mabs,omega_m,alpha,beta,gamma] = theta
+            [H_0,n] = params_fijos
+        if len(theta)==4:
+            [Mabs,alpha,beta,gamma] = theta
+            [omega_m,H_0,n] = params_fijos
 
-    zs = np.linspace(0,3,cantidad_zs)
-    if model=='HS':
-        H_modelo = Taylor_HS(zs, omega_m, b, H_0)
+        zs = np.linspace(0,3,cantidad_zs)
+        H_modelo = H_LCDM(zs, omega_m, H_0)
+
     else:
-        H_modelo = Taylor_ST(zs, omega_m, b, H_0)
+        if len(theta)==7:
+            [Mabs,omega_m,b,H_0,alpha,beta,gamma] = theta
+            n = params_fijos
+        elif len(theta)==6:
+            [Mabs,omega_m,b,alpha,beta,gamma] = theta
+            [H_0,n] = params_fijos
+        elif len(theta)==4:
+            [Mabs,alpha,beta,gamma] = theta
+            [omega_m,b,H_0,n] = params_fijos
+
+        if (0 <= b < 0.1):
+            zs = np.linspace(0,3,cantidad_zs)
+            if model=='HS':
+                H_modelo = Taylor_HS(zs, omega_m, b, H_0)
+            else:
+                H_modelo = Taylor_ST(zs, omega_m, b, H_0)
+
+        else:
+            params_fisicos = [omega_m,b,H_0]
+            zs, H_modelo = integrador(params_fisicos, n, cantidad_zs=cantidad_zs)
+
+    alpha_0 = 0.154
+    beta_0 = 3.02
+    gamma_0 = 0.053
+    mstep0 = 10.13
+    #tau0 = 0.001
+
+    #DeltaM_0=gamma_0*np.power((1.+np.exp((mstep0-hmass)/tau0)),-1)
+    #DeltaM=gamma*np.power((1.+np.exp((mstep0-hmass)/tau0)),-1)
+
+    #DeltaM_0 = gamma_0 * np.heaviside(hmass-mstep0, 1)
+    #DeltaM = gamma * np.heaviside(hmass-mstep0, 1)
+
+    sn = len(zcmb)
+    muobs =  mb0 - Mabs + x1 * (alpha-alpha_0) - color * (beta-beta_0) + np.heaviside(hmass-mstep0, 1) * (gamma-gamma_0)
+
     muth = magn_aparente_teorica(zs,H_modelo,zcmb,zhel)
-    chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
 
-    return chi
+    deltamu = muobs - muth
+    transp = np.transpose(deltamu)
+    aux = np.dot(Cinv,deltamu)
+    chi2 = np.dot(transp,aux)
+
+    return chi2
+
+#%%
+if __name__ == '__main__':
 
 
-def params_to_chi2_omega_H0_fijo(cond_iniciales, theta, params_fijos, zcmb,
-                                zhel, Cinv, mb, cantidad_zs=3000, max_step=0.1,
-                                verbose=True):
-    '''Dados los parámetros del modelo devuelve un chi2 para los datos
-    de supernovas. 1 parámetro fijo y 4 variables'''
+    import numpy as np
+    np.random.seed(42)
+    from matplotlib import pyplot as plt
 
-    [Mabs,b] = theta
-    [omega_m,H_0,n] = params_fijos
+    import sys
+    import os
+    from os.path import join as osjoin
+    from pc_path import definir_path
+    path_git, path_datos_global = definir_path()
+    os.chdir(path_git)
+    sys.path.append('./Software/Funcionales/')
+    from funciones_data import leer_data_pantheon_2
+    from funciones_data import leer_data_pantheon
+    #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
-    ## Transformo los parametros fisicos en los del modelo:
-    c1,c2 = params_fisicos_to_modelo(omega_m,b,n)
-    params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
-    z,E = integrador(cond_iniciales, params_modelo,
-                    cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
-    muth = magn_aparente_teorica(z,E,zcmb,zhel,H_0)
-    chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
-    return chi
+    #%% Predeterminados:
+    M_true = -19.2
+    omega_m_true = 0.3
+    b_true = 0.5
+    H0_true =  73.48 #Unidades de (km/seg)/Mpc
+    alpha_true = 0.154
+    beta_true = 3.02
+    gamma_true = 0.053
+    n = 1
 
-def params_to_chi2_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel,
-                            Cinv, mb, cantidad_zs=3000, max_step=0.1, verbose=True):
-    '''Dados los parámetros del modelo devuelve un chi2 para los datos de
-    supernovas. 2 parámetros fijos y 3 variables'''
+    params_fijos = [H0_true,n]
 
-    [Mabs,omega_m,b] = theta
-    [H_0,n] = params_fijos
+    #%%
+    #Datos de SN
+    os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
 
-    ## Transformo los parametros fisicos en los del modelo:
-    c1,c2 = params_fisicos_to_modelo(omega_m,b,n)
-    params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
-    z,E = integrador(cond_iniciales, params_modelo,
-                    cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
-    muth = magn_aparente_teorica(z,E,zcmb,zhel,H_0)
-    chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
-    #chi_norm = chi / (len(zcmb) - len(theta))
-    return chi
+    _, zcmb, zhel, Cinv, mb0, x1, cor, hmass = leer_data_pantheon_2(
+                'lcparam_full_long_zhel.txt','ancillary_g10.txt')
+    zcmb_1,zhel_1, Cinv_1, mb_1 = leer_data_pantheon('lcparam_full_long_zhel.txt')
 
-def params_to_chi2_M_H0_fijo(cond_iniciales, theta, params_fijos, zcmb, zhel,
-                            Cinv, mb, cantidad_zs=3000, max_step=0.1, verbose=True):
-    '''Dados los parámetros del modelo devuelve un chi2 para los datos de
-    supernovas. 3 parámetros fijos y 2 variables.'''
+    #%%
+    np.all(zhel_1==zhel)
+    np.where(zcmb_1==zcmb)
+    zcmb
+    zcmb_1
+    alpha_0=0.154
+    beta_0=3.02
+    gamma_0=0.053
+    mstep0=10.13
+    tau0=0.001
+    from matplotlib import pyplot as plt
+    plt.figure()
+    plt.plot(hmass,gamma_0*np.power((1.+np.exp((mstep0-hmass)/tau0)),-1),'.')
+    plt.plot(hmass,gamma_0*np.heaviside(hmass-mstep0, 1),'.')
+    plt.grid(True)
 
-    [omega_m,b] = theta
-    [Mabs,H_0,n] = params_fijos
-
-    ## Transformo los parametros fisicos en los del modelo:
-    c1,c2 = params_fisicos_to_modelo(omega_m,b,n)
-    params_modelo = [c1,c2,n] #de la cruz: [b,c,d,n]
-    z,E = integrador(cond_iniciales, params_modelo,
-                    cantidad_zs=cantidad_zs, max_step=max_step,verbose=verbose)
-    muth = magn_aparente_teorica(z,E,zcmb,zhel,H_0)
-    chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
-    #chi_norm = chi / (len(zcmb) - len(theta))
-    return chi
+    plt.figure()
+    plt.plot(zcmb-zcmb_1,'.')
+    plt.grid(True)

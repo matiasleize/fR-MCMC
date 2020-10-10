@@ -56,53 +56,9 @@ def chi_2_supernovas(muth,magn_aparente_obs,M_abs,C_invertida):
     chi2 = np.dot(transp,aux)
     return chi2
 
-#Juntamos todo
-def params_to_chi2_taylor(theta, params_fijos, zcmb, zhel, Cinv,
-                    mb,z_data_cron, H_data_cron, dH_cron, cantidad_zs=10000,
-                     verbose=True,model='HS',M_fijo=False,chi_riess=True):
-    '''Dados los parámetros del modelo devuelve un chi2 para los datos
-    de supernovas. 1 parámetro fijo y 4 variables'''
-
-    if len(theta)==4:
-        [Mabs,omega_m,b,H_0] = theta
-        n = params_fijos
-        chi_H0 = ((H_0-73.48)/1.66)**2
-    elif len(theta)==3:
-        if M_fijo == False:
-            [Mabs,omega_m,b] = theta
-            [H_0,n] = params_fijos
-            chi_H0 = 0
-        else:
-            [omega_m,b,H_0] = theta
-            [Mabs,n] = params_fijos
-            chi_H0 = ((H_0-73.48)/1.66)**2
-
-    #Preliminares SN:
-    zs_SN = np.linspace(0,3,cantidad_zs)
-
-
-    if model=='HS':
-        H_modelo_cron = Taylor_HS(z_data_cron, omega_m, b, H_0)
-        H_modelo_SN = Taylor_HS(zs_SN, omega_m, b, H_0)
-    else:
-        H_modelo_cron = Taylor_ST(z_data_cron, omega_m, b, H_0)
-        H_modelo_SN = Taylor_ST(zs_SN, omega_m, b, H_0)
-
-    #Cronometros:
-    chi_cron = chi_2_cronometros(H_modelo_cron,H_data_cron,dH_cron)
-
-    #Supernovas:
-    muth = magn_aparente_teorica(zs_SN,H_modelo_SN,zcmb,zhel)
-    chi_sn = chi_2_supernovas(muth,mb,Mabs,Cinv)
-
-    if chi_riess==True:
-        return chi_cron+chi_sn+chi_H0
-    else:
-        return chi_cron+chi_sn
-
 def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
-                    mb,z_data_cron, H_data_cron, dH_cron, cantidad_zs=100000,
-                     verbose=True,model='HS',M_fijo=False,chi_riess=True):
+                    mb,z_data_cron, H_data_cron, dH_cron, cantidad_zs=int(10**5),
+                     verbose=True,model='HS',M_fijo=False,chi_riess=True,taylor=False):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
     de supernovas. 1 parámetro fijo y 4 variables'''
 
@@ -120,28 +76,37 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
             [Mabs,n] = params_fijos
             chi_H0 = ((H_0-73.48)/1.66)**2
 
-    #Preliminares SN:
-    zs_SN = np.linspace(0,3,cantidad_zs)
-
-    if (0 <= b < 0.1):
+    if taylor == True:
+        zs_modelo = np.linspace(0,3,cantidad_zs)
         if model=='HS':
             H_modelo_cron = Taylor_HS(z_data_cron, omega_m, b, H_0)
-            H_modelo_SN = Taylor_HS(zs_SN, omega_m, b, H_0)
+            H_modelo = Taylor_HS(zs_modelo, omega_m, b, H_0)
         else:
             H_modelo_cron = Taylor_ST(z_data_cron, omega_m, b, H_0)
-            H_modelo_SN = Taylor_ST(zs_SN, omega_m, b, H_0)
+            H_modelo = Taylor_ST(zs_modelo, omega_m, b, H_0)
+
     else:
-        params_fisicos = [omega_m,b,H_0]
-        z, H = integrador(params_fisicos, n)
-        H_int = interp1d(z,H)
+        if (0 <= b < 0.1):
+            zs_modelo = np.linspace(0,3,cantidad_zs)
+            if model=='HS':
+                H_modelo_cron = Taylor_HS(z_data_cron, omega_m, b, H_0)
+                H_modelo = Taylor_HS(zs_modelo, omega_m, b, H_0)
+            else:
+                H_modelo_cron = Taylor_ST(z_data_cron, omega_m, b, H_0)
+                H_modelo = Taylor_ST(zs_modelo, omega_m, b, H_0)
+        else:
+            params_fisicos = [omega_m,b,H_0]
+            zs_modelo, H_modelo = integrador(params_fisicos, n)
+            #Para SN se interpola con datos en el calculo de mu!
+
+        H_int = interp1d(zs_modelo, H_modelo)
         H_modelo_cron = H_int(z_data_cron)
-        H_modelo_SN = H_int(zs_SN)
 
     #Cronometros:
     chi_cron = chi_2_cronometros(H_modelo_cron,H_data_cron,dH_cron)
 
     #Supernovas:
-    muth = magn_aparente_teorica(zs_SN,H_modelo_SN,zcmb,zhel)
+    muth = magn_aparente_teorica(zs_modelo,H_modelo,zcmb,zhel)
     chi_sn = chi_2_supernovas(muth,mb,Mabs,Cinv)
 
     if chi_riess==True:

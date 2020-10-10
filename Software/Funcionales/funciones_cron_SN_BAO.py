@@ -18,6 +18,7 @@ sys.path.append('./Software/Funcionales/')
 from funciones_cambio_parametros import params_fisicos_to_modelo
 from funciones_int import integrador
 from funciones_taylor import Taylor_HS, Taylor_ST
+from funciones_LambdaCDM import H_LCDM
 
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.integrate import simps as simps
@@ -84,103 +85,12 @@ def chi_2_BAO(teo, data, errores):
     chi2 = np.sum(((data-teo)/errores)**2)
     return chi2
 
-#Juntamos todo
-def params_to_chi2_taylor(theta, params_fijos, zcmb, zhel, Cinv,
-                    mb,z_data_cron, H_data_cron, dH_cron, dataset_BAO,
-                    cantidad_zs=int(10**5), verbose=True, num_datasets=5,
-                    M_fijo=False, model='HS',chi_riess=True):
-    '''Dados los parámetros del modelo devuelve un chi2 para los datos
-    de supernovas. 1 parámetro fijo y 4 variables'''
-
-    if len(theta)==4:
-        [Mabs,omega_m,b,H_0] = theta
-        n = params_fijos
-        chi_H0 = ((H_0-73.48)/1.66)**2
-    elif len(theta)==3:
-        if M_fijo==True:
-            [omega_m,b,H_0] = theta
-            [Mabs,n] = params_fijos
-            chi_H0 = ((H_0-73.48)/1.66)**2
-        else:
-            [Mabs,omega_m,b] = theta
-            [H_0,n] = params_fijos
-            chi_H0 = 0
-
-    #Preliminares (sn)
-    zs_SN = np.linspace(0,3,cantidad_zs)
-
-    #Preliminares (BAO)
-    zs_BAO = np.linspace(0.1, 3, cantidad_zs)
-    h = H_0/100
-    cte = 0.02 #(omega_B * h**2)     #omega_b = 0.05 #(o algo asi)
-
-    #Calculo el zd
-    b1 = 0.313*(omega_m*h**2)**(-0.419)*(1+0.607*(omega_m*h**2)**(0.6748))
-    b2 = 0.238*(omega_m*h**2)**0.223
-    zd = ((1291*(omega_m*h**2)**0.251)/(1+0.659*(omega_m*h**2)**0.828)) * (1+b1*cte**b2)
-    #Calculo del rd:
-    zs_rd = np.logspace(np.log10(zd),13,int(10**5))
-
-    if model=='HS':
-        H_modelo_cron = Taylor_HS(z_data_cron, omega_m, b, H_0)
-        H_modelo_SN = Taylor_HS(zs_SN, omega_m, b, H_0)
-        H_modelo_BAO = Taylor_HS(zs_BAO, omega_m, b, H_0)
-        H_rd = Taylor_HS(zs_rd, omega_m, b, H_0)
-    else:
-        H_modelo_cron = Taylor_ST(z_data_cron, omega_m, b, H_0)
-        H_modelo_SN = Taylor_ST(zs_SN, omega_m, b, H_0)
-        H_modelo_BAO = Taylor_ST(zs_BAO, omega_m, b, H_0)
-        H_rd = Taylor_ST(zs_rd, omega_m, b, H_0)
-
-
-    #Cronometros:
-    chi_cron = chi_2_cronometros(H_modelo_cron,H_data_cron,dH_cron)
-
-    #Supernovas:
-    muth = magn_aparente_teorica(zs_SN,H_modelo_SN,zcmb,zhel)
-    chi_sn = chi_2_supernovas(muth,mb,Mabs,Cinv)
-
-    #BAO:
-    R_bar = 31500 * cte * (2.726/2.7)**(-4)
-    #cs = c_luz_km / (np.sqrt(3*(1 + R_bar/(1 + zs_int))))
-    #integrando = cs/H_int
-    integrando = c_luz_km / (H_rd * np.sqrt(3*(1 + R_bar/(1 + zs_rd))))
-    rd = simps(integrando,zs_rd)
-
-    chies_BAO = np.zeros(num_datasets)
-    for i in range(num_datasets):
-        (z_data, valores_data, errores_data, rd_fid) = dataset_BAO[i]
-        #print(type(valores_data))
-        if isinstance(z_data,np.float64):
-            if (rd_fid == 1):
-                pass
-            else:
-                valores_data = valores_data #* (rd/rd_fid)
-                errores_data = errores_data #* (rd/rd_fid)
-        elif isinstance(z_data,np.ndarray):
-            for j in range(len(z_data)):
-                if (rd_fid[j] == 1):
-                        pass
-                else:
-                    valores_data[j] = valores_data[j] #*(rd/rd_fid[j])
-                    errores_data[j] = errores_data[j]# *(rd/rd_fid[j])
-        outs = Hs_to_Ds(zs_BAO,H_modelo_BAO,z_data,i)
-        chies_BAO[i] = chi_2_BAO(outs,valores_data,errores_data)
-    if np.isnan(sum(chies_BAO))==True:
-        print('Hay errores!')
-        print(omega_m,H_0,rd)
-    chi_BAO = np.sum(chies_BAO)
-
-    if chi_riess==True:
-        return chi_cron+chi_sn+chi_BAO+chi_H0
-    else:
-        return chi_cron+chi_sn+chi_BAO
 
 #Juntamos todo
 def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
                     mb,z_data_cron, H_data_cron, dH_cron, dataset_BAO,
                     cantidad_zs=int(10**5), verbose=True, num_datasets=5,
-                    M_fijo=False, model='HS',chi_riess=True):
+                    M_fijo=False, model='HS',chi_riess=True,taylor=False):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
     de supernovas. 1 parámetro fijo y 4 variables'''
 
@@ -198,11 +108,42 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
             [H_0,n] = params_fijos
             chi_H0 = 0
 
-    #Preliminares (sn)
-    zs_SN = np.linspace(0,3,cantidad_zs)
+    if taylor == True:
+        zs = np.linspace(0,3,cantidad_zs)
+        if model=='HS':
+            H_modelo_cron = Taylor_HS(z_data_cron, omega_m, b, H_0)
+            H_modelo = Taylor_HS(zs, omega_m, b, H_0)
+            #H_modelo_BAO = Taylor_HS(zs_BAO, omega_m, b, H_0)
+            #H_rd = Taylor_HS(zs_rd, omega_m, b, H_0)
+        else:
+            H_modelo_cron = Taylor_ST(z_data_cron, omega_m, b, H_0)
+            H_modelo = Taylor_ST(zs, omega_m, b, H_0)
+            #H_modelo_BAO = Taylor_ST(zs_BAO, omega_m, b, H_0)
+            #H_rd = Taylor_ST(zs_rd, omega_m, b, H_0)
+    else:
+        if (0 <= b < 0.1):
+            zs = np.linspace(0,3,cantidad_zs)
+            if model=='HS':
+                H_modelo_cron = Taylor_HS(z_data_cron, omega_m, b, H_0)
+                H_modelo = Taylor_HS(zs, omega_m, b, H_0)
+                #H_modelo_BAO = Taylor_HS(zs_BAO, omega_m, b, H_0)
+                #H_rd = Taylor_HS(zs_rd, omega_m, b, H_0)
+            else:
+                H_modelo_cron = Taylor_ST(z_data_cron, omega_m, b, H_0)
+                H_modelo = Taylor_ST(zs, omega_m, b, H_0)
+                #H_modelo_BAO = Taylor_ST(zs_BAO, omega_m, b, H_0)
+                #H_rd = Taylor_ST(zs_rd, omega_m, b, H_0)
+
+        else:
+            params_fisicos = [omega_m,b,H_0]
+            zs, H_modelo = integrador(params_fisicos, n)
+            H_int = interp1d(zs, H_modelo)
+            H_modelo_cron = H_int(z_data_cron)
+    #        H_modelo_BAO = H_int(zs_BAO)
+    #        H_rd = H_int(zs_rd)
 
     #Preliminares (BAO)
-    zs_BAO = np.linspace(0.1, 3, cantidad_zs)
+    #zs_BAO = np.linspace(0.1, 3, cantidad_zs)
     h = H_0/100
     cte = 0.02 #(omega_B * h**2)     #omega_b = 0.05 #(o algo asi)
 
@@ -210,38 +151,17 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
     b1 = 0.313*(omega_m*h**2)**(-0.419)*(1+0.607*(omega_m*h**2)**(0.6748))
     b2 = 0.238*(omega_m*h**2)**0.223
     zd = ((1291*(omega_m*h**2)**0.251)/(1+0.659*(omega_m*h**2)**0.828)) * (1+b1*cte**b2)
-    #Calculo del rd:
+
     zs_rd = np.logspace(np.log10(zd),13,int(10**5))
+    H_rd =H_LCDM(zs_rd)
 
-
-    if (0 <= b < 0.1):
-        if model=='HS':
-            H_modelo_cron = Taylor_HS(z_data_cron, omega_m, b, H_0)
-            H_modelo_SN = Taylor_HS(zs_SN, omega_m, b, H_0)
-            H_modelo_BAO = Taylor_HS(zs_BAO, omega_m, b, H_0)
-            H_rd = Taylor_HS(zs_rd, omega_m, b, H_0)
-        else:
-            H_modelo_cron = Taylor_ST(z_data_cron, omega_m, b, H_0)
-            H_modelo_SN = Taylor_ST(zs_SN, omega_m, b, H_0)
-            H_modelo_BAO = Taylor_ST(zs_BAO, omega_m, b, H_0)
-            H_rd = Taylor_ST(zs_rd, omega_m, b, H_0)
-
-    else:
-        params_fisicos = [omega_m,b,H_0]
-        z, H = integrador(params_fisicos, n)
-        H_int = interp1d(z,H)
-        H_modelo_cron = H_int(z_data_cron)
-        H_modelo_SN = H_int(zs_SN)
-        H_modelo_BAO = H_int(zs_BAO)
-        H_rd = H_int(zs_rd)
-
-    #BAO:
     R_bar = 31500 * cte * (2.726/2.7)**(-4)
     #cs = c_luz_km / (np.sqrt(3*(1 + R_bar/(1 + zs_int))))
     #integrando = cs/H_int
     integrando = c_luz_km / (H_rd * np.sqrt(3*(1 + R_bar/(1 + zs_rd))))
     rd = simps(integrando,zs_rd)
 
+    #BAO:
     chies_BAO = np.zeros(num_datasets)
     for i in range(num_datasets):
         (z_data, valores_data, errores_data, rd_fid) = dataset_BAO[i]
@@ -259,7 +179,8 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
                 else:
                     valores_data[j] = valores_data[j] #*(rd/rd_fid[j])
                     errores_data[j] = errores_data[j]# *(rd/rd_fid[j])
-        outs = Hs_to_Ds(zs_BAO,H_modelo_BAO,z_data,i)
+        #outs = Hs_to_Ds(zs_BAO,H_modelo_BAO,z_data,i) No hace falta usar interpolacion!
+        outs = Hs_to_Ds(zs, H_modelo,z_data,i)
         chies_BAO[i] = chi_2_BAO(outs,valores_data,errores_data)
     if np.isnan(sum(chies_BAO))==True:
         print('Hay errores!')
@@ -270,7 +191,7 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
     chi_cron = chi_2_cronometros(H_modelo_cron,H_data_cron,dH_cron)
 
     #Supernovas:
-    muth = magn_aparente_teorica(zs_SN,H_modelo_SN,zcmb,zhel)
+    muth = magn_aparente_teorica(zs, H_modelo,zcmb,zhel)
     chi_sn = chi_2_supernovas(muth,mb,Mabs,Cinv)
 
     if chi_riess==True:
