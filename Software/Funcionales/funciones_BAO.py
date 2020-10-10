@@ -65,13 +65,14 @@ def params_to_chi2_taylor(theta, params_fijos, dataset, cantidad_zs=int(10**5),
         [omega_m,b] = theta
         [H_0,n] = params_fijos
 
-    zs = np.linspace(0, 3, cantidad_zs) #Mas chico diverge, esta biene esto xq el
+    zs_modelo = np.linspace(0, 3, cantidad_zs) #Mas chico diverge, esta biene esto xq el
     #primer z esta en 0.106 y el paso es del orden de 10**(-5)
 
     if model=='HS':
-        H_teo = Taylor_HS(zs, omega_m, b,H_0)
+        H_modelo = Taylor_HS(zs, omega_m, b,H_0)
     else:
-        H_teo = Taylor_ST(zs, omega_m, b,H_0)
+        H_modelo = Taylor_ST(zs, omega_m, b,H_0)
+
     h = H_0/100
     #omega_b = 0.05 #(o algo asi)
     cte = 0.02 #(omega_B * h**2)
@@ -111,7 +112,7 @@ def params_to_chi2_taylor(theta, params_fijos, dataset, cantidad_zs=int(10**5),
                 else:
                     valores_data[j] = valores_data[j] #*(rd/rd_fid[j])
                     errores_data[j] = errores_data[j]# *(rd/rd_fid[j])
-        outs = Hs_to_Ds(zs,H_teo,z_data,i)
+        outs = Hs_to_Ds(zs_modelo,H_modelo,z_data,i)
         chies[i] = chi_2_BAO(outs,valores_data,errores_data)
     if np.isnan(sum(chies))==True:
         print('Hay errores!')
