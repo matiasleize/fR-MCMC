@@ -24,6 +24,28 @@ F_2R = sym.simplify(sym.diff(F_R,R))
 
 gamma = F_R/(R*F_2R)
 print(sym.simplify(gamma))
+#%%
+H0= sym.Symbol('H0')
+Rs = sym.Symbol('Rs')
+lamb = sym.Symbol('lamb')
+n = sym.Symbol('n')
+R = sym.Symbol('R')
+
+omega_m=0.3
+c = sym.Symbol('c')
+
+#omega_m = sym.Symbol('omega_m')
+#c = 6*(1-omega_m)*(c2/c1)
+
+#r = R/(c*H0**2)
+F = R - lamb * Rs * (1-(1+(R/Rs)**2)**(-n))
+
+#Calculo las derivadas
+F_R = sym.simplify(sym.diff(F,R))
+F_2R = sym.simplify(sym.diff(F_R,R))
+
+gamma = F_R/(R*F_2R)
+print(sym.simplify(gamma))
 
 #%%
 if __name__ == '__main__':
