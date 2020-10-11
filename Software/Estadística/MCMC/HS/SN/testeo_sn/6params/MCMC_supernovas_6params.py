@@ -41,7 +41,7 @@ def log_prior(theta):
         0 < b < 1 and 0.12 < alpha < 0.19 and 2.5 < beta < 3.5 and
         0.01 < gamma < 0.075):
         return 0.0
-    return -np.inf-4
+    return -np.inf
 
 def log_probability(theta):
     lp = log_prior(theta)
