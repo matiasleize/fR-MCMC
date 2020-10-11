@@ -26,8 +26,8 @@ from funciones_cron_SN import params_to_chi2
 
 #%% Predeterminados:
 M_true = -19.2
-omega_m_true = 0.4
-b_true = 0.5
+omega_m_true = 0.2
+b_true = 0.3
 H0_true =  73.48 #Unidades de (km/seg)/Mpc
 n = 1
 
@@ -50,10 +50,10 @@ nll = lambda theta: params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
 
 initial = np.array([M_true,omega_m_true,b_true,H0_true])
 soln = minimize(nll, initial, options = {'eps': 0.01},
-                bounds =((-20,-18),(0.1,0.5),(0, 1),(60,80)))
+                bounds =((-19.8,-19),(0.1,0.5),(0, 1),(68,75)))
 M_ml, omega_m_ml, b_ml, H0_ml = soln.x
 
-print(M_ml,omega_m_ml,b_ml, H0_ml)
+print(M_ml, omega_m_ml, b_ml, H0_ml)
 
 os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
 np.savez('valores_medios_HS_CC+SN_4params', sol=soln.x)

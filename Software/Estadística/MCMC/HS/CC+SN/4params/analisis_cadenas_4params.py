@@ -28,22 +28,22 @@ print(tau)
 #%%
 %matplotlib qt5
 graficar_cadenas(reader,
-                labels = ['$M_{abs}$','$\Omega_{m}$','b','\H_{0}'],title='SN+CC HS')
+                labels = ['$M_{abs}$','$\Omega_{m}$','b','H_{0}'],title='SN+CC HS')
 #%%
 #burnin=300
 burnin = int(2 * np.max(tau))
 thin = int(0.5 * np.min(tau))
 graficar_contornos(reader,params_truths=sol,discard=burnin,
                     #,thin=thin
-                    labels= ['$M_{abs}$','$\Omega_{m}$','b','\H_{0}']
+                    labels= ['$M_{abs}$','$\Omega_{m}$','b','H_{0}']
                     #,title='SN+CC HS'
-                    ,poster=True)
+                    )
 
 
 #%% Printeo los valores!
 from IPython.display import display, Math
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
-labels = ['M_{abs}','\Omega_{m}','b','\H_{0}']
+labels = ['M_{abs}','\Omega_{m}','b','H_{0}']
 len_chain,nwalkers,ndim=reader.get_chain().shape
 for i in range(ndim):
     mcmc = np.percentile(samples[:, i], [16, 50, 84])

@@ -56,7 +56,7 @@ def chi_2_supernovas(muth,magn_aparente_obs,M_abs,C_invertida):
 
 def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
                     mb,cantidad_zs=100000, verbose=True,model='HS',
-                    taylor=False,lcdm=False):
+                    taylor=False):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
     de supernovas. 1 parámetro fijo y 4 variables'''
 
@@ -135,11 +135,9 @@ def testeo_supernovas(theta, params_fijos, zcmb, zhel, Cinv,
 
     #DeltaM_0=gamma_0*np.power((1.+np.exp((mstep0-hmass)/tau0)),-1)
     #DeltaM=gamma*np.power((1.+np.exp((mstep0-hmass)/tau0)),-1)
-
     #DeltaM_0 = gamma_0 * np.heaviside(hmass-mstep0, 1)
     #DeltaM = gamma * np.heaviside(hmass-mstep0, 1)
 
-    sn = len(zcmb)
     muobs =  mb0 - Mabs + x1 * (alpha-alpha_0) - color * (beta-beta_0) + np.heaviside(hmass-mstep0, 1) * (gamma-gamma_0)
 
     muth = magn_aparente_teorica(zs,H_modelo,zcmb,zhel)
