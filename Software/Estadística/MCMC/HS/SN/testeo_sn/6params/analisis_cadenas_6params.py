@@ -43,6 +43,7 @@ graficar_contornos(reader,params_truths=sol,discard=burnin,
 
 
 #%% Printeo los valores!
+thin=1
 from IPython.display import display, Math
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
 labels = ['M_{abs}','\Omega_{m}','b','$alpha$','$beta$','$\gamma$']

@@ -56,7 +56,7 @@ nwalkers, ndim = pos.shape
 #%%
 # Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/')
-filename = "sample_HS_SN_6params.h5"
+filename = "sample_HS_SN_6params_1.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
 textfile_witness = open('witness_2.txt','w+')
@@ -75,7 +75,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
         continue
 
     os.chdir(path_datos_global+'/Resultados_cadenas/')
-    textfile_witness = open('witness_2.txt','w')
+    textfile_witness = open('witness_1.txt','w')
     textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
     textfile_witness.write('Tiempo: {}'.format(time.time()))
     textfile_witness.close()
@@ -90,7 +90,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     #También pido que tau se mantenga relativamente constante:
     converged &= np.all((np.abs(old_tau - tau) / tau) < 0.01)
     if converged:
-        textfile_witness = open('witness_2.txt','a')
+        textfile_witness = open('witness_1.txt','a')
         textfile_witness.write('Convergió!')
         textfile_witness.close()
         break
