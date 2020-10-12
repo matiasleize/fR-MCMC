@@ -59,7 +59,7 @@ os.chdir(path_datos_global+'/Resultados_cadenas/')
 filename = "sample_HS_SN_6params_1.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
-textfile_witness = open('witness_2.txt','w+')
+textfile_witness = open('witness_1.txt','w+')
 textfile_witness.close()
 #%%
 #Initialize the sampler
