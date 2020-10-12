@@ -15,20 +15,13 @@ sys.path.append('./Software/Funcionales/')
 from funciones_cambio_parametros import params_fisicos_to_modelo
 
 
-def condiciones_iniciales(omega_m,b,z0=30):
+def condiciones_iniciales(omega_m,b,H0,z0=30):
 
-    '''
-    Calculo las condiciones iniciales para el sistema de ecuaciones diferenciales
-    para el modelo de Hu-Sawicki
-    OBSERVACION IMPORTANTE: Lamb, R_HS están reescalados por un factor H0**2 y
-    H reescalado por un facor H0. Esto es para librarnos de la dependencia de
-    las condiciones iniciales con H0.
-    '''
     c1,c2=params_fisicos_to_modelo(omega_m,b)
-    #h= H0/100
-    Lamb = 3*(1-omega_m)
-    #R_HS = (c_luz_norm/8315)**2 * (omega_m/(100**2))/0.13
-    R_HS = 6*(1-omega_m)*c2/c1 #Dan lo mismo, este factor no depende de b
+    h= H0/100
+    Lamb = 3*(1-omega_m)*H0**2
+    #R_HS = (c_luz_norm/8315)**2 * (omega_m*h**2)/0.13
+    R_HS = H0**2 * 6*(1-omega_m)*c2/c1 #Dan lo mismo, este factor no depende de b
 
     R = sym.Symbol('R')
     #Calculo F y sus derivadas
@@ -40,8 +33,8 @@ def condiciones_iniciales(omega_m,b,z0=30):
     F_2R = sym.simplify(sym.diff(F_R,R))
 
     z = sym.Symbol('z')
-    H = (omega_m*(1+z)**3 + (1-omega_m))**(0.5)
-    #H_z = ((1+z)**3 *3 * omega_m)/(2*(1+omega_m*(-1+(1+z)**3))**(0.5))
+    H = H0*(omega_m*(1+z)**3 + (1-omega_m))**(0.5)
+    #H_z = H0*((1+z)**3 *3 * omega_m)/(2*(1+omega_m*(-1+(1+z)**3))**(0.5))
     H_z = sym.simplify(sym.diff(H,z))
     H_2z = sym.simplify(sym.diff(H_z,z))
 
@@ -76,11 +69,10 @@ if __name__ == '__main__':
     z0 = 30
     omega_m = 0.3
     b = 2
-
-    cond_iniciales=condiciones_iniciales(omega_m,b,z0)
-    print(cond_iniciales)
-    #%%
-    c1,c2 = params_fisicos_to_modelo(omega_m,b)
-
     H0 = 73.48
+
+    cond_iniciales=condiciones_iniciales(omega_m,b,H0,z0)
+    print(cond_iniciales)
+#%%
+    c1,c2 = params_fisicos_to_modelo(omega_m,b)
     R_HS = H0**2 * 6*(1-omega_m)*c2/c1
