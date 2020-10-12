@@ -75,7 +75,7 @@ def integrador(params_fisicos, n=1, cantidad_zs=int(10**5), max_step=0.003,
 
     #Calculo las condiciones cond_iniciales, eta
     # y los parametros de la ecuación
-    cond_iniciales = condiciones_iniciales(*params_fisicos)
+    cond_iniciales = condiciones_iniciales(omega_m,b)
     eta = (c_luz_norm/(8315*100)) * np.sqrt(omega_m/0.13)
     c1, c2 = params_fisicos_to_modelo(omega_m,b)
 
@@ -110,12 +110,15 @@ if __name__ == '__main__':
     omega_m = .24 #Con valores mas altos de omega deja de andar para b=0.01! Hacer
     #mapa de paparams para Hs n=2
     b = 2
+
+    b=0.11034483 # 0.10461538
+    omega_m=0.35555556 #0.35263158
     H0 = 73.48
     params_fisicos = [omega_m,b,H0]
 
     z_inicial = 30
     z_final = 0
-    cantidad_zs = int(10**4)
+    cantidad_zs = int(10**5)
     max_step = 0.003
 
     zs, H_ode = integrador(params_fisicos, n=1, cantidad_zs=cantidad_zs,
