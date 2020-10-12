@@ -126,7 +126,7 @@ if __name__ == '__main__':
 	analisis = Graficador(reader,['omega_m','b', 'H0'],'HS CC+H0')
 	analisis.graficar_cadenas()
 	analisis.graficar_contornos(sol,discard=burnin,thin=thin,poster=False)
-	analisis.reportar_intervalos()
+	analisis.reportar_intervalos(sol)
 
 #%%
 	plt.figure()
