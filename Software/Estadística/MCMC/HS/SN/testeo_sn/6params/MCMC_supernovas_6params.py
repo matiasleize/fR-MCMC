@@ -37,7 +37,7 @@ log_likelihood = lambda theta: -0.5 * testeo_supernovas(theta, params_fijos,
 #%% Definimos las gunciones de prior y el posterior
 def log_prior(theta):
     M, omega_m, b, alpha, beta, gamma = theta
-    if (-20 < M < -18.5 and  0.2 < omega_m < 0.4 and
+    if (-20 < M < -18.5 and  0.2 < omega_m < 0.32 and
         0 < b < 1 and 0.12 < alpha < 0.19 and 2.5 < beta < 3.5 and
         0.01 < gamma < 0.075):
         return 0.0

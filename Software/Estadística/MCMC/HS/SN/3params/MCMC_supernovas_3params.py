@@ -42,7 +42,7 @@ def log_prior(theta):
 
 def log_probability(theta):
     lp = log_prior(theta)
-    if not np.isfinite(lp):
+    if not np.isfinite(lp): #Este if creo que está de más..
         return -np.inf
     return lp + log_likelihood(theta)
 
