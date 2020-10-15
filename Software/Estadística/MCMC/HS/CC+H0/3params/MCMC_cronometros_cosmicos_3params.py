@@ -38,7 +38,7 @@ print(sol)
 #%%
 def log_prior(theta):
     omega_m, b, H_0 = theta
-    if (0.05 < omega_m < 0.4 and 0 < b < 4 and 50 < H_0 < 90):
+    if (0.05 < omega_m < 0.4 and 0 < b < 5.5 and 50 < H_0 < 90):
         return 0.0
     return -np.inf
 
@@ -56,7 +56,7 @@ os.chdir(path_datos_global+'/Resultados_cadenas/')
 filename = "sample_HS_CC+H0_3params.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
-textfile_witness = open('witness_3.txt','w+')
+textfile_witness = open('witness_4.txt','w+')
 textfile_witness.close()
 #%%
 #Initialize the sampler
@@ -66,6 +66,7 @@ sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend
 max_n = 10000
 # This will be useful to testing convergence
 old_tau = np.inf
+t1 = time.time()
 
 # Now we'll sample for up to max_n steps
 for sample in sampler.sample(pos, iterations=max_n, progress=True):
@@ -74,9 +75,11 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
         continue
 
     os.chdir(path_datos_global+'/Resultados_cadenas/')
-    textfile_witness = open('witness_3.txt','w')
+    textfile_witness = open('witness_4.txt','w')
     textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
-    textfile_witness.write('Tiempo: {}'.format(time.time()))
+    t2 = time.time()
+    textfile_witness.write('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
+          int((t2-t1) - 60*int((t2-t1)/60))))
     textfile_witness.close()
 
     # Compute the autocorrelation time so far
@@ -90,7 +93,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     #También pido que tau se mantenga relativamente constante:
     converged_2 = np.all((np.abs(old_tau - tau)/tau) < 0.001)
     if (converged_1 and converged_2):
-        textfile_witness = open('witness_3.txt','a')
+        textfile_witness = open('witness_4.txt','a')
         textfile_witness.write('Convergió!')
         textfile_witness.close()
         break
