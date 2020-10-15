@@ -33,9 +33,8 @@ os.chdir(path_git+'/Software/Estadística/Datos/')
 z_data, H_data, dH  = leer_data_cronometros('datos_cronometros_nunes.txt')
 
 log_likelihood = lambda theta: -0.5 * params_to_chi2(theta,n,z_data,
-                                H_data,dH,nunes=True,taylor=True)
+                                H_data,dH,H0_nunes=True,taylor=True)
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-#with np.load('valores_medios_HS+H0_CC_3params_taylor.npz') as data:
 with np.load('valores_medios_HS_CC+H0_3params_taylor_nunes.npz') as data:
     sol = data['sol']
 #%%
@@ -52,7 +51,7 @@ def log_probability(theta):
         return -np.inf
     return lp + log_likelihood(theta)
 
-pos = sol + 1e-4 * np.random.randn(12, 3)
+pos = sol + 1e-4 * np.random.randn(32, 3)
 nwalkers, ndim = pos.shape
 #%%
 # Set up the backend
@@ -60,7 +59,7 @@ os.chdir(path_datos_global+'/Resultados_cadenas/')
 filename = "sample_HS_CC+H0_3params_taylor_nunes.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
-textfile_witness = open('witness_1.txt','w+')
+textfile_witness = open('witness_3.txt','w+')
 textfile_witness.close()
 #%%
 #Initialize the sampler
@@ -78,7 +77,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
         continue
 
     os.chdir(path_datos_global+'/Resultados_cadenas/')
-    textfile_witness = open('witness_1.txt','w')
+    textfile_witness = open('witness_3.txt','w')
     textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
     textfile_witness.write('Tiempo: {}'.format(time.time()))
     textfile_witness.close()
@@ -93,7 +92,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     #También pido que tau se mantenga relativamente constante:
     converged_2 = np.all((np.abs(old_tau - tau)) < 0.01)#(con el /tau son 4960 pasos)
     if (converged_1 and converged_2):
-        textfile_witness = open('witness_1.txt','a')
+        textfile_witness = open('witness_3.txt','a')
         textfile_witness.write('Convergió!')
         textfile_witness.close()
         break

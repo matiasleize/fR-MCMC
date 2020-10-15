@@ -36,7 +36,7 @@ burnin = int(2 * np.max(tau))
 thin = int(0.5 * np.min(tau))
 graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,
                     labels= ['omega_m','b','H0'],
-                    title='CC+H0'#,
+                    title='CC+H0 (Nunes)'#,
                     #poster=True,color='b'
                     )
 
@@ -52,9 +52,3 @@ for i in range(ndim):
     txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{{2:.3f}}}"
     txt = txt.format(mcmc[1], q[0], q[1], labels[i])
     display(Math(txt))
-
-#%%
-plt.figure()
-graficar_taus_vs_n(reader,num_param=2)
-graficar_taus_vs_n(reader,num_param=0)
-graficar_taus_vs_n(reader,num_param=1)
