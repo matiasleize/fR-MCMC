@@ -86,7 +86,7 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
             H_modelo = Taylor_ST(zs_modelo, omega_m, b, H_0)
 
     else:
-        if (0 <= b < 0.1):
+        if (0 <= b < 0.2):
             zs_modelo = np.linspace(0,3,cantidad_zs)
             if model=='HS':
                 H_modelo_cron = Taylor_HS(z_data_cron, omega_m, b, H_0)

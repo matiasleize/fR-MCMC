@@ -74,7 +74,7 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
         else:
             H_modelo = Taylor_ST(zs, omega_m, b, H_0)
     else:
-        if (0 <= b < 0.1):
+        if (0 <= b < 0.2):
             zs = np.linspace(0,3,cantidad_zs)
             if model=='HS':
                 H_modelo = Taylor_HS(zs, omega_m, b, H_0)
@@ -116,7 +116,7 @@ def testeo_supernovas(theta, params_fijos, zcmb, zhel, Cinv,
             [Mabs,alpha,beta,gamma] = theta
             [omega_m,b,H_0,n] = params_fijos
 
-        if (0 <= b < 0.1):
+        if (0 <= b < 0.2):
             zs = np.linspace(0,3,cantidad_zs)
             if model=='HS':
                 H_modelo = Taylor_HS(zs, omega_m, b, H_0)
