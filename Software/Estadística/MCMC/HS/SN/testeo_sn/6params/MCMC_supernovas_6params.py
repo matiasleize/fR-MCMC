@@ -37,8 +37,8 @@ log_likelihood = lambda theta: -0.5 * testeo_supernovas(theta, params_fijos,
 #%% Definimos las gunciones de prior y el posterior
 def log_prior(theta):
     M, omega_m, b, alpha, beta, gamma = theta
-    if (-20 < M < -18.5 and  0.2 < omega_m < 0.32 and
-        0 < b < 1 and 0.12 < alpha < 0.19 and 2.5 < beta < 3.5 and
+    if (-20 < M < -18.5 and  0.05 < omega_m < 0.4 and
+        0 < b < 1.3 and 0.12 < alpha < 0.19 and 2.5 < beta < 3.5 and
         0.01 < gamma < 0.075):
         return 0.0
     return -np.inf
@@ -50,13 +50,13 @@ def log_probability(theta):
     return lp + log_likelihood(theta)
 
 
-pos = sol + 1e-4 * np.random.randn(12, 6) #Defino la cantidad de caminantes.
+pos = sol + 1e-4 * np.random.randn(32, 6) #Defino la cantidad de caminantes.
 nwalkers, ndim = pos.shape
 
 #%%
 # Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/')
-filename = "sample_HS_SN_6params_1.h5"
+filename = "sample_HS_SN_6params.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
 textfile_witness = open('witness_1.txt','w+')
@@ -64,7 +64,7 @@ textfile_witness.close()
 #%%
 #Initialize the sampler
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
-max_n = 10000
+max_n = 20000
 # This will be useful to testing convergence
 old_tau = np.inf
 

@@ -23,6 +23,7 @@ zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_HS_SN_3params.npz') as data:
     sol = data['sol']
+sol[0] = -19.0
 print(sol)
 
 #Parametros fijos
@@ -36,7 +37,7 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos,
 #%% Definimos las gunciones de prior y el posterior
 def log_prior(theta):
     M, omega_m, b = theta
-    if (-20 < M < -18.5 and  0.1 < omega_m < 0.32 and 0 < b < 1.5):
+    if (-20 < M < -18.5 and  0.05 < omega_m < 0.5 and 0 < b < 1.7):
         return 0.0
     return -np.inf
 
@@ -47,7 +48,7 @@ def log_probability(theta):
     return lp + log_likelihood(theta)
 
 
-pos = sol + 1e-4 * np.random.randn(12, 3) #Defino la cantidad de caminantes.
+pos = sol + 1e-4 * np.random.randn(32, 3) #Defino la cantidad de caminantes.
 nwalkers, ndim = pos.shape
 
 #%%
@@ -61,7 +62,7 @@ textfile_witness.close()
 #%%
 #Initialize the sampler
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
-max_n = 10000
+max_n = 20000
 # This will be useful to testing convergence
 old_tau = np.inf
 

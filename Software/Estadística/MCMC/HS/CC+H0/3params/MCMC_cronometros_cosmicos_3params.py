@@ -86,6 +86,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
 
     # Check convergence
     converged_1 = np.all(tau * 100 < sampler.iteration) #100 es el threshold de convergencia
+    #(threshold nunca debe ser menor que 50 según la documentación de emcee! )
     #También pido que tau se mantenga relativamente constante:
     converged_2 = np.all((np.abs(old_tau - tau)/tau) < 0.001)
     if (converged_1 and converged_2):

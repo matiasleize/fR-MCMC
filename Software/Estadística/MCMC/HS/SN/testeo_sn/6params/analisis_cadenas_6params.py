@@ -31,9 +31,9 @@ graficar_cadenas(reader,
                 labels = ['$M_{abs}$','$\Omega_{m}$','b',
                 '$alpha$','$beta$','$\gamma$'],title='SN HS')
 #%%
-burnin=100
-#burnin = int(2 * np.max(tau))
-#thin = int(0.5 * np.min(tau))
+#burnin=100
+burnin = int(2 * np.max(tau))
+thin = int(0.5 * np.min(tau))
 graficar_contornos(reader,params_truths=sol,discard=burnin,
                     #thin=thin,
                     labels = ['$M_{abs}$','$\Omega_{m}$','b',
