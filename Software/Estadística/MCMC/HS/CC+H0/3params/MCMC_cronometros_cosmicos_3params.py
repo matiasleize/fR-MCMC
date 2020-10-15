@@ -38,7 +38,7 @@ print(sol)
 #%%
 def log_prior(theta):
     omega_m, b, H_0 = theta
-    if (0.05 < omega_m < 0.4 and 0 < b < 5.5 and 50 < H_0 < 90):
+    if (0.05 < omega_m < 0.4 and 0 < b < 5 and 63 < H_0 < 80):
         return 0.0
     return -np.inf
 
@@ -48,7 +48,7 @@ def log_probability(theta):
     if not np.isfinite(lp):
         return -np.inf
     return lp + log_likelihood(theta)
-pos = sol + 1e-4 * np.random.randn(30, 3)
+pos = sol + 1e-4 * np.random.randn(12, 3)
 nwalkers, ndim = pos.shape
 #%%
 # Set up the backend
@@ -91,7 +91,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     converged_1 = np.all(tau * 100 < sampler.iteration) #100 es el threshold de convergencia
     #(threshold nunca debe ser menor que 50 según la documentación de emcee! )
     #También pido que tau se mantenga relativamente constante:
-    converged_2 = np.all((np.abs(old_tau - tau)/tau) < 0.001)
+    converged_2 = np.all((np.abs(old_tau - tau)/tau) < 0.001) #Error menor a 0.1%
     if (converged_1 and converged_2):
         textfile_witness = open('witness_4.txt','a')
         textfile_witness.write('Convergió!')

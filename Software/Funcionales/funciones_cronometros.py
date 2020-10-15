@@ -30,7 +30,6 @@ def chi_2_cronometros(H_teo,H_data, dH):
 
 
 def params_to_chi2(theta, params_fijos, z_data, H_data, dH,
-                    cantidad_zs=10000, max_step=0.005,
                     verbose=True, model='HS',
                     chi_riess=True, taylor=False, H0_nunes=False):
     '''Dados los parámetros libres del modelo (omega, b y H0) y los que quedan params_fijos (n),
