@@ -77,7 +77,10 @@ class Graficador:
 
 	def graficar_taus_vs_n(self, num_param=0,threshold=100.0):
 		'''Esta función grafica el tiempo de autocorrelación integraodo
-		 en función del largo de la cadena.'''
+		 en función del largo de la cadena.
+		 OBS: threshold no debería nunca ser menor que 50, según la
+		 documentación de la librería emcee.
+		 '''
 		chain = self.sampler.get_chain()[:, :, num_param].T
 
 		# Compute the estimators for a few different chain lengths
@@ -91,7 +94,7 @@ class Graficador:
 		taus=np.cumsum(taus)
 		plt.loglog(N, taus, '.-')
 		plt.plot(N, N / threshold, "--k", label=r"$\tau = N/{}$".format(threshold))
-
+		plt.axhline(true_tau, color="k", label="truth", zorder=-100)
 		ylim = plt.gca().get_ylim()
 		plt.ylim(ylim)
 		plt.xlabel("number of samples, $N$")
@@ -131,5 +134,5 @@ if __name__ == '__main__':
 #%%
 	plt.figure()
 	analisis.graficar_taus_vs_n(num_param=0)
-	analisis.graficar_taus_vs_n(num_param=1)
-	analisis.graficar_taus_vs_n(num_param=2)
+#	analisis.graficar_taus_vs_n(num_param=1)
+#	analisis.graficar_taus_vs_n(num_param=2)

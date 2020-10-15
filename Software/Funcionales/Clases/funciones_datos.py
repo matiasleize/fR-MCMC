@@ -7,6 +7,7 @@ class DataFrame:
 	def __init__(self,dataset,datafile):
 		self.dataset=dataset #Implementar poner varios datasets
 		self.datafile=datafile
+
 	def crear_df(self ,min_z = 0 ,max_z = 3):
 		if self.dataset=='SN':
 			'''Toma la data de Pantheon y extrae la data de los redshifts zcmb y zhel
@@ -15,7 +16,7 @@ class DataFrame:
 			matriz de correlación asociada. La función devuelve la información
 			de los redshifts, la magnitud aparente y la matriz de correlación
 			inversa.'''
-
+			'''IMPLEMENTAR min_z y max_z'''
 			# leo la tabla de datos:
 			zcmb,zhel,dz,mb,dmb=np.loadtxt(self.datafile[0],
 			usecols=(1,2,3,4,5),unpack=True)
@@ -30,18 +31,13 @@ class DataFrame:
 			Ccov=Csys+Dstat
 			Cinv=inv(Ccov)
 
-			mask = ma.masked_where((zcmb <= max_z) & ((zcmb >= min_z)) , zcmb).mask
-			mask_1 = mask[np.newaxis, :] & mask[:, np.newaxis]
+			#ARREGLAR
+			df_1 = pd.read_csv(self.datafile[0],delimiter='\t',header=None,
+				 			 usecols=(1,2,4),names=['zcmb', 'zhel', 'mb'])
+			df=(df_1,Cinv)
 
-			zhel = zhel[mask]
-			mb = mb[mask]
-			Cinv = Cinv[mask_1]
-			Cinv = Cinv.reshape(len(zhel),len(zhel))
-			zcmb = zcmb[mask]
 
-			df = pd.DataFrame([zcmb, zhel, Cinv, mb])
-
-		elif self.dataset=='CC_nuicence':
+		elif self.dataset=='SN_nuicence':
 			'''IMPLEMENTAR min_z y max_z'''
 			# leo la tabla de datos:
 			zcmb0,zhel0,dz0,mb0,dmb0=np.loadtxt(self.datafile[0],
@@ -67,18 +63,16 @@ class DataFrame:
 			'''Data de Cronometros'''
 			'''IMPLEMENTAR min_z y max_z'''
 			# leo la tabla de datos:
-			z, h, dh = np.loadtxt(self.datafile, usecols=(0,1,2), unpack=True)
+			df = pd.read_csv(self.datafile,delimiter='\t',header=None,
+				 			 usecols=(0,1,2),names=['z', 'H', 'dH'])
 
-			df = pd.DataFrame([z, h, dh])
 
 		elif self.dataset=='BAO':
 			'''Toma datos de BAO..'''
 			'''IMPLEMENTAR min_z y max_z'''
 
-			z, valores_data, errores_data, rd_fid = np.loadtxt(self.datafile,
-			usecols=(0,1,2,4), unpack=True)
+			df = pd.read_csv(self.datafile,delimiter='\t',usecols=(0,1,2,4))
 
-			df = pd.DataFrame([z, valores_data, errores_data, rd_fid])
 		return df
 
 
@@ -88,9 +82,17 @@ if __name__ == '__main__':
 	import os
 	from os.path import join as osjoin
 	from pc_path import definir_path
-
 	path_git, path_datos_global = definir_path()
-	#%% Supernovas
+
+	#%% Supernovas Nuisence
 	os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
-	df_CC = DataFrame('SN',['lcparam_full_long_zhel.txt','lcparam_full_long_sys.txt'])
-	df_CC.crear_df() #OJO, habria que trasponerlo!
+	df_SN_nuisence = DataFrame('SN',['lcparam_full_long_zhel.txt','lcparam_full_long_sys.txt'])
+	df_SN_nuisence.crear_df() #OJO, habria que trasponerlo!
+	#%% Cronómetros Cósmicos
+    os.chdir(path_git+'/Software/Estadística/Datos/')
+	df_CC = DataFrame('CC','datos_cronometros_nunes.txt')
+	df_CC.crear_df()
+	#%% BAO
+    os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
+	df_BAO = DataFrame('BAO','datos_BAO.txt')
+	df_BAO.crear_df()
