@@ -153,7 +153,7 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
     zd = ((1291*(omega_m*h**2)**0.251)/(1+0.659*(omega_m*h**2)**0.828)) * (1+b1*cte**b2)
 
     zs_rd = np.logspace(np.log10(zd),13,int(10**5))
-    H_rd =H_LCDM(zs_rd)
+    H_rd =H_LCDM(zs_rd,omega_m,H_0)
 
     R_bar = 31500 * cte * (2.726/2.7)**(-4)
     #cs = c_luz_km / (np.sqrt(3*(1 + R_bar/(1 + zs_int))))
