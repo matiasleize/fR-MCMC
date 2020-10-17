@@ -47,7 +47,7 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2(theta,params_fijos,
 #%% Definimos las gunciones de prior y el posterior
 def log_prior(theta):
     M, omega_m, b, H0 = theta
-    if (-22 < M < -18 and  0.01 < omega_m < 0.5 and 0 < b < 2 and 60 < H0 < 80):
+    if (-22 < M < -18 and  0.01 < omega_m < 0.5 and 0 < b < 2.2 and 60 < H0 < 80):
         return 0.0
     return -np.inf
 
@@ -67,12 +67,12 @@ os.chdir(path_datos_global+'/Resultados_cadenas/')
 filename = "sample_HS_CC+SN_4params.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
-textfile_witness = open('witness_2.txt','w+')
+textfile_witness = open('witness_5.txt','w+')
 textfile_witness.close()
 #%%
 #Initialize the sampler
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
-max_n = 10000
+max_n = 20000
 # This will be useful to testing convergence
 old_tau = np.inf
 
@@ -83,7 +83,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
         continue
 
     os.chdir(path_datos_global+'/Resultados_cadenas/')
-    textfile_witness = open('witness_2.txt','w')
+    textfile_witness = open('witness_5.txt','w')
     textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
     textfile_witness.write('Tiempo: {}'.format(time.time()))
     textfile_witness.close()
@@ -98,7 +98,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     #También pido que tau se mantenga relativamente constante:
     converged &= np.all((np.abs(old_tau - tau) / tau) < 0.01)
     if converged:
-        textfile_witness = open('witness_2.txt','a')
+        textfile_witness = open('witness_5.txt','a')
         textfile_witness.write('Convergió!')
         textfile_witness.close()
         break

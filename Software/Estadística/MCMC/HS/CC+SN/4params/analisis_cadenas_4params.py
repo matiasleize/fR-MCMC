@@ -28,14 +28,14 @@ print(tau)
 #%%
 %matplotlib qt5
 graficar_cadenas(reader,
-                labels = ['$M_{abs}$','$\Omega_{m}$','b','H_{0}'],title='SN+CC HS')
+                labels = ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],title='SN+CC HS')
 #%%
 #burnin=300
 burnin = int(2 * np.max(tau))
 thin = int(0.5 * np.min(tau))
 graficar_contornos(reader,params_truths=sol,discard=burnin,
                     #,thin=thin
-                    labels= ['$M_{abs}$','$\Omega_{m}$','b','H_{0}']
+                    labels= ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$']
                     #,title='SN+CC HS'
                     )
 
