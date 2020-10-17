@@ -36,7 +36,7 @@ burnin=100
 graficar_contornos(reader,params_truths=sol,discard=burnin,
                     #thin=thin,
                     labels = ['$M_{abs}$','$\Omega_{m}$','b'],
-                    #title='SN+CC HS',
+                    title='SN HS',
                     poster=False)
 
 
