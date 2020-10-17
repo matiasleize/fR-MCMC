@@ -60,4 +60,4 @@ print(M_ml,omega_m_ml,b_ml,H0_ml)
 os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
 np.savez('valores_medios_HS_CC+SN+BAO_4params', sol=soln.x)
 
-soln.fun/(17+z_data+zcmb-4)
+soln.fun/(17+len(z_data)+len(zcmb)-4)
