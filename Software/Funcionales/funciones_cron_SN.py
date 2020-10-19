@@ -96,7 +96,7 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
                 H_modelo = Taylor_ST(zs_modelo, omega_m, b, H_0)
         else:
             params_fisicos = [omega_m,b,H_0]
-            zs_modelo, H_modelo = integrador(params_fisicos, n)
+            zs_modelo, H_modelo = integrador(params_fisicos, n, model=model)
             #Para SN se interpola con datos en el calculo de mu!
 
         H_int = interp1d(zs_modelo, H_modelo)

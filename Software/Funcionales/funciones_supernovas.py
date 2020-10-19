@@ -82,7 +82,7 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
                 H_modelo = Taylor_ST(zs, omega_m, b, H_0)
         else:
             params_fisicos = [omega_m,b,H_0]
-            zs, H_modelo = integrador(params_fisicos, n)
+            zs, H_modelo = integrador(params_fisicos, n, model=model)
 
     muth = magn_aparente_teorica(zs,H_modelo,zcmb,zhel)
     chi = chi_2_supernovas(muth,mb,Mabs,Cinv)
@@ -125,7 +125,7 @@ def testeo_supernovas(theta, params_fijos, zcmb, zhel, Cinv,
 
         else:
             params_fisicos = [omega_m,b,H_0]
-            zs, H_modelo = integrador(params_fisicos, n, cantidad_zs=cantidad_zs)
+            zs, H_modelo = integrador(params_fisicos, n, cantidad_zs=cantidad_zs, model=model)
 
     alpha_0 = 0.154
     beta_0 = 3.02

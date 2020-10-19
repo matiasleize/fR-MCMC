@@ -136,7 +136,7 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
 
         else:
             params_fisicos = [omega_m,b,H_0]
-            zs, H_modelo = integrador(params_fisicos, n)
+            zs, H_modelo = integrador(params_fisicos, n, model=model)
             H_int = interp1d(zs, H_modelo)
             H_modelo_cron = H_int(z_data_cron)
     #        H_modelo_BAO = H_int(zs_BAO)

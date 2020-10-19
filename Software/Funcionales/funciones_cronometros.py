@@ -61,7 +61,7 @@ def params_to_chi2(theta, params_fijos, z_data, H_data, dH,
                 H_teo = Taylor_ST(z_data, omega_m, b, H_0)
         else:
             params_fisicos = [omega_m,b,H_0]
-            z, H = integrador(params_fisicos, n)
+            z, H = integrador(params_fisicos, n, model=model)
             H_int = interp1d(z,H)
             H_teo = H_int(z_data)
 
