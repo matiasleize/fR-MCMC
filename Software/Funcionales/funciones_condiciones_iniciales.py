@@ -3,7 +3,7 @@ from sympy.utilities.lambdify import lambdify
 import numpy as np
 import math
 from scipy.constants import c as c_luz #metros/segundos
-c_luz_norm=c_luz/1000;
+c_luz_km = c_luz/1000;
 
 import sys
 import os
@@ -12,30 +12,38 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
-from funciones_cambio_parametros import params_fisicos_to_modelo
+from funciones_cambio_parametros import params_fisicos_to_modelo_HS
 
-
-def condiciones_iniciales(omega_m,b,z0=30):
-
+def condiciones_iniciales(omega_m, b, z0=30, model='HS'):
     '''
     Calculo las condiciones iniciales para el sistema de ecuaciones diferenciales
-    para el modelo de Hu-Sawicki
+    para el modelo de Hu-Sawicki y el de Starobinsky n=1
     OBSERVACION IMPORTANTE: Lamb, R_HS están reescalados por un factor H0**2 y
     H reescalado por un facor H0. Esto es para librarnos de la dependencia de
-    las condiciones iniciales con H0.
+    las condiciones iniciales con H0. Además, como el output son adminensionales
+    podemos tomar c=1 (lo chequeamos en el papel).
     '''
-    c1,c2=params_fisicos_to_modelo(omega_m,b)
-    #h= H0/100
-    Lamb = 3*(1-omega_m)
-    #R_HS = (c_luz_norm/8315)**2 * (omega_m/(100**2))/0.13
-    R_HS = 6*(1-omega_m)*c2/c1 #Dan lo mismo, este factor no depende de b
-
     R = sym.Symbol('R')
-    #Calculo F y sus derivadas
-    #Ambas F dan las mismas CI para z=0 :)
-    F = R - ((c1*R)/((c2*R/R_HS)+1))
-    #F = R - 2*Lamb * (1 - 1/ (1 + (R/(b*Lamb))) )
+    Lamb = 3 * (1-omega_m)
 
+    if model=='HS':
+        c1,c2 = params_fisicos_to_modelo_HS(omega_m,b)
+
+        R_HS = 2 * Lamb * c2/c1
+        R_0 = R_HS #No confundir con R0 que es R en la CI!
+
+        #Calculo F. Ambas F dan las mismas CI para z=z0 :)
+        #F = R - ((c1*R)/((c2*R/R_HS)+1))
+        F = R - 2 * Lamb * (1 - 1/ (1 + (R/(b*Lamb))) )
+    elif model=='ST':
+        #lamb = 2 / b
+        R_ST = Lamb * b
+        R_0 = R_ST #No confundir con R0 que es R en la CI!
+
+        #Calculo F.
+        F = R - 2 * Lamb * (1 - 1/ (1 + (R/(b*Lamb)**2) ))
+
+    #Calculo las derivadas de F
     F_R = sym.simplify(sym.diff(F,R))
     F_2R = sym.simplify(sym.diff(F_R,R))
 
@@ -68,19 +76,20 @@ def condiciones_iniciales(omega_m,b,z0=30):
     y0 = F_ci(R0) / (6*(H_ci(z0)**2)*F_R_ci(R0))
     v0 = R0 / (6*H_ci(z0)**2)
     w0 = 1+x0+y0-v0
-    r0 = R0/R_HS
+    r0 = R0/R_0
 
     return[x0,y0,v0,w0,r0]
+
 #%%
 if __name__ == '__main__':
-    z0 = 30
-    omega_m = 0.3
-    b = 2
-
-    cond_iniciales=condiciones_iniciales(omega_m,b,z0)
-    print(cond_iniciales)
-    #%%
-    c1,c2 = params_fisicos_to_modelo(omega_m,b)
-
+    z0 = 0
+    omega_m = 0.24
+    b = 1
     H0 = 73.48
-    R_HS = H0**2 * 6*(1-omega_m)*c2/c1
+    c1,c2 = params_fisicos_to_modelo_HS(omega_m,b)
+    c2/c1
+
+    cond_iniciales=condiciones_iniciales(omega_m,b,z0=0,model='HS')
+    print(cond_iniciales)
+    cond_iniciales=condiciones_iniciales(omega_m,b,z0=0,model='ST')
+    print(cond_iniciales)
