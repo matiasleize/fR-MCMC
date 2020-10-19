@@ -17,7 +17,6 @@ os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 
 from funciones_int import integrador
-from funciones_cambio_parametros import params_fisicos_to_modelo
 from funciones_taylor import Taylor_HS, Taylor_ST
 from funciones_condiciones_iniciales import condiciones_iniciales
 
