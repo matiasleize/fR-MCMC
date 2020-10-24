@@ -37,7 +37,7 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos,
 #%% Definimos las gunciones de prior y el posterior
 def log_prior(theta):
     M, omega_m, b = theta
-    if (-20 < M < -18.5 and  0.05 < omega_m < 0.4 and 0 < b < 1.7):
+    if (-20 < M < -18.5 and  0.05 < omega_m < 0.4 and 0 < b < 2.5):
         return 0.0
     return -np.inf
 
@@ -62,7 +62,7 @@ textfile_witness.close()
 #%%
 #Initialize the sampler
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
-max_n = 20000
+max_n = 2000000
 # This will be useful to testing convergence
 old_tau = np.inf
 t1 = time.time()

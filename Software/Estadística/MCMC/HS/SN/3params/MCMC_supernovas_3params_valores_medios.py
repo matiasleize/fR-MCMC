@@ -25,9 +25,9 @@ from funciones_supernovas import params_to_chi2
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
 #%% Predeterminados:
-M_true = -19.19
-omega_m_true = 0.24
-b_true = 0.5
+M_true = -19.25
+omega_m_true = 0.3
+b_true = 0.1
 H0_true =  73.48 #Unidades de (km/seg)/Mpc
 n = 1
 
@@ -44,7 +44,7 @@ nll = lambda theta: params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,mb)
 
 initial = np.array([M_true,omega_m_true,b_true])
 soln = minimize(nll, initial, options = {'eps': 0.01},
-                bounds =((-20,-18.5),(0.15,0.4),(0,1.5)))
+                bounds =((-19.5,-19),(0.25,0.35),(0,0.5)))
 M_ml,omega_m_ml,b_ml = soln.x
 
 print(M_ml,omega_m_ml,b_ml)

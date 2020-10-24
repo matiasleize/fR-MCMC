@@ -14,6 +14,9 @@ import pandas as pd
 from IPython.display import display, Math
 
 class Graficador:
+	'''Falta: poder agregar $$ al principio y al final
+	de cada item de la lista de labels (son necesarios
+	para los graficos pero no para reportar_intervalos)'''
 	def __init__(self,sampler,labels,title):
 		self.sampler=sampler
 		self.labels=labels
@@ -60,8 +63,9 @@ class Graficador:
 
 
 	def reportar_intervalos(self, params_truths, burnin=20, thin=1):
-		'''Printeo los valores!'''
-
+		'''Printeo los valores!
+		Falta: Printear a dos sigmas
+		'''
 		samples = self.sampler.get_chain(discard=burnin, flat=True, thin=thin)
 		labels = self.labels
 		len_chain, nwalkers, ndim = self.sampler.get_chain().shape

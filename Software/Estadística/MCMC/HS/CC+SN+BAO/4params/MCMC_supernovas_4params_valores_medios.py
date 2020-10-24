@@ -20,10 +20,10 @@ from funciones_cron_SN_BAO import params_to_chi2
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
 #%% Predeterminados:
-M_true = -19.352
-omega_m_true = 0.22
+M_true = -19.42
+omega_m_true = 0.27
 b_true = 0.023
-H0_true =  73.48 #Unidades de (km/seg)/Mpc
+H0_true =  70 #Unidades de (km/seg)/Mpc
 n = 1
 
 params_fijos = n
@@ -52,7 +52,7 @@ nll = lambda theta: params_to_chi2(theta,params_fijos,zcmb, zhel,
                     dH, dataset,chi_riess=False)
 
 initial = np.array([M_true,omega_m_true,b_true,H0_true])
-soln = minimize(nll, initial, options = {'eps': 0.01}, bounds =((-25,-18),(0.1,0.5),(0, 3),(60,80)))
+soln = minimize(nll, initial, options = {'eps': 0.01}, bounds =((-19.48,-19.35),(0.22,0.30),(0, 0.4),(66,72)))
 M_ml, omega_m_ml, b_ml, H0_ml = soln.x
 
 print(M_ml,omega_m_ml,b_ml,H0_ml)
