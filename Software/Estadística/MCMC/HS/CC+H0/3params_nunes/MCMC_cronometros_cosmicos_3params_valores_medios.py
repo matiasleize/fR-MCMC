@@ -35,7 +35,7 @@ H0_true =  73.48 #Unidades de (km/seg)/Mpc
 
 nll = lambda theta: params_to_chi2(theta,n,z_data,H_data,dH,H0_nunes=True)
 initial = np.array([omega_m_true,b_true,H0_true])
-bnds = ((0.05, 0.5), (-1,1), (60,100))
+bnds = ((0.05, 0.5), (0,4), (60,80))
 soln = minimize(nll, initial,bounds=bnds, options = {'eps': 0.001})
 omega_m_ml, b_ml, H0_ml = soln.x
 print(omega_m_ml,b_ml,H0_ml)

@@ -40,7 +40,7 @@ with np.load('valores_medios_HS_CC+H0_3params_nunes.npz') as data:
 #%%
 def log_prior(theta):
     omega_m, b, H_0 = theta
-    if (0.05 < omega_m < 0.4 and -2 < b < 2 and 50 < H_0 < 90):
+    if (0.05 < omega_m < 0.4 and 0 < b < 7 and 63 < H_0 < 80):
         return 0.0
     return -np.inf
 
@@ -66,7 +66,7 @@ textfile_witness.close()
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend,
         moves=[(emcee.moves.DEMove(), 0.4), (emcee.moves.DESnookerMove(), 0.3)
         , (emcee.moves.KDEMove(), 0.3)])
-max_n = 1000000
+max_n = 100000
 # This will be useful to testing convergence
 old_tau = np.inf
 
