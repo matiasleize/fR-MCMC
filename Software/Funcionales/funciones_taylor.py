@@ -83,9 +83,9 @@ if __name__ == '__main__':
     from funciones_LambdaCDM import H_LCDM
 
     omega_m = 0.24
-    b = 2
+    b = 0.2
     H0 = 73.48
-    zs = np.linspace(0,3,10000);
+    zs = np.linspace(0,1,10000);
     H_LCDM = H_LCDM(zs,omega_m,H0)
 
     # Hu-Sawicki
