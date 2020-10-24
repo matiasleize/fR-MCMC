@@ -14,7 +14,7 @@ os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_cambio_parametros import params_fisicos_to_modelo_HS
 
-def condiciones_iniciales(omega_m, b, z0=30, model='HS'):
+def condiciones_iniciales(omega_m, b, z0=30, n=1, model='HS'):
     '''
     Calculo las condiciones iniciales para el sistema de ecuaciones diferenciales
     para el modelo de Hu-Sawicki y el de Starobinsky n=1
@@ -27,14 +27,13 @@ def condiciones_iniciales(omega_m, b, z0=30, model='HS'):
     Lamb = 3 * (1-omega_m)
 
     if model=='HS':
-        c1,c2 = params_fisicos_to_modelo_HS(omega_m,b)
-
+        c1,c2 = params_fisicos_to_modelo_HS(omega_m,b,n)
         R_HS = 2 * Lamb * c2/c1
         R_0 = R_HS #No confundir con R0 que es R en la CI!
 
         #Calculo F. Ambas F dan las mismas CI para z=z0 :)
         #F = R - ((c1*R)/((c2*R/R_HS)+1))
-        F = R - 2 * Lamb * (1 - 1/ (1 + (R/(b*Lamb))) )
+        F = R - 2 * Lamb * (1 - 1/ (1 + (R/(b*Lamb)**n)) )
     elif model=='ST':
         #lamb = 2 / b
         R_ST = Lamb * b
@@ -84,11 +83,12 @@ def condiciones_iniciales(omega_m, b, z0=30, model='HS'):
 if __name__ == '__main__':
     z0 = 0
     omega_m = 0.24
-    b = 1
+    b = 2
     H0 = 73.48
     c1,c2 = params_fisicos_to_modelo_HS(omega_m,b)
     c2/c1
-
+    c2
+    1/19
     cond_iniciales=condiciones_iniciales(omega_m,b,z0=0,model='HS')
     print(cond_iniciales)
     cond_iniciales=condiciones_iniciales(omega_m,b,z0=0,model='ST')

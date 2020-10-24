@@ -12,22 +12,22 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
-from funciones_cambio_parametros import params_fisicos_to_modelo
+from funciones_cambio_parametros import params_fisicos_to_modelo_HS
 
 
 def condiciones_iniciales(omega_m,b,H0,z0=30):
 
-    c1,c2=params_fisicos_to_modelo(omega_m,b)
+    c1,c2=params_fisicos_to_modelo_HS(omega_m,b)
     h= H0/100
     Lamb = 3*(1-omega_m)*H0**2
-    #R_HS = (c_luz_norm/8315)**2 * (omega_m*h**2)/0.13
-    R_HS = H0**2 * 6*(1-omega_m)*c2/c1 #Dan lo mismo, este factor no depende de b
+    R_HS = (c_luz_norm/8315)**2 * (omega_m*h**2)/0.13
+    #R_HS = H0**2 * 6*(1-omega_m)*c2/c1 #Dan lo mismo, este factor no depende de b
 
     R = sym.Symbol('R')
     #Calculo F y sus derivadas
     #Ambas F dan las mismas CI para z=0 :)
     F = R - ((c1*R)/((c2*R/R_HS)+1))
-    #F = R - 2*Lamb * (1 - 1/ (1 + (R/(b*Lamb))) )
+    F = R - 2*Lamb * (1 - 1/ (1 + (R/(b*Lamb))) )
 
     F_R = sym.simplify(sym.diff(F,R))
     F_2R = sym.simplify(sym.diff(F_R,R))
@@ -66,13 +66,15 @@ def condiciones_iniciales(omega_m,b,H0,z0=30):
     return[x0,y0,v0,w0,r0]
 #%%
 if __name__ == '__main__':
-    z0 = 30
-    omega_m = 0.3
+    z0 = 0
+    omega_m = 0.24
     b = 2
     H0 = 73.48
 
     cond_iniciales=condiciones_iniciales(omega_m,b,H0,z0)
     print(cond_iniciales)
+    w0 = 1+cond_iniciales[0]*10+cond_iniciales[1]-cond_iniciales[2]
+    w0
 #%%
     c1,c2 = params_fisicos_to_modelo(omega_m,b)
     R_HS = H0**2 * 6*(1-omega_m)*c2/c1
