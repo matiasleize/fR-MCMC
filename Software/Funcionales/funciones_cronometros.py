@@ -53,7 +53,7 @@ def params_to_chi2(theta, params_fijos, z_data, H_data, dH,
             H_teo = Taylor_ST(z_data, omega_m, b, H_0)
 
     else:
-        if (0 <= b < 0.2):
+        if (-np.inf <= b < 0.2):
             if model=='HS':
                 H_teo = Taylor_HS(z_data, omega_m, b, H_0)
             else:
