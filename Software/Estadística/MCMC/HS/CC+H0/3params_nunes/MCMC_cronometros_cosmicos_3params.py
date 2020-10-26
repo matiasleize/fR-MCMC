@@ -40,7 +40,7 @@ with np.load('valores_medios_HS_CC+H0_3params_nunes.npz') as data:
 #%%
 def log_prior(theta):
     omega_m, b, H_0 = theta
-    if (0.05 < omega_m < 0.4 and 0 < b < 7 and 63 < H_0 < 80):
+    if (0.05 < omega_m < 0.4 and -2 < b < 7 and 63 < H_0 < 80):
         return 0.0
     return -np.inf
 
@@ -56,7 +56,8 @@ nwalkers, ndim = pos.shape
 #%%
 # Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/')
-filename = "sample_HS_CC+H0_3params_nunes.h5"
+#filename = "sample_HS_CC+H0_3params_nunes.h5" #Con prior de b entre 0 y 7
+filename = "sample_HS_CC+H0_3params_nunes_1.h5" #Con prior de b entre -2 y 7
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
 textfile_witness = open('witness_7.txt','w+')
