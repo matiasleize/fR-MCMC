@@ -57,7 +57,7 @@ nwalkers, ndim = pos.shape
 # Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/')
 #filename = "sample_HS_CC+H0_3params_nunes.h5" #Con prior de b entre 0 y 7 (y b_crit=0.2)
-filename = "sample_HS_CC+H0_3params_nunes_1.h5" #Con prior de b entre -2 y 7 (y b_crit=0.2)
+#filename = "sample_HS_CC+H0_3params_nunes_1.h5" #Con prior de b entre -2 y 7 (y b_crit=0.2)
 filename = "sample_HS_CC+H0_3params_nunes_2.h5" #Con prior de b entre -2 y 7 (y b_crit=0.5)
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
