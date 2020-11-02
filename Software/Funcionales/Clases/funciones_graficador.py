@@ -12,6 +12,7 @@ import corner
 import seaborn as sns
 import pandas as pd
 from IPython.display import display, Math
+import arviz as az
 
 class Graficador:
 	'''Falta: poder agregar $$ al principio y al final
@@ -62,7 +63,7 @@ class Graficador:
 				fig.suptitle(self.title);
 
 
-	def reportar_intervalos(self, params_truths, burnin=20, thin=1):
+	def reportar_intervalos(self, params_truths, burnin=20, thin=1,UL_index=None):
 		'''Printeo los valores!
 		Falta: Printear a dos sigmas
 		'''
@@ -70,13 +71,16 @@ class Graficador:
 		labels = self.labels
 		len_chain, nwalkers, ndim = self.sampler.get_chain().shape
 		for i in range(ndim):
-		    mcmc = np.percentile(samples[:, i], [16, 50, 84])
-		    mcmc[1]=params_truths[i] #Correción de mati: En vez de percentil 50 poner el mu
-		    q = np.diff(mcmc)
-		    txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{{2:.3f}}}"
-		    txt = txt.format(mcmc[1], q[0], q[1], labels[i])
-		    display(Math(txt))
+			mode = params_truths[i] #Correción de mati: Ponemos la moda (el minimo del chi2)
+			one_sigma = az.hdi(samples,hdi_prob=0.68)[i]
+			two_sigma = az.hdi(samples,hdi_prob=0.95)[i]
 
+			q1 = np.diff([one_sigma[0],mode,one_sigma[1]])
+			q2 = np.diff([two_sigma[0],mode,two_sigma[1]])
+
+			txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}({4:.3f})}}^{{+{2:.3f}({5:.3f})}}"
+			txt = txt.format(mode, q1[0], q1[1], labels[i], q2[0], q2[1])
+			display(Math(txt))
 
 
 	def graficar_taus_vs_n(self, num_param=0,threshold=100.0):
@@ -134,9 +138,22 @@ if __name__ == '__main__':
 	analisis.graficar_cadenas()
 	analisis.graficar_contornos(sol,discard=burnin,thin=thin,poster=False)
 	analisis.reportar_intervalos(sol)
-
 #%%
 	plt.figure()
 	analisis.graficar_taus_vs_n(num_param=0)
 #	analisis.graficar_taus_vs_n(num_param=1)
 #	analisis.graficar_taus_vs_n(num_param=2)
+
+#%% Forma alternativa de graficar, seguir investigando!
+	#%matplotlib qt5
+	reader = emcee.backends.HDFBackend(filename)
+	samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
+	emcee_data = az.from_emcee(reader, var_names=['$\Omega_{m}$','b', '$H_{0}$'])
+	emcee_data
+	az.plot_pair(emcee_data,
+            	kind=['kde'],
+				kde_kwargs={"fill_last": False},
+            	divergences=True,
+				marginals = True,
+				point_estimate = 'mode',
+            	textsize=18)
