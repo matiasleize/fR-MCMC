@@ -39,3 +39,10 @@ print(omega_m_ml,b_ml,H0_ml)
 
 os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
 np.savez('valores_medios_HS_CC+H0_3params', sol=soln.x)
+soln.fun/(len(z_data)+1-3) #0.5289586935537024
+#%%
+os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
+with np.load('valores_medios_HS_CC+H0_3params') as data:
+    sol = data['sol']
+
+sol
