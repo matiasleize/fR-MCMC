@@ -6,7 +6,7 @@ import math
 #%%
 n = sym.Symbol('n')
 #n=1 #Descomentar para obtener el caso n=1
-#n=2 #Descomentar para obtener el caso n=2
+n=2 #Descomentar para obtener el caso n=2
 
 c1 = sym.Symbol('c1')
 c2 = sym.Symbol('c2')
