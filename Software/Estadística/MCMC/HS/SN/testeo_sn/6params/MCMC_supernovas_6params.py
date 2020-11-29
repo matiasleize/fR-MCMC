@@ -39,7 +39,7 @@ def log_prior(theta):
     M, omega_m, b, alpha, beta, gamma = theta
     if (-20 < M < -18.5 and  0.05 < omega_m < 0.4 and
         0 < b < 2.5 and 0.12 < alpha < 0.19 and 2.5 < beta < 3.5 and
-        0.01 < gamma < 0.075):
+        0.01 < gamma < 0.1):
         return 0.0
     return -np.inf
 
