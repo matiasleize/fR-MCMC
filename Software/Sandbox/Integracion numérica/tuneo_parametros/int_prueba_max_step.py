@@ -45,12 +45,19 @@ for j in range(1,len(Hs)):
 plt.close()
 plt.figure()
 plt.grid(True)
-plt.xlabel('max_steps')
-plt.ylabel('$\Delta$Hs')
+
+plt.xlabel('Tamaño del paso de integración', fontsize=13)
+plt.ylabel('$\Delta$H', fontsize=13)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+
 plt.plot(max_steps[::-1],np.array(final)[::-1],'.-');
-#plt.legend(loc='best')
 plt.gca().invert_xaxis()
+
+#plt.legend(loc='best',prop={'size': 12})
 plt.show()
+
+#%%
 index=np.where(abs(final)<=float(10**(-10)))[0][1]
 max_steps[index+1]
 final[index+1]
