@@ -49,8 +49,8 @@ nll = lambda theta: params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
                     mb, z_data, H_data, dH, chi_riess=False)
 
 initial = np.array([M_true,omega_m_true,b_true,H0_true])
-soln = minimize(nll, initial, options = {'eps': 0.01},
-                bounds =((-19.6,-19),(0.1,0.3),(0.2, 0.3),(68,73)))
+soln = minimize(nll, initial,
+                bounds =((-19.46,-19.3),(0.23,0.27),(0, 0.2),(69,72)))
 M_ml, omega_m_ml, b_ml, H0_ml = soln.x
 
 print(M_ml, omega_m_ml, b_ml, H0_ml)

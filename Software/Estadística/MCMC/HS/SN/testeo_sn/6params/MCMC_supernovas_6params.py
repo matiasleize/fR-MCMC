@@ -88,7 +88,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     # Check convergence
     converged = np.all(tau * 100 < sampler.iteration) #100 es el threshold de convergencia
     #También pido que tau se mantenga relativamente constante:
-    converged &= np.all((np.abs(old_tau - tau) / tau) < 0.01)
+    converged &= np.all((np.abs(old_tau - tau) / tau) < 0.1)
     if converged:
         textfile_witness = open('witness_1.txt','a')
         textfile_witness.write('Convergió!')

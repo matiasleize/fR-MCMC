@@ -52,7 +52,8 @@ nll = lambda theta: params_to_chi2(theta,params_fijos,zcmb, zhel,
                     dH, dataset,chi_riess=False)
 
 initial = np.array([M_true,omega_m_true,b_true,H0_true])
-soln = minimize(nll, initial, options = {'eps': 0.01}, bounds =((-19.48,-19.35),(0.22,0.30),(0, 0.4),(66,72)))
+soln = minimize(nll, initial,
+                bounds =((-19.48,-19.35),(0.26,0.28),(0, 0.2),(68,72)))
 M_ml, omega_m_ml, b_ml, H0_ml = soln.x
 
 print(M_ml,omega_m_ml,b_ml,H0_ml)
@@ -60,4 +61,4 @@ print(M_ml,omega_m_ml,b_ml,H0_ml)
 os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
 np.savez('valores_medios_HS_CC+SN+BAO_4params', sol=soln.x)
 
-soln.fun/(17+len(z_data)+len(zcmb)-4) #0.9728014051534156
+soln.fun/(17+len(z_data)+len(zcmb)-4) #0.9672497806526248
