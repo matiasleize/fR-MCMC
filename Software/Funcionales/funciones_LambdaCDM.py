@@ -24,10 +24,17 @@ def H_LCDM(z, omega_m, H_0):
 #Supernovas
 
 def magn_aparente_teorica(z, H, zcmb, zhel):
-    '''A partir de un array de redshift y un array de la magnitud E = H_0/H
-    que salen de la integración numérica, se calcula el mu teórico que deviene
-    del modelo. muth = 25 + 5 * log_{10}(d_L),
-    donde d_L = (c/H_0) (1+z) int(dz'/E(z'))'''
+    '''Calculo del modelo de la distancia teórica a partir del H(z) del modelo.
+
+    Imput:
+        z (array): vector de redshifts z
+        H (array): vector de H(z)
+        zcmb, zcdm (array): vectores con redshifts que voy a usar
+        para evaluar la distancia luminosa teórica.
+
+    Output:
+        muth (array): magnitud aparente teórica
+    '''
 
     d_c =  c_luz_km * cumtrapz(H**(-1), z, initial=0)
     dc_int = interp1d(z, d_c) #Interpolamos
