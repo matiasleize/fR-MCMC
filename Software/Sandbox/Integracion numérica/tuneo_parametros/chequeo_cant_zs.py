@@ -17,7 +17,7 @@ from funciones_int import integrador
 
 #%%
 omega_m = 0.24
-b = 1
+b = 0.1
 H0 = 73.48
 params_fisicos = [omega_m,b,H0]
 
@@ -50,12 +50,18 @@ for j in range(1,len(ds)):
 plt.close()
 plt.figure()
 plt.grid(True)
-plt.xlabel('max_steps')
-plt.ylabel('$\Delta$hs')
+plt.xlabel('Cantidad de puntos evaluados', fontsize=12)
+plt.ylabel('$\Delta$ I', fontsize=12)
+plt.xticks(fontsize=11)
+plt.yticks(fontsize=11)
+
+
 plt.plot(cantidad_zs[::-1],np.array(final_hs)[::-1],'.-');
+plt.xscale('log')
 #plt.legend(loc='best')
 plt.show()
 
+#%%
 tol = 10**(-4)
 final_hs[np.where(np.abs(final_hs)<=tol)[0]]
 cantidad_zs[np.where(np.abs(final_hs)<=tol)[0]]
@@ -63,13 +69,15 @@ cantidad_zs[np.where(np.abs(final_hs)<=tol)[0]]
 #Pareceria que en mas_steps y valores de los parametros razonables
 #no hay diferencia en el valor de H(z) para distintos cant_zs
 
-#%%
+#%% BORRAR
 %matplotlib qt5
 plt.close()
 plt.figure()
 plt.grid(True)
-plt.xlabel('max_steps')
+plt.xlabel('Cantidad de puntos a evaluar')
 plt.ylabel('$\Delta$ds')
+
+
 plt.plot(cantidad_zs[::-1],np.array(final_ds)[::-1],'.-');
 #plt.legend(loc='best')
 plt.show()
