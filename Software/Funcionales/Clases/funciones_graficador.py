@@ -1,9 +1,3 @@
-"""
-Created on Sun Feb  2 13:28:48 2020
-
-@author: matias
-"""
-
 import numpy as np
 from matplotlib import pyplot as plt
 import time
@@ -14,10 +8,21 @@ import pandas as pd
 from IPython.display import display, Math
 import arviz as az
 
+#b_w=0.25 #CC+H0 Mejor sin smoothear!
+#b_w=0.005 #Nuisance Mejor sin smoothear!
+#b_w=0.12 #CC+SN
+b_w=0.15 #CC+SN+BAO
 class Graficador:
-	'''Falta: poder agregar $$ al principio y al final
+	'''
+	Esta clase genera un objeto "Graficador" que toma el objeto sampler
+	de las cadenas generadas por el método MonteCarlo, las etiquetas
+	de cada cadena y el título del análisis.
+
+	Falta: poder agregar $$ al principio y al final
 	de cada item de la lista de labels (son necesarios
-	para los graficos pero no para reportar_intervalos)'''
+	para los graficos pero no para reportar_intervalos)
+	'''
+
 	def __init__(self,sampler,labels,title):
 		self.sampler=sampler
 		self.labels=labels
@@ -25,32 +30,58 @@ class Graficador:
 
 	def graficar_cadenas(self):
 		'''Esta función grafica las cadenas en función del largo
-		de las mismas.'''
+		de las mismas para cada parámetro.'''
+
 		samples = self.sampler.get_chain()
 		len_chain,nwalkers,ndim=self.sampler.get_chain().shape
+		sns.set(style='darkgrid', palette="muted", color_codes=True)
+		sns.set_context("paper", font_scale=1.5, rc={"font.size":10,"axes.labelsize":17})
 		fig, axes = plt.subplots(ndim, figsize=(10, 7), sharex=True)
+
 		for i in range(ndim):
 		    ax = axes[i]
 		    ax.plot(samples[:, :, i], "k", alpha=0.3)
 		    ax.set_xlim(0, len(samples))
 		    ax.set_ylabel(self.labels[i])
 		ax.yaxis.set_label_coords(-0.1, 0.5)
-		axes[-1].set_xlabel("step number");
+		axes[-1].set_xlabel("Número de pasos N");
 		if not self.title==None:
 			fig.suptitle(self.title);
 
 	def graficar_contornos(self, params_truths, discard=20,
-							thin=1, poster=False, color='b'):
-		'''Grafica los contornos de confianza.'''
+							thin=1, poster=False, color='b', nuisance_only=False):
+		'''
+		Grafica los cornerplots para los parámetros a partir de las cadenas
+		de Markov. En la diagonal aparecen las  distribuciones de probabilidad
+		 proyectadas para cada parámetro, y fuera de la diagonal los contornos
+		 de confianza 2D.
+
+		 Poster: If True, hace los graficos sin relleno y solo plotea los
+		 		contornos a 98% CL.
+				If False, Realiza los contornos de confianza utilizando la
+				libreria corner, que es mas rapido pero es más feo.
+
+		 '''
+
 		flat_samples = self.sampler.get_chain(discard=discard, flat=True, thin=thin)
+		if nuisance_only==True:
+			flat_samples=flat_samples[:,3:] #Solo para el grafico de nuisance only!
+
 		if poster==True:
+			viz_dict = {
+	    	#'axes.titlesize':5,
+			#'font.size':36,
+	    	'axes.labelsize':26,
+			'xtick.labelsize':15,
+			'ytick.labelsize':15,
+			}
 			df = pd.DataFrame(flat_samples,columns=self.labels)
 			sns.set(style='darkgrid', palette="muted", color_codes=True)
-			sns.set_context("paper", font_scale=1.5, rc={"font.size":10,"axes.labelsize":17})
+			sns.set_context("paper", font_scale=3, rc=viz_dict)#{"font.size":15,"axes.labelsize":17})
 
 			g = sns.PairGrid(df, diag_sharey=False, corner=True)
-			g.map_diag(sns.kdeplot, lw=2, shade=True,color=color)
-			g.map_lower(sns.kdeplot,levels=5,shade=True,shade_lowest=False,color=color)
+			g.map_diag(sns.kdeplot, lw=2, fill=False,color=color)#,bw=b_w)
+			g.map_lower(sns.kdeplot,levels=[1-0.95,1-0.68,1],fill=True,color=color)
 			g.fig.set_size_inches(8,8)
 			if not self.title==None:
 				# Access the Figure
@@ -64,9 +95,14 @@ class Graficador:
 
 
 	def reportar_intervalos(self, params_truths, burnin=20, thin=1,UL_index=None):
-		'''Printeo los valores!
-		Falta: Printear a dos sigmas
 		'''
+		Imprimer los valores de los parámetros, tanto los valores más
+		probables, como las incertezas a uno y dos sigmas.
+		'''
+		sns.set(style='darkgrid', palette="muted", color_codes=True)
+
+
+		sns.set_context("paper", font_scale=1.2, rc={"font.size":10,"axes.labelsize":12})
 		samples = self.sampler.get_chain(discard=burnin, flat=True, thin=thin)
 		labels = self.labels
 		len_chain, nwalkers, ndim = self.sampler.get_chain().shape
@@ -83,31 +119,64 @@ class Graficador:
 			display(Math(txt))
 
 
-	def graficar_taus_vs_n(self, num_param=0,threshold=100.0):
-		'''Esta función grafica el tiempo de autocorrelación integraodo
-		 en función del largo de la cadena.
-		 OBS: threshold no debería nunca ser menor que 50, según la
-		 documentación de la librería emcee.
+	def graficar_taus_vs_n(self, num_param=None,threshold=100.0):
+		'''
+		Esta función grafica el tiempo de autocorrelación integrado
+		en función del largo de la cadena.
+		OBS: threshold no debería nunca ser menor que 50, según la
+		documentación de la librería emcee.
 		 '''
-		chain = self.sampler.get_chain()[:, :, num_param].T
+		labels = self.labels
+		sns.set(style='darkgrid', palette="muted", color_codes=True)
+		sns.set_context("paper", font_scale=1.5, rc={"font.size":8,"axes.labelsize":17})
+		plt.grid(True)
+		plt.xlabel("Número de muestras $N$",fontsize=15)
+		plt.ylabel(r"$\hat{\tau}$",fontsize=15)
+		plt.legend(fontsize=17);
+		if num_param==None:
+			for j in range(len(self.sampler.get_chain()[0, 0, :])):
+				chain = self.sampler.get_chain()[:, :, j].T
 
-		# Compute the estimators for a few different chain lengths
-		N = np.exp(np.linspace(np.log(threshold), np.log(chain.shape[1]),
-		 	int(chain.shape[1]/threshold))).astype(int)
-		#donde chain.shape[1] es el largo de las cadenas
+				# Compute the estimators for a few different chain lengths
+				N = np.exp(np.linspace(np.log(threshold), np.log(chain.shape[1]),
+				 	int(chain.shape[1]/threshold))).astype(int)
+				#donde chain.shape[1] es el largo de las cadenas
 
-		taus = np.empty(len(N))
-		for i, n in enumerate(N):
-		    taus[i] = emcee.autocorr.integrated_time(chain[:, :n],quiet=True);
-		taus=np.cumsum(taus)
-		plt.loglog(N, taus, '.-')
-		plt.plot(N, N / threshold, "--k", label=r"$\tau = N/{}$".format(threshold))
-		plt.axhline(true_tau, color="k", label="truth", zorder=-100)
-		ylim = plt.gca().get_ylim()
-		plt.ylim(ylim)
-		plt.xlabel("number of samples, $N$")
-		plt.ylabel(r"$\tau$ estimates")
-		plt.legend(fontsize=14);
+				taus = np.empty(len(N))
+				for i, n in enumerate(N):
+				    taus[i] = emcee.autocorr.integrated_time(chain[:, :n],quiet=True);
+				taus=np.cumsum(taus)
+
+				#plt.axhline(true_tau, color="k", label="truth", zorder=-100)
+				plt.loglog(N, taus, '.-', label="{}".format(labels[j]))
+
+			ylim = plt.gca().get_ylim()
+			plt.ylim(ylim)
+			plt.plot(N, N / threshold, "--k", label=r"$\tau = N/{}$".format(threshold))
+			plt.legend(loc = 'best', fontsize=12)
+			plt.show()
+
+		else:
+			chain = self.sampler.get_chain()[:, :, num_param].T
+
+			# Compute the estimators for a few different chain lengths
+			N = np.exp(np.linspace(np.log(threshold), np.log(chain.shape[1]),
+			 	int(chain.shape[1]/threshold))).astype(int)
+			#donde chain.shape[1] es el largo de las cadenas
+
+			taus = np.empty(len(N))
+			for i, n in enumerate(N):
+			    taus[i] = emcee.autocorr.integrated_time(chain[:, :n],quiet=True);
+			taus=np.cumsum(taus)
+
+			plt.loglog(N, taus, '.-')
+			plt.plot(N, N / threshold, "--k", label=r"$\tau = N/{}$".format(threshold))
+			#plt.axhline(true_tau, color="k", label="truth", zorder=-100)
+			ylim = plt.gca().get_ylim()
+			plt.ylim(ylim)
+			plt.xlabel("Número de muestras $N$")
+			plt.ylabel(r"$\hat{\tau}$")
+			plt.legend(fontsize=17);
 
 
 
@@ -115,7 +184,6 @@ class Graficador:
 if __name__ == '__main__':
 	import sys
 	import os
-
 	from pc_path import definir_path
 	path_git, path_datos_global = definir_path()
 
@@ -132,15 +200,16 @@ if __name__ == '__main__':
 	tau = reader.get_autocorr_time()
 	burnin = int(2 * np.max(tau))
 	thin = int(0.5 * np.min(tau))
+	thin = 100
 #%%
 	#%matplotlib qt5
 	analisis = Graficador(reader,['omega_m','b', 'H0'],'HS CC+H0')
+	analisis.graficar_contornos(sol,discard=burnin,thin=thin,poster=True)
+#%%
 	analisis.graficar_cadenas()
-	analisis.graficar_contornos(sol,discard=burnin,thin=thin,poster=False)
 	analisis.reportar_intervalos(sol)
 #%%
-	plt.figure()
-	analisis.graficar_taus_vs_n(num_param=0)
+	analisis.graficar_taus_vs_n(num_param=None)
 #	analisis.graficar_taus_vs_n(num_param=1)
 #	analisis.graficar_taus_vs_n(num_param=2)
 
@@ -151,9 +220,46 @@ if __name__ == '__main__':
 	emcee_data = az.from_emcee(reader, var_names=['$\Omega_{m}$','b', '$H_{0}$'])
 	emcee_data
 	az.plot_pair(emcee_data,
-            	kind=['kde'],
-				kde_kwargs={"fill_last": False},
+            	kind='kde',
+				#kde_kwargs={"fill_last": False, 'bw':'scott','levels':[1-0.95, 1-0.68]},
+				contour=True,
             	divergences=True,
 				marginals = True,
 				point_estimate = 'mode',
             	textsize=18)
+#%%
+	az.plot_posterior(emcee_data)
+	plt.show()
+
+	#%%
+	labels = ['omega_m','b', 'H0']
+	sampler = reader
+	flat_samples = sampler.get_chain(discard=burnin, flat=True, thin=thin)
+	df = pd.DataFrame(flat_samples,columns=labels)
+	sns.set(style='darkgrid', palette="muted", color_codes=True)
+	sns.set_context("paper", font_scale=1.5, rc={"font.size":10,"axes.labelsize":17})
+
+	g = sns.PairGrid(df, diag_sharey=False, corner=True)
+	g.map_diag(sns.kdeplot, lw=2, shade=False)
+	g.map_lower(sns.kdeplot,
+				levels = [1-0.95],
+				#n_levels=[0.68,0.95],
+				#shade_lowest=True)
+				shade=False
+				)
+	g.map_lower(sns.kdeplot, levels = [1-0.68], shade=False)
+	g.fig.set_size_inches(8,8)
+	#%%
+	fig,ax=plt.subplots()
+	g = sns.PairGrid(df, diag_sharey=False, corner=True)
+	g.map_lower(sns.kdeplot,
+				shade=True,
+				#n_levels=[1-0.95, 1-0.68],
+				#n_levels=[0.68,0.95],
+				levels=5,
+				#normed=True,
+				shade_lowest=False
+				)
+
+	ax.set_aspect('equal')
+	plt.show()
