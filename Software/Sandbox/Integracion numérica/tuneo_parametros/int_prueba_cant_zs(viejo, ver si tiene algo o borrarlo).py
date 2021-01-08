@@ -23,7 +23,7 @@ from funciones_int import integrador
 #%%
 
 omega_m = 0.24
-b = 1
+b = 0.2
 H0 = 73.48
 params_fisicos = [omega_m,b,H0]
 
@@ -41,7 +41,7 @@ Hs = []
 for i,cant in enumerate(cant_zs):
 
     zs, H_ode = integrador(params_fisicos, n=1, cantidad_zs=cant,
-    max_step=0.001)
+    max_step=0.003)
 
     f = interp1d(zs,H_ode)
     Hs.append(f(zs_patron))
