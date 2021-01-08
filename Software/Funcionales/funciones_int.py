@@ -2,7 +2,7 @@ import time
 import numpy as np
 from scipy.integrate import solve_ivp
 from scipy.constants import c as c_luz #metros/segundos
-c_luz_km = c_luz/1000;
+c_luz_km = c_luz/1000
 
 import sys
 import os
@@ -17,10 +17,20 @@ from funciones_cambio_parametros import params_fisicos_to_modelo_HS, params_fisi
 #%%
 
 def dX_dz(z, variables, params_modelo, model='HS'):
-    '''Defino el sistema de ecuaciones a resolver. El argumento params_modelo
-    es una lista donde los primeros n-1 elementos son los parametros del sistema,
-    mientras que el útimo argumento especifica el modelo en cuestión,
-    matematicamente dado por la función gamma.'''
+    '''
+    Sistema de ecuaciones a resolver pot la función Integrador.
+
+    Parameters:
+        params_modelo: list
+            lista de n parámetros, donde los primeros n-1 elementos son los
+            parametros del sistema, mientras que el útimo argumento especifica el modelo
+            en cuestión, matemáticamente dado por la función \Gamma.
+        model: string
+            Modelo que estamos integrando.
+
+    Returns: list
+        Set de ecuaciones diferenciales para las variables (x,y,v,w,r).
+    '''
 
     x = variables[0]
     y = variables[1]
@@ -36,7 +46,7 @@ def dX_dz(z, variables, params_modelo, model='HS'):
             gamma = lambda r,lamb: -(r**2 + 1)*(2*lamb*r - (r**2 + 1)**2)/(2*lamb*r*(3*r**2 - 1))
             G = gamma(r,lamb) #Va como r^6/r^3 = r^3
         else:
-            (r**2 + 1)**(n + 2)*(-lamb*n*r*(r**2 + 1)**(-n - 1) + 1/2)/(lamb*n*r*(2*n*r**2 + r**2 - 1))
+            (r**2 + 1)**(N + 2)*(-lamb*N*r*(r**2 + 1)**(-N - 1) + 1/2)/(lamb*N*r*(2*N*r**2 + r**2 - 1))
             print('Guarda que estas poniendo n!=1')
             pass
 
@@ -65,18 +75,32 @@ def dX_dz(z, variables, params_modelo, model='HS'):
     return [s0,s1,s2,s3,s4]
 
 
-def integrador(params_fisicos, n=1, cantidad_zs=int(10**5), max_step=0.003,
+def integrador(params_fisicos, n=1, cantidad_zs=int(10**5), max_step=10**(-5),
                 z_inicial=30, z_final=0, sistema_ec=dX_dz, verbose=False,
                 model='HS'):
-
-    '''Esta función integra el sistema de ecuaciones diferenciales entre
-    z_inicial y z_final, dadas las condiciones iniciales y los parámetros
-    del modelo.
-        Para el integrador, dependiendo que datos se usan hay que ajustar
-    el cantidad_zs y el max_step.
-    Para cronometros: max_step=0.1
-    Para supernovas:  max_step=0.05
+    #Para HS n=1 con max_step 0.003 alcanza.
     '''
+    Integración numérica del sistema de ecuaciones diferenciales entre
+    z_inicial y z_final, dadas las condiciones iniciales de las variables
+    (x,y,v,w,r) y los parámetros 'con sentido físico' del modelo f(R).
+
+    Parameters:
+        cantidad_zs: int
+            cantidad de puntos (redshifts) en los que se evalúa la
+            integración nummérica. Es necesario que la cantidad de puntos en el
+            área de interés $(z \in [0,3])$.
+        mas_step: int
+            paso de la integración numérica. Cuando los parámetros que aparecen
+            en el sistema de ecuaciones se vuelven muy grandes (creo que esto implica
+            que el sistema a resolver se vuelva más inestable) es necesario que el paso
+            de integración sea pequeño.
+        verbose: Bool
+            if True, imprime el tiempo que tarda el proceso de integración.
+
+    Output: list
+        Un array de Numpy de redshifts z y un array de H(z).
+    '''
+
     t1 = time.time()
 
     if model=='HS':
@@ -128,20 +152,20 @@ def integrador(params_fisicos, n=1, cantidad_zs=int(10**5), max_step=0.003,
 if __name__ == '__main__':
     from matplotlib import pyplot as plt
 
-    omega_m = 0.24 #Con valores mas altos de omega deja de andar para b=0.01! Hacer
+    omega_m = 0.3 #Con valores mas altos de omega deja de andar para b=0.01! Hacer
     #mapa de paparams para Hs n=2
-    b = 0.1
+    b = 1
     H0 = 73.48
     params_fisicos = [omega_m,b,H0]
 
-    z_inicial = 30
+    z_inicial = 3
     z_final = 0
-    cantidad_zs = int(10**5)
-    max_step = 10**(-5)
+    cantidad_zs = int(10**2)
+    max_step = 10**(-4)
 
     zs, H_ode = integrador(params_fisicos, n=1, cantidad_zs=cantidad_zs,
-                max_step=max_step, z_inicial=30, z_final=0, sistema_ec=dX_dz,
-                verbose=True,model='ST')
+                max_step=max_step, z_inicial=z_inicial, z_final=0, sistema_ec=dX_dz,
+                verbose=True,model='HS')
 
     #%matplotlib qt5
     #plt.close()
@@ -149,9 +173,18 @@ if __name__ == '__main__':
     plt.grid(True)
     plt.title('Parámetro de Hubble por integración numérica')
     plt.xlabel('z(redshift)')
-    plt.ylabel('H(z)')
-    plt.plot(zs, H_ode/H0, label='ODE')
+    plt.ylabel('E(z)')
+    plt.plot(zs, H_ode/H0, label='$\Omega_{m}=0.3, b=1$')
     plt.legend(loc='best')
+    out= np.zeros((len(zs),2))
+    out[:,0] = zs
+    out[:,1] = H_ode/H0
+    np.savetxt('out.txt', out,
+                delimiter='\t', newline='\n')
+
+
+
+
 
     #%% Testeamos el cumtrapz comparado con simpson para la integral de 1/H
     from scipy.integrate import simps,trapz,cumtrapz
