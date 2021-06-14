@@ -73,6 +73,7 @@ sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend
 max_n = 100000
 # This will be useful to testing convergence
 old_tau = np.inf
+t1 = time.time()
 
 # Now we'll sample for up to max_n steps
 for sample in sampler.sample(pos, iterations=max_n, progress=True):
@@ -83,8 +84,12 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     os.chdir(path_datos_global+'/Resultados_cadenas/')
     textfile_witness = open('witness_5.txt','w')
     textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
-    textfile_witness.write('Tiempo: {}'.format(time.time()))
+
+    t2 = time.time()
+    textfile_witness.write('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
+          int((t2-t1) - 60*int((t2-t1)/60))))
     textfile_witness.close()
+
 
     # Compute the autocorrelation time so far
     # Using tol=0 means that we'll always get an estimate even
@@ -94,7 +99,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
     # Check convergence
     converged = np.all(tau * 100 < sampler.iteration) #100 es el threshold de convergencia
     #También pido que tau se mantenga relativamente constante:
-    converged &= np.all((np.abs(old_tau - tau) / tau) < 0.1) #10% 
+    converged &= np.all((np.abs(old_tau - tau) / tau) < 0.1) #10%
     if converged:
         textfile_witness = open('witness_5.txt','a')
         textfile_witness.write('Convergió!')

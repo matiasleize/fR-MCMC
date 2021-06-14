@@ -163,24 +163,28 @@ def params_to_chi2(theta, params_fijos, zcmb, zhel, Cinv,
     #BAO:
     chies_BAO = np.zeros(num_datasets)
     for i in range(num_datasets):
-        (z_data, valores_data, errores_data, rd_fid) = dataset_BAO[i]
-        #print(type(valores_data))
-        if isinstance(z_data,np.float64):
-            if (rd_fid == 1):
-                pass
+        (z_data_BAO, valores_data, errores_data, rd_fid) = dataset[i]
+        if isinstance(z_data_BAO,np.float64):
+            if (rd_fid == 1): #Abreviatura de que el cociente rd/rd_fid=1
+                valores_data_mod = valores_data
+                errores_data_mod = errores_data
             else:
-                valores_data = valores_data #* (rd/rd_fid)
-                errores_data = errores_data #* (rd/rd_fid)
-        elif isinstance(z_data,np.ndarray):
-            for j in range(len(z_data)):
+                valores_data_mod = valores_data * (rd/rd_fid)
+                errores_data_mod = errores_data * (rd/rd_fid)
+        elif isinstance(z_data_BAO,np.ndarray):
+            valores_data_mod=np.zeros(len(valores_data))
+            errores_data_mod=np.zeros(len(errores_data))
+            for j in range(len(z_data_BAO)):
                 if (rd_fid[j] == 1):
-                        pass
+                        valores_data_mod[j] = valores_data[j]
+                        errores_data_mod[j] = errores_data[j]
                 else:
-                    valores_data[j] = valores_data[j] #*(rd/rd_fid[j])
-                    errores_data[j] = errores_data[j]# *(rd/rd_fid[j])
+                    valores_data_mod[j] = valores_data[j] * (rd/rd_fid[j])
+                    errores_data_mod[j] = errores_data[j] * (rd/rd_fid[j])
         #outs = Hs_to_Ds(zs_BAO,H_modelo_BAO,z_data,i) No hace falta usar interpolacion!
         outs = Hs_to_Ds(zs, H_modelo,z_data,i)
-        chies_BAO[i] = chi_2_BAO(outs,valores_data,errores_data)
+        chies_BAO[i] = chi_2_BAO(outs,valores_data_mod,errores_data_mod)
+        #chies_BAO[i] = chi_2_BAO(outs,valores_data,errores_data) #esto esta mal pero es como lo hiciste en la tesis!
     if np.isnan(sum(chies_BAO))==True:
         print('Hay errores!')
         print(omega_m,H_0,rd)

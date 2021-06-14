@@ -35,14 +35,13 @@ os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/LCDM')
 with np.load('valores_medios_LCDM_BAO_2params.npz') as data:
     sol = data['sol']
 print(sol)
-H0_true =  73.48
 
-log_likelihood = lambda theta: -0.5 * params_to_chi2_BAO(theta,H0_true, dataset)
+log_likelihood = lambda theta: -0.5 * params_to_chi2_BAO(theta,_, dataset)
 
 #%% Definimos las funciones de prior y el posterior
 def log_prior(theta):
-    rd, omega_m = theta
-    if (0.8 < rd < 1.2 and 0.1 < omega_m < 0.45):
+    omega_m, H0  = theta
+    if (0.1 < omega_m < 0.45 and 60 < H0 < 80):
         return 0.0
     return -np.inf
 

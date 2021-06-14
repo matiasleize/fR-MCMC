@@ -37,6 +37,7 @@ def leer_data_pantheon(archivo_pantheon,min_z = 0,max_z = 3):
     return zcmb, zhel, Cinv, mb
 
 def leer_data_pantheon_2(archivo_pantheon,archivo_pantheon_2):
+    '''Idem leer_data_pantheon, además de importar los parámetros nuisance.'''
     # leo la tabla de datos:
     zcmb0,zhel0,dz0,mb0,dmb0=np.loadtxt(archivo_pantheon
                     , usecols=(1,2,3,4,5),unpack=True)
@@ -70,12 +71,22 @@ def leer_data_cronometros(archivo_cronometros):
     z, h, dh = np.loadtxt(archivo_cronometros, usecols=(0,1,2), unpack=True)
     return z, h, dh
 
-
 def leer_data_BAO(archivo_BAO):
-    z, valores_data, errores_data, rd_fid = np.loadtxt(archivo_BAO,
-    usecols=(0,1,2,4), unpack=True)
-    return z, valores_data, errores_data, rd_fid
+    z, valores_data, errores_est, errores_sist, wb_fid = np.loadtxt(archivo_BAO,
+    usecols=(0,1,2,3,4), skiprows=1,unpack=True)
+    errores_totales_cuad = errores_est**2 + errores_sist**2
+    return z, valores_data, errores_totales_cuad, wb_fid
 
+def leer_data_AGN(archivo_AGN):
+    z, Fuv, eFuv, Fx, eFx = np.loadtxt(archivo_AGN,
+    usecols=(3,4,5,6,7), unpack=True)
+    arr1inds = z.argsort()
+    sorted_z = z[arr1inds]
+    sorted_Fuv = Fuv[arr1inds]
+    sorted_eFuv = eFuv[arr1inds]
+    sorted_Fx = Fx[arr1inds]
+    sorted_eFx = eFx[arr1inds]
+    return sorted_z, sorted_Fuv, sorted_eFuv, sorted_Fx, sorted_eFx
 #%%
 if __name__ == '__main__':
     import sys
@@ -86,6 +97,9 @@ if __name__ == '__main__':
     path_git, path_datos_global = definir_path()
     os.chdir(path_git)
 
+    #%% AGN
+    os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
+    aux = leer_data_AGN('table3.dat')
     #%% Supernovas
     os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
     zcmb, zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
@@ -99,7 +113,24 @@ if __name__ == '__main__':
 
     #%% BAO
     os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
-    archivo_BAO='datos_BAO_H.txt'
-    z, valores_data, errores_data, rs_bool = np.loadtxt(archivo_BAO,
-    usecols=(0,1,2,4), unpack=True)
-    #z, valores_data, errores_data, rs_bool
+    archivo_BAO='datos_BAO_da.txt'
+
+    z, valores_data, errores_data_cuad = leer_data_BAO(archivo_BAO)
+    #z, valores_data, errores_data_cuad
+#%%
+    import pandas as pd
+    import sys
+    import os
+    from os.path import join as osjoin
+    from pc_path import definir_path
+    path_git, path_datos_global = definir_path()
+    os.chdir(path_git)
+    os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
+    archivo_BAO='datos_BAO.txt'
+    df = pd.read_csv(archivo_BAO,sep='\t')
+    z_data = df.to_numpy()[:,0]
+    valores_data = df.to_numpy()[:,1]
+    errores_est = df.to_numpy()[:,2]
+    errores_sist = df.to_numpy()[:,3]
+    errores_totales_cuad = errores_est**2 + errores_sist**2
+    df.to_numpy()[:,4]

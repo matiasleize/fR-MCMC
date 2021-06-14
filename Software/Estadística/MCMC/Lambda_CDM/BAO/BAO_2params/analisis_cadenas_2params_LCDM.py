@@ -30,11 +30,11 @@ print(tau)
 #%%
 %matplotlib qt5
 graficar_cadenas(reader,
-                labels = ['omega_m','b'])
+                labels = ['omega_m','H0'])
  #%%
 burnin=100
 graficar_contornos(reader,params_truths=sol,discard=burnin,#thin=thin,
-                    labels = ['omega_m','b'])
+                    labels = ['omega_m','H0'])
 #%%
 #Ojo, siempre muestra que convergio, aun cuando no
 plt.figure()

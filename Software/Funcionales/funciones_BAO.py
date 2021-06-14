@@ -6,6 +6,7 @@ Created on Sun Feb  2 13:28:48 2020
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy.integrate import cumtrapz as cumtrapz
+from scipy.integrate import simps as simps
 
 from scipy.constants import c as c_luz #metros/segundos
 c_luz_km = c_luz/1000;
@@ -18,10 +19,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 
-from funciones_int import integrador
-from funciones_cambio_parametros import params_fisicos_to_modelo
 from funciones_data import leer_data_BAO
-from funciones_taylor import Taylor_HS, Taylor_ST
 
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,n
 
@@ -158,6 +156,8 @@ if __name__ == '__main__':
     print(rd)
 
 #%%
+    num_datasets = 5
+    chies = np.zeros(num_datasets)
     for i in range(num_datasets):
         (z_data, valores_data, errores_data, rd_bool) = dataset[i]
         print(type(valores_data))
@@ -179,6 +179,7 @@ if __name__ == '__main__':
         chies[i] = chi_2_BAO(outs,valores_data,errores_data)
     print(chies)
     print(outs)
-
+    len(dataset[4][0])
+    dataset
 
     print(np.sum(chies))

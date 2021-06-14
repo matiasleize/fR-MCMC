@@ -1,0 +1,2 @@
+z	Distancia	Error_estad	Error_sist	type
+0.81	10.75	0.43	0	Da/rd
