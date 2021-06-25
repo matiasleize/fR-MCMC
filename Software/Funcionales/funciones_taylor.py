@@ -67,7 +67,7 @@ def Taylor_HS(z,omega_m,b,H0):
     N_dato = -np.log(1+z)
     numpy_array_of_results = func(N_dato)
     return numpy_array_of_results
-
+    
 #%%
 if __name__ == '__main__':
     from matplotlib import pyplot as plt

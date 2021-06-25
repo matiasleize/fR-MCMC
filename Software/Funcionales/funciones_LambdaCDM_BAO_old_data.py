@@ -14,64 +14,18 @@ from scipy.integrate import simps as simps
 from scipy.interpolate import interp1d
 from scipy.constants import c as c_luz #metros/segundos
 c_luz_km = c_luz/1000
+
+import sys
+import os
+from os.path import join as osjoin
+from pc_path import definir_path
+path_git, path_datos_global = definir_path()
+os.chdir(path_git)
+sys.path.append('./Software/Funcionales/')
+from funciones_int import Hubble_teorico
+from funciones_BAO import r_drag, r_drag_camb
+from funciones_LambdaCDM import H_LCDM
 #%%
-
-def E_LCDM(z, omega_m):
-    omega_lambda = 1 - omega_m
-    E = np.sqrt(omega_m * (1 + z)**3 + omega_lambda)
-    return E
-
-def H_LCDM(z, omega_m, H_0):
-    H = H_0 * E_LCDM(z,omega_m)
-    return H
-
-# BAO
-
-def zdrag(omega_m,H_0,wb=0.0225):
-    '''
-    omega_b = 0.05 #(o algo asi, no lo usamos directamente)
-    wb = 0.0222383 #Planck
-    wb = 0.0225 #BBN
-    '''
-    h = H_0/100
-    b1 = 0.313*(omega_m*h**2)**(-0.419)*(1+0.607*(omega_m*h**2)**(0.6748))
-    b2 = 0.238*(omega_m*h**2)**0.223
-    zd = (1291*(omega_m*h**2)**0.251) * (1+b1*wb**b2) /(1+0.659*(omega_m*h**2)**0.828)
-    #zd =1060.31
-    return zd
-
-def H_LCDM_rad(z, omega_m, H_0):
-    omega_r = 4.18343*10**(-5) / (H_0/100)**2
-    omega_lambda = 1 - omega_m - omega_r
-    H = H_0 * np.sqrt(omega_r * (1 + z)**4 + omega_m * (1 + z)**3 + omega_lambda)
-    return H
-
-def r_drag(omega_m,H_0,int_z=True):
-    #Calculo del rd:
-    h = H_0/100
-    zd = zdrag(omega_m,H_0)
-    wb=0.0225
-#    R_bar = 31500 * wb * (2.726/2.7)**(-4)
-    R_bar = wb * 10**5 / 2.473
-
-    #Integral logaritmica
-    zs_int_log = np.logspace(np.log10(zd),13,int(10**5))
-    H_int_log = H_LCDM_rad(zs_int_log,omega_m,H_0)
-
-    integrando_log = c_luz_km / (H_int_log * np.sqrt(3*(1 + R_bar*(1+zs_int_log)**(-1))))
-
-    rd_log = simps(integrando_log,zs_int_log)
-    return rd_log
-
-
-def r_drag_camb(omega_m,H_0,wb = 0.0225):
-    pars = camb.CAMBparams()
-    h = (H_0/100)
-    pars.set_cosmology(H0=H_0, ombh2=wb, omch2=omega_m*h**2-wb)
-    results = camb.get_background(pars)
-    rd = results.get_derived_params()['rdrag']
-    #print('Derived parameter dictionary: %s'%results.get_derived_params()['rdrag'])
-    return rd
 
 def chi_2_BAO(teo, data, errores):
     chi2 = np.sum(((data-teo)/errores)**2)
@@ -144,7 +98,6 @@ def params_to_chi2_BAO_old_data(theta, params_fijos, dataset,
         print(omega_m,H_0,rd)
 
     return np.sum(chies)
-    #return chies
 
 if __name__ == '__main__':
     from scipy.constants import c as c_luz #metros/segundos

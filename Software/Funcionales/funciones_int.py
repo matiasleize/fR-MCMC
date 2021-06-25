@@ -15,6 +15,8 @@ sys.path.append('./Software/Funcionales/')
 
 from funciones_condiciones_iniciales import condiciones_iniciales, z_condicion_inicial
 from funciones_cambio_parametros import params_fisicos_to_modelo_HS
+from funciones_LambdaCDM import H_LCDM
+from funciones_taylor import Taylor_HS, Taylor_ST
 #%%
 
 def dX_dz(z, variables, params_modelo, model='HS'):
@@ -86,8 +88,9 @@ def dX_dz(z, variables, params_modelo, model='HS'):
         return [s0,s1,s2,s3,s4]
 
 
-def integrador(params_fisicos,epsilon=10**(-10), n=1, cantidad_zs=int(10**5), max_step=10**(-5),
-                z_inicial=3, z_final=0, sistema_ec=dX_dz, verbose=False,
+def integrador(params_fisicos,epsilon=10**(-10), n=1, cantidad_zs=int(10**5),
+                max_step=10**(-5), z_inicial=5, z_final=0,
+                sistema_ec=dX_dz, verbose=False, eval_data=False, z_data = None,
                 model='HS',method='RK45'):
     '''
     Integración numérica del sistema de ecuaciones diferenciales entre
@@ -114,53 +117,49 @@ def integrador(params_fisicos,epsilon=10**(-10), n=1, cantidad_zs=int(10**5), ma
     t1 = time.time()
     [omega_m, b, H0] = params_fisicos
     if model=='EXP':
-        log_eps_inv = -np.log10(epsilon)
-        if b > (4 + omega_m/(1-omega_m)) / log_eps_inv:
-            z_ci = z_condicion_inicial(params_fisicos,epsilon)
-            #print(z_ci)
-            #if (np.isnan(z_ci)==True or z_ci<=0):
-            beta = 2/b
-            params_modelo = [omega_m,beta]
-            cond_iniciales = condiciones_iniciales(omega_m, b, z0=z_ci, model='EXP')
-            #Integramos el sistema
-            zs_int = np.linspace(z_ci,z_final,cantidad_zs)
+        z_ci = z_condicion_inicial(params_fisicos,epsilon)
+        #print(z_ci)
+        #if (np.isnan(z_ci)==True or z_ci<=0):
+        beta = 2/b
+        params_modelo = [omega_m,beta]
+        cond_iniciales = condiciones_iniciales(omega_m, b, z0=z_ci, model='EXP')
+        #Integramos el sistema
+        zs_int = np.linspace(z_ci,z_final,cantidad_zs)
 
-            x_ci = -np.log(1 + z_ci)
-            x_final = -np.log(1 + z_final)
-            xs_int = -np.log(1 + zs_int)
+        x_ci = -np.log(1 + z_ci)
+        x_final = -np.log(1 + z_final)
+        xs_int = -np.log(1 + zs_int)
 
-            sol = solve_ivp(sistema_ec, (x_ci,x_final),
-                cond_iniciales, t_eval=xs_int, args=(params_modelo,model),
-                 max_step=max_step,method=method)
+        sol = solve_ivp(sistema_ec, (x_ci,x_final),
+            cond_iniciales, t_eval=xs_int, args=(params_modelo,model),
+             max_step=max_step,method=method)
 
-            xs_ode = sol.t[::-1]
-            zs_ode = np.exp(-xs_ode)-1
-            Hs_ode = H0 * sol.y[0][::-1]
+        xs_ode = sol.t[::-1]
+        zs_ode = np.exp(-xs_ode)-1
+        Hs_ode = H0 * sol.y[0][::-1]
 
-            ## La parte LCDM
-            zs_LCDM = np.linspace(z_ci,z_inicial,cantidad_zs)
-            Hs_LCDM = H0 * np.sqrt(omega_m * (1+zs_LCDM)**3 + (1-omega_m))
+        ## La parte LCDM
+        zs_LCDM = np.linspace(z_ci,z_inicial,cantidad_zs)
+        Hs_LCDM = H0 * np.sqrt(omega_m * (1+zs_LCDM)**3 + (1-omega_m))
 
-            zs_aux = np.concatenate((zs_ode,zs_LCDM),axis = None)
-            Hs_aux = np.concatenate((Hs_ode,Hs_LCDM),axis = None)
+        zs_aux = np.concatenate((zs_ode,zs_LCDM),axis = None)
+        Hs_aux = np.concatenate((Hs_ode,Hs_LCDM),axis = None)
 
-            f = interp1d(zs_aux,Hs_aux)
+        f = interp1d(zs_aux,Hs_aux)
 
+        if eval_data == False:
             zs_final = np.linspace(z_final,z_inicial,cantidad_zs)
             Hs_final = f(zs_final)
 
+        else:
+            zs_final = z_data
+            Hs_final = f(zs_final)
 
-            t2 = time.time()
-            if verbose == True:
-                print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
-                int((t2-t1) - 60*int((t2-t1)/60))))
-            return zs_final,Hs_final
-
-
-        else: #Si la cond de parametros es muy cercana a LCDM, no integro
-            zs_LCDM = np.linspace(z_final,z_inicial,cantidad_zs)
-            Hs_LCDM = H0 * np.sqrt(omega_m * (1+zs_LCDM)**3 + (1-omega_m)) #O bien un Taylor
-            return zs_LCDM, Hs_LCDM
+        t2 = time.time()
+        if verbose == True:
+            print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
+            int((t2-t1) - 60*int((t2-t1)/60))))
+        return zs_final,Hs_final
 
     else:
         if model=='HS':
@@ -191,15 +190,25 @@ def integrador(params_fisicos,epsilon=10**(-10), n=1, cantidad_zs=int(10**5), ma
 
             params_modelo=[lamb, n]
 
-        zs_int = np.linspace(z_inicial,z_final,cantidad_zs)
-        sol = solve_ivp(sistema_ec, (z_inicial,z_final),
-            cond_iniciales, t_eval=zs_int, args=(params_modelo,model),
-            max_step=max_step,method=method)
+        if eval_data == False:
+            zs_int = np.linspace(z_inicial,z_final,cantidad_zs)
+            sol = solve_ivp(sistema_ec, (z_inicial,z_final),
+                cond_iniciales, t_eval=zs_int, args=(params_modelo,model),
+                max_step=max_step,method=method)
 
-        if (len(sol.t)!=cantidad_zs):
-            print('Está integrando mal!')
-        if np.all(zs_int==sol.t)==False:
-            print('Hay algo raro!')
+            if (len(sol.t)!=cantidad_zs):
+                print('Está integrando mal!')
+            if np.all(zs_int==sol.t)==False:
+                print('Hay algo raro!')
+        else:
+            sol = solve_ivp(sistema_ec, (z_inicial,z_final),
+                cond_iniciales, t_eval=z_data.reverse(), args=(params_modelo,model),
+                max_step=max_step,method=method)
+
+            if (len(sol.t)!=len(z_data)):
+                print('Está integrando mal!')
+            if np.all(z_data==sol.t)==False:
+                print('Hay algo raro!')
 
         #Calculamos el Hubble
         zs = sol.t[::-1]
@@ -216,26 +225,53 @@ def integrador(params_fisicos,epsilon=10**(-10), n=1, cantidad_zs=int(10**5), ma
         return zs, Hs
 
 
-def eleccion_integrador(model, b_crit):
-    if model=='HS':
-        if b > b_crit:
-            pass
-        else:
-            pass
-    elif model=='ST':
-        if b > b_crit:
-            pass
-        else:
-            pass
-    elif model=='EXP':
+def Hubble_teorico(params_fisicos, b_crit=0.2, all_analytic=False,
+                    eval_data=False, z_data=None, epsilon=10**(-10), n=1,
+                    cantidad_zs=int(10**5), max_step=10**(-5),
+                    z_min=0, z_max=5, sistema_ec=dX_dz,
+                    verbose=False, model='HS', method='RK45'):
+
+    [omega_m,b,H0] = params_fisicos
+    if model=='LCDM':
+        zs_modelo = np.linspace(z_min,z_max,cantidad_zs)
+        Hs_modelo = H_LCDM(zs_modelo, omega_m, H0)
+        return zs_modelo, Hs_modelo
+
+    elif model=='EXP': #b critico para el modelo exponencial
+        log_eps_inv = -np.log10(epsilon)
         b_crit = (4 + omega_m/(1-omega_m)) / log_eps_inv
-        if b crit > b_crit:
-            pass
+        method = 'LSODA'
+    else:
+        pass
+
+    if (b <= b_crit) or (all_analytic==True): #Aproximacion analitica
+        if eval_data == False:
+            zs_modelo = np.linspace(z_min,z_max,cantidad_zs)
         else:
-            pass
-    return zs, Hs
+            zs_modelo = z_data
 
+        if (model=='HS') and (n==1):
+            Hs_modelo = Taylor_HS(zs_modelo, omega_m, b, H0)
+        elif (model=='HS') and (n==2):
+            Hs_modelo = Taylor_ST(zs_modelo, omega_m, b, H0)
+        elif (model=='ST') and (n==1):
+            Hs_modelo = Taylor_ST(zs_modelo, omega_m, b, H0)
+        elif model=='EXP': #Devuelvo LCDM
+            Hs_modelo = H_LCDM(zs_modelo, omega_m, H0)
 
+    else: #Integro
+        if eval_data == False:
+            zs_modelo, Hs_modelo = integrador(params_fisicos, epsilon=epsilon, n=n,
+                                    cantidad_zs=cantidad_zs, max_step=max_step,
+                                    z_inicial=z_max, z_final=z_min, sistema_ec=sistema_ec,
+                                    verbose=verbose, model=model, method=method)
+        else:
+            zs_modelo, Hs_modelo = integrador(params_fisicos, epsilon=epsilon, n=n,
+                                    cantidad_zs=cantidad_zs, max_step=max_step,
+                                    z_inicial=z_max, z_final=z_min, sistema_ec=sistema_ec,
+                                    verbose=verbose, eval_data=True, z_data = z_data,
+                                    model=model, method=method)
+    return zs_modelo, Hs_modelo
 
 #%%
 if __name__ == '__main__':
@@ -246,18 +282,39 @@ if __name__ == '__main__':
     H0 = 73.48
 
     params_fisicos = [omega_m,b,H0]
+    params_fisicos = [0.23,0.2,66.012]
     zs_ode, H_HS = integrador(params_fisicos, verbose=True, model='HS')
     _, H_ST = integrador(params_fisicos, verbose=True, model='ST')
     _, H_EXP = integrador(params_fisicos, epsilon=10**(-10),
                 verbose=True, model='EXP', method='LSODA')
+
+
+    #%% La otra funcion:
+    params_fisicos = [0.3,0.1,66.012]
+    zs_ode, H_HS = Hubble_teorico(params_fisicos, verbose=True, model='HS')
+    _,  H_ST = Hubble_teorico(params_fisicos, verbose=True, model='ST')
+    _, H_EXP = Hubble_teorico(params_fisicos, epsilon=10**(-10),
+                    verbose=True, model='EXP', method='LSODA')
+    _, H_LCDM = Hubble_teorico(params_fisicos, epsilon=10**(-10),
+                    verbose=True, model='LCDM', method='LSODA')
+
+    #%% La otra funcion: (PARA PROBAR)
+    params_fisicos = [0.28,1,66.012]
+    zs_ode, H_HS = Hubble_teorico(params_fisicos, eval_data=True,z_data=[1,2],verbose=True, model='HS')
+    _,  H_ST = Hubble_teorico(params_fisicos, eval_data=True,z_data=[1,2], verbose=True, model='ST')
+    _, H_EXP = Hubble_teorico(params_fisicos, eval_data=True,z_data=[1,2], epsilon=10**(-10),
+                    verbose=True, model='EXP', method='LSODA')
+
+#%%
 
     #%matplotlib qt5
     plt.figure()
     plt.title('Integrador $f(R)$')
     plt.xlabel('z (redshift)')
     plt.ylabel('H(z) ((km/seg)/Mpc)')
-    plt.plot(zs_ode,H_HS,label='HS')
-    plt.plot(zs_ode,H_ST,label='ST')
-    plt.plot(zs_ode,H_EXP,label='Exp')
+    plt.plot(zs_ode,H_HS,'.',label='HS')
+    plt.plot(zs_ode,H_ST,'.',label='ST')
+    plt.plot(zs_ode,H_EXP,'.',label='Exp')
+    plt.plot(zs_ode,H_LCDM,'.',label='LCDM')
     plt.legend(loc = 'best')
     plt.grid(True)

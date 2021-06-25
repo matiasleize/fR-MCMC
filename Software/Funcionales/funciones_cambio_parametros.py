@@ -57,6 +57,6 @@ if __name__ == '__main__':
     aux = c_luz_km**2 * omega_m_true / (7800 * (8315)**2 * (1-omega_m_true)) #B en la tesis
     aux
 
-#%% Testamos Starobinsky
+#%% Testeamos Starobinsky
     lamb,Rs = params_fisicos_to_modelo_ST(omega_m_true, b_true, H_0)
     print(lamb,Rs)
