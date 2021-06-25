@@ -26,11 +26,11 @@ tau = reader.get_autocorr_time()
 burnin = int(2 * np.max(tau))
 thin = int(0.5 * np.min(tau))
 
-#burnin = 200
-#thin = 1
 #%%
 %matplotlib qt5
+burnin = 1500
+thin = 50
 analisis = Graficador(reader, ['$\Omega_{m}$','b'], 'AGN HS')
 analisis.graficar_cadenas()
-analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=True, color='k')
+analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=False, color='k')
 analisis.reportar_intervalos(sol)
