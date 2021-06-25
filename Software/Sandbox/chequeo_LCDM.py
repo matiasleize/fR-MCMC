@@ -1,4 +1,3 @@
-
 import numpy as np
 from numpy.linalg import inv
 from matplotlib import pyplot as plt
@@ -44,7 +43,7 @@ for omega_m in (np.linspace(0,1,10)):
     d_c = cumtrapz(1/H,z,initial=0) #Paso c_luz a km/seg
     dc_int = interp1d(z,d_c) #Interpolamos
     d_L = (1+zhel) * dc_int(zcmb) #Obs, Caro multiplica por Zhel, con Zobs da un poquin mejor
-    ##Magnitud aparente teorica
+    #Magnitud aparente teorica
     muth = 25.0 + 5.0 * np.log10(d_L)
     sn = len(muth)
     plt.plot(zcmb,muth,'.',label='omega={}'.format(omega_m))
@@ -52,6 +51,7 @@ for omega_m in (np.linspace(0,1,10)):
     plt.legend(loc='best')
 
     print(muth)
+
     #%%
     plt.figure()
     z = np.linspace(0,0.5,1000)
@@ -72,6 +72,7 @@ for omega_m in (np.linspace(0,1,10)):
         #plt.plot(z, d_L)
         #plt.plot(z,H,label='omega={}'.format(omega_m))
         plt.legend(loc='best')
+
 #%%
 def integral(omega_m,z):
     zs = np.linspace(0,z,100000)
