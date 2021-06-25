@@ -29,12 +29,12 @@ data_agn = leer_data_AGN('table3.dat')
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/LCDM')
 with np.load('valores_medios_LCDM_AGN_3params_nuisance.npz') as data:
     sol = data['sol']
-sol[0] = 0.4
-sol[1] = 0.4
-sol[2] = 0.4
+#sol[0] = 0.4
+#sol[1] = 0.4
+#sol[2] = 0.4
 print(sol)
 beta_true = 8.3
-H0_true =  50
+H0_true =  70
 params_fijos = [H0_true, beta_true]
 
 log_likelihood = lambda theta: -0.5 * params_to_chi2_AGN_nuisance(theta, params_fijos, data_agn)
@@ -42,7 +42,7 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2_AGN_nuisance(theta, params_
 def log_prior(theta):
     omega_m, gamma, delta = theta
     if (0.1 < omega_m < 0.99
-        and 0.1 < gamma < 0.8 and 0 < delta < 0.5):
+        and 0.5 < gamma < 0.8 and 0 < delta < 0.5):
         return 0.0
     return -np.inf
 

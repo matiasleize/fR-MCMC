@@ -32,8 +32,9 @@ print(tau)
 graficar_cadenas(reader,
                 labels = ['omega_m','beta','gamma','delta'])
  #%%
-burnin=500
-graficar_contornos(reader,params_truths=sol,discard=burnin,#thin=thin,
+burnin=1500
+thin=5
+graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,
                     labels = ['omega_m','beta','gamma','delta'])
 #%%
 #Ojo, siempre muestra que convergio, aun cuando no
@@ -41,15 +42,59 @@ graficar_contornos(reader,params_truths=sol,discard=burnin,#thin=thin,
 #graficar_taus_vs_n(reader,num_param=0,threshold=1000)
 #graficar_taus_vs_n(reader,num_param=1,threshold=1000)
 #%% Printeo los valores!
+thin=1
 from IPython.display import display, Math
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
-labels = ['omega_m','b']
+labels = ['omega_m','beta','gamma','delta']
 len_chain,nwalkers,ndim=reader.get_chain().shape
 print(len_chain)
 for i in range(ndim):
     mcmc = np.percentile(samples[:, i], [16, 50, 84])
     mcmc[1]=sol[i] #Correción de mati: En vez de percentil 50 poner el mu
     q = np.diff(mcmc)
-    txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{{2:.3f}}}"
+    txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{+{2:.3f}}}"
     txt = txt.format(mcmc[1], q[0], q[1], labels[i])
     display(Math(txt))
+
+#%%
+betas_2_unflitered = samples[:, 1]
+gammas_unflitered = samples[:, 2]
+
+burnin = 1500
+thin = 15
+
+def filtrar_puntos(sample, burnin=0,thin=1):
+    sample_2 = sample[burnin:]
+    sample_3 =[]
+    for i in range(len(sample_2)):
+        if (i%thin==0):
+            sample_3.append(sample_2[i])
+    return np.array(sample_3)
+
+betas_2 = filtrar_puntos(betas_2_unflitered, burnin=burnin,thin=thin)
+gammas = filtrar_puntos(gammas_unflitered, burnin=burnin,thin=thin)
+len(betas_2),len(gammas)
+#%%
+betas = betas_2 + (gammas-1) * (np.log10(4*np.pi) - 2 * np.log10(70))
+np.mean(betas)
+np.std(betas)
+beta_posta = np.random.normal(7.735,0.244,10**7)
+plt.close()
+plt.figure()
+plt.title('Lambda CDM')
+plt.xlabel(r'$\beta$')
+plt.hist(betas,density=True,bins=round(np.sqrt(len(betas))),label=r'$\beta_{propagacion}$')
+plt.hist(beta_posta,density=True,bins=round(np.sqrt(len(beta_posta))),label=r'$\beta_{paper}$')
+plt.grid(True)
+plt.legend()
+plt.savefig( '/home/matias/propagacion_beta.png')
+#%%
+
+mcmc = np.percentile(betas, [16, 50, 84]) #Hay coincidencia a 1 sigma :) 
+q = np.diff(mcmc)
+txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{+{2:.3f}}}"
+txt = txt.format(mcmc[1], q[0], q[1], r'\beta')
+display(Math(txt))
+txt = "\mathrm{{{2}}} = {0:.3f}\pm{{{1:.3f}}}"
+txt = txt.format(np.mean(beta_posta), np.std(beta_posta), r'\beta')
+display(Math(txt))

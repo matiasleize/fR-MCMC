@@ -41,7 +41,7 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2_AGN_nuisance(theta,H0_true,
 #%% Definimos las funciones de prior y el posterior
 def log_prior(theta):
     omega_m, beta, gamma, delta = theta
-    if (0.1 < omega_m < 0.99 and 5 < beta < 15 #5 < beta < 15
+    if (0.1 < omega_m < 0.99 and 5 < beta < 15
         and 0.1 < gamma < 0.8 and 0 < delta < 0.5):
         return 0.0
     return -np.inf
