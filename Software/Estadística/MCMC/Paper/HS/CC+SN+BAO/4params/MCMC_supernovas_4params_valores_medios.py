@@ -72,3 +72,10 @@ num_data_BAO = 20
 datos_totales = num_data_CC+num_data_SN+num_data_BAO
 
 soln.fun/(datos_totales-len(soln.x)) #0.9948250407473016
+
+#%%
+os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
+with np.load('valores_medios_HS_CC+SN+BAO_4params.npz') as data:
+    sol = data['sol']
+
+sol

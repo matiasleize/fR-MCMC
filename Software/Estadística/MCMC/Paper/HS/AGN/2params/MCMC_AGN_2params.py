@@ -36,7 +36,7 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos,
 # Definimos la distribucion del prior
 def log_prior(theta):
     omega_m, b = theta
-    if (0.1 < omega_m < 0.5 and 0 < b < 1):
+    if (0.1 < omega_m < 0.5 and 0 < b < 2):
         return 0.0
     return -np.inf
 
@@ -56,4 +56,4 @@ MCMC_sampler(log_probability,pos,
             filename = "sample_HS_AGN_2params.h5",
             witness_file = 'witness_21.txt',
             witness_freq = 5,
-            max_samples = 100000)
+            max_samples = 2000000)

@@ -15,7 +15,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
-from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO
+from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO,leer_data_AGN
 from funciones_alternativos import params_to_chi2
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
@@ -76,3 +76,10 @@ num_data_AGN = len(ds_AGN[0])
 datos_totales = num_data_CC+num_data_SN+num_data_BAO+num_data_AGN
 
 soln.fun/(datos_totales-len(soln.x)) #
+
+#%%
+os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
+with np.load('valores_medios_HS_CC+SN+BAO+AGN_4params.npz') as data:
+    sol = data['sol']
+
+sol
