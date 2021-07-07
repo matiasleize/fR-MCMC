@@ -50,7 +50,7 @@ ds_AGN = leer_data_AGN('table3.dat')
 
 
 #%% Parametros a ajustar
-nll = lambda theta: params_to_chi2(theta, params_fijos, index=4,
+nll = lambda theta: params_to_chi2(theta, params_fijos, index=32,
                                     dataset_SN = ds_SN,
                                     dataset_CC = ds_CC,
                                     #dataset_BAO = ds_BAO,
@@ -60,7 +60,7 @@ nll = lambda theta: params_to_chi2(theta, params_fijos, index=4,
                                     )
 
 initial = np.array([M_true,omega_m_true,H0_true])
-soln = minimize(nll, initial, options = {'eps': 0.01}, bounds =((-25,-18),(0, 0.5),(68,75)))
+soln = minimize(nll, initial, options = {'eps': 0.01}, bounds =((-25,-18),(0, 0.5),(60,75)))
 M_ml, omega_m_ml, H0_ml = soln.x
 
 print(M_ml,omega_m_ml,H0_ml)

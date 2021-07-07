@@ -27,9 +27,11 @@ burnin = int(2 * np.max(tau))
 thin = int(0.5 * np.min(tau))
 #%%
 %matplotlib qt5
-analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','$H_{0}$'],'')
-                    #'Supernovas tipo IA + Cronómetros Cósmicos + BAO')
+analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','$H_{0}$'],
+                    'SnIA + CC + AGN')
+
 analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=True,color='r')
+plt.savefig( '/home/matias/contornos_SN+CC+AGN+LCDM.png')
  #%%
 analisis.graficar_cadenas()
 analisis.reportar_intervalos(sol)

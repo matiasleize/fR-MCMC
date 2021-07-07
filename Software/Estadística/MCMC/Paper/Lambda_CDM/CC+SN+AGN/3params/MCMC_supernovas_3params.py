@@ -41,19 +41,19 @@ print(sol)
 #Parametros fijos
 params_fijos = _
 
-log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=4,
+log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=32,
                                                         dataset_SN = ds_SN,
                                                         dataset_CC = ds_CC,
                                                         #dataset_BAO = ds_BAO,
                                                         dataset_AGN = ds_AGN,
                                                         #H0_Riess = True,
-                                                        model = 'HS'
+                                                        model = 'LCDM'
                                                         )
 #%%
 # Definimos la distribucion del prior
 def log_prior(theta):
     M, omega_m, H0 = theta
-    if (-22 < M < -18 and  0.01 < omega_m < 0.4 and 60 < H0 < 80):
+    if (-22 < M < -18 and  0.01 < omega_m < 0.55 and 60 < H0 < 80):
         return 0.0
     return -np.inf
 
@@ -70,7 +70,7 @@ def log_probability(theta):
 pos = sol + 1e-4 * np.random.randn(12, 3)
 
 MCMC_sampler(log_probability,pos,
-            filename = "sample_LCDM_CC+AGN+BAO_3params.h5",
+            filename = "sample_LCDM_CC+SN+AGN_3params.h5",
             witness_file = 'witness_13.txt',
             witness_freq = 5,
-            max_samples = 100000)
+            max_samples = 1000000)

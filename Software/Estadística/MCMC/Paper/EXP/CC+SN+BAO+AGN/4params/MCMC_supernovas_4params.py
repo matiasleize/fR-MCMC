@@ -15,7 +15,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_sampleo import MCMC_sampler
-from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO
+from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
 from funciones_alternativos import params_to_chi2
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
@@ -62,7 +62,7 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=
 # Definimos la distribucion del prior
 def log_prior(theta):
     M, omega_m, b, H0 = theta
-    if (-22 < M < -18 and  0.01 < omega_m < 0.4 and 0 < b < 3 and 60 < H0 < 80):
+    if (-22 < M < -18 and  0.01 < omega_m < 0.4 and 0 < b < 1 and 60 < H0 < 80):
         return 0.0
     return -np.inf
 

@@ -56,10 +56,11 @@ nll = lambda theta: params_to_chi2(theta, params_fijos, index=4,
                                     )
 
 initial = np.array([M_true,omega_m_true,b_true,H0_true])
-soln = minimize(nll, initial, options = {'eps': 0.01}, bounds =((-25,-18),(0.1,0.5),(0, 3),(68,75)))
+soln = minimize(nll, initial, options = {'eps': 0.01}, bounds =((-25,-18),(0.1,0.5),(0, 3),(64,75)))
 M_ml, omega_m_ml, b_ml, H0_ml = soln.x
 
-print(M_ml,omega_m_ml,b_ml,H0_ml)
+print(M_ml,omega_m_ml,b_ml,H0_ml)#-19.351100617405038 0.30819459447582237 0.023 69.2229987565787
+
 
 
 os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
@@ -70,4 +71,4 @@ num_data_SN = len(ds_SN[0])
 num_data_BAO = 20
 datos_totales = num_data_CC+num_data_SN+num_data_BAO
 
-soln.fun/(datos_totales-len(soln.x)) #0.9948250407473016
+soln.fun/(datos_totales-len(soln.x)) #0.9919908562467951

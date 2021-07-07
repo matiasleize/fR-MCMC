@@ -17,7 +17,7 @@ os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/LCDM')
 with np.load('valores_medios_HS_AGN_5params_nuisance.npz') as data:
     sol = data['sol']
 #%%
-os.chdir(path_datos_global+'/Resultados_cadenas/LDCM')
+os.chdir(path_datos_global+'/Resultados_cadenas')
 filename = "sample_HS_AGN_5params_nuisance.h5"
 
 reader = emcee.backends.HDFBackend(filename)

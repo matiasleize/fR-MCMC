@@ -28,9 +28,33 @@ thin = int(0.5 * np.min(tau))
 
 #%%
 %matplotlib qt5
-burnin = 1500
-thin = 50
-analisis = Graficador(reader, ['$\Omega_{m}$'], 'AGN LCDM')
-analisis.graficar_cadenas()
-analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=False, color='k')
-analisis.reportar_intervalos(sol)
+samples = reader.get_chain()
+label = "omega_m"
+plt.figure()
+plt.grid()
+plt.title('AGN LCDM')
+plt.plot(samples[:, :,0], "k", alpha=0.3)
+plt.xlim(0, len(samples))
+plt.ylabel(label)
+plt.xlabel("step number");
+plt.savefig( '/home/matias/cadenas_omega_m_LCDM.png')
+#%%
+
+sample = reader.get_chain(discard=burnin, flat=True, thin=thin)
+plt.close()
+plt.figure()
+plt.grid(True)
+plt.title('Lambda CDM')
+plt.xlabel(r'$\beta$')
+plt.hist(sample,density=True,bins=round(np.sqrt(len(samples))),label=r'$\omega_m$')
+plt.hist(sample)
+
+
+#Reporto intevalo
+from IPython.display import display, Math
+mcmc = np.percentile(samples[:, 0], [16, 50, 84])
+mcmc[1]=sol[0] #Correción de mati: En vez de percentil 50 poner el mu
+q = np.diff(mcmc)
+txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{+{2:.3f}}}"
+txt = txt.format(mcmc[1], q[0], q[1], label)
+display(Math(txt))

@@ -39,6 +39,10 @@ def all_parameters(theta, params_fijos, index):
         Mabs = params_fijos
 
     elif index == 32:
+        [Mabs, omega_m, H_0] = theta
+        b = params_fijos
+
+    elif index == 33:
         [Mabs, omega_m, b] = theta
         H_0 = params_fijos
 
@@ -128,7 +132,8 @@ def params_to_chi2(theta, params_fijos, index=0,
         gamma = 0.648
         egamma = 0.007
 
-        DlH0_teo = zs_2_logDlH0(zs_modelo,omega_m,z_data)
+        Es_modelo = Hs_modelo/H_0
+        DlH0_teo = zs_2_logDlH0(zs_modelo,Es_modelo,z_data)
         DlH0_obs =  np.log10(3.24) - 25 + (logFx - gamma * logFuv - beta) / (2*gamma - 2)
 
         df_dgamma = (1/(2*(gamma-1))**2) * (-logFx+beta+logFuv)
@@ -171,11 +176,57 @@ if __name__ == '__main__':
     ds_AGN = leer_data_AGN('table3.dat')
 
 #%%
-    params_to_chi2([0.3,0.1,72], [-19,1], index=0,
+    bs = np.linspace(0,2,22)
+    chies_HS = np.zeros(len(bs))
+    chies_EXP = np.zeros(len(bs))
+    for (i,b) in enumerate(bs):
+        chies_EXP[i] = params_to_chi2([0.325,b,68], -19.35, index=31,
+                        #dataset_SN = ds_SN,
+                        dataset_CC = ds_CC,
+                        #dataset_BAO = ds_BAO,
+                        #dataset_AGN = ds_AGN,
+                        H0_Riess = True,
+                        model = 'EXP'
+                        )
+        chies_HS[i] = params_to_chi2([0.325,b,68], -19.35, index=31,
+                        #dataset_SN = ds_SN,
+                        dataset_CC = ds_CC,
+                        #dataset_BAO = ds_BAO,
+                        #dataset_AGN = ds_AGN,
+                        H0_Riess = True,
+                        model = 'HS'
+                        )
+        print(i)
+#b = 5 #1296.0757648437618
+#b = 2 #1655.1381848068963
+#b = 1 #1086.2319745225054
+#b = 0.5 #1128.9476844983917
+#b = 0.1 #1133.0048315820693
+    plt.figure()
+    plt.title('CC+H0')
+    plt.ylabel(r'$\chi^2$')
+    plt.xlabel('b')
+    plt.grid(True)
+    plt.plot(bs,chies_HS,label = 'Modelo Hu-Sawicki')
+    plt.plot(bs,chies_EXP,label = 'Modelo Exponencial')
+    plt.legend()
+    plt.savefig('/home/matias/EXP+HS_CC+H0.png')
+#%%
+    a = params_to_chi2([-19.351100617405038, 0.30819459447582237, 69.2229987565787], _, index=32,
                     dataset_SN = ds_SN,
                     dataset_CC = ds_CC,
                     dataset_BAO = ds_BAO,
-                    dataset_AGN = ds_AGN,
-                    H0_Riess = True,
-                    model = 'EXP'
+                    #dataset_AGN = ds_AGN,
+                    #H0_Riess = True,
+                    model = 'LCDM'
                     )
+    print(a)
+    #%%
+    from scipy.stats import chi2
+    N = len(ds_SN[0])
+    P = 3
+    df = N - P
+    x = np.linspace(0,2000, 10**5)
+    y = chi2.pdf(x, df, loc=0, scale=1)
+    plt.vlines(a,0,np.max(y),'r')
+    plt.plot(x,y)

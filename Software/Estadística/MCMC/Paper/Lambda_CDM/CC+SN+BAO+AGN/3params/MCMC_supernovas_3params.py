@@ -15,7 +15,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_sampleo import MCMC_sampler
-from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO
+from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
 from funciones_alternativos import params_to_chi2
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
@@ -42,28 +42,27 @@ os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
 ds_AGN = leer_data_AGN('table3.dat')
 
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-with np.load('valores_medios_HS_CC+SN+BAO+AGN_4params.npz') as data:
+with np.load('valores_medios_LCDM_CC+SN+BAO+AGN_3params.npz') as data:
     sol = data['sol']
 print(sol)
 
 
 #Parametros fijos
-n = 1
-params_fijos = n
+params_fijos = _
 
-log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=4,
+log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=32,
                                                         dataset_SN = ds_SN,
                                                         dataset_CC = ds_CC,
                                                         dataset_BAO = ds_BAO,
-                                                        #dataset_AGN = ds_AGN,
+                                                        dataset_AGN = ds_AGN,
                                                         #H0_Riess = True,
-                                                        model = 'HS'
+                                                        model = 'LCDM'
                                                         )
 #%%
 # Definimos la distribucion del prior
 def log_prior(theta):
-    M, omega_m, b, H0 = theta
-    if (-22 < M < -18 and  0.01 < omega_m < 0.4 and 0 < b < 3 and 60 < H0 < 80):
+    M, omega_m, H0 = theta
+    if (-22 < M < -18 and  0.01 < omega_m < 0.4 and 60 < H0 < 80):
         return 0.0
     return -np.inf
 
@@ -77,10 +76,10 @@ def log_probability(theta):
 #%%
 #Defino los valores iniciales de cada cadena a partir de los valores
 #de los parametros que corresponden al minimo del chi2.
-pos = sol + 1e-4 * np.random.randn(12, 4)
+pos = sol + 1e-4 * np.random.randn(12, 3)
 
 MCMC_sampler(log_probability,pos,
-            filename = "sample_HS_CC+SN+BAO_4params.h5",
-            witness_file = 'witness_25.txt',
+            filename = "sample_LCDM_CC+SN+BAO+AGN_3params.h5",
+            witness_file = 'witness_15.txt',
             witness_freq = 5,
             max_samples = 100000)
