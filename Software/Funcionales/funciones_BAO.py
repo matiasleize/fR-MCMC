@@ -4,7 +4,7 @@ Created on Sun Feb  2 13:28:48 2020
 @author: matias
 """
 import numpy as np
-import camb
+#import camb #Para que ande en el DF
 from scipy.interpolate import interp1d
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.integrate import simps as simps
@@ -54,14 +54,14 @@ def r_drag(omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de BBN.
     rd_log = simps(integrando_log,zs_int_log)
     return rd_log
 
-def r_drag_camb(omega_m,H_0,wb = 0.0225):
-    pars = camb.CAMBparams()
-    h = (H_0/100)
-    pars.set_cosmology(H0=H_0, ombh2=wb, omch2=omega_m*h**2-wb)
-    results = camb.get_background(pars)
-    rd = results.get_derived_params()['rdrag']
-    #print('Derived parameter dictionary: %s'%results.get_derived_params()['rdrag'])
-    return rd
+# def r_drag_camb(omega_m,H_0,wb = 0.0225): #Para que ande en el DF
+#     pars = camb.CAMBparams()
+#     h = (H_0/100)
+#     pars.set_cosmology(H0=H_0, ombh2=wb, omch2=omega_m*h**2-wb)
+#     results = camb.get_background(pars)
+#     rd = results.get_derived_params()['rdrag']
+#     #print('Derived parameter dictionary: %s'%results.get_derived_params()['rdrag'])
+#     return rd
 
 def Hs_to_Ds(zs, Hs, z_data, index):
     if index == 4: #H
