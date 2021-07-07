@@ -72,6 +72,8 @@ wb = 0.048*h**2
 r_drag_camb(omega_m,h*100,wb=wb) #148.66089043939596
 r_drag(omega_m,h*100,wb=wb) #147.52197078103742
 #Deberia ser 148.69 Mpc
+print((1-(r_drag(omega_m,h*100,wb=wb)/r_drag_camb(omega_m,h*100,wb=wb)))*100)
+
 
 #Ref 16 de caro
 omega_m = 0.31
@@ -80,6 +82,7 @@ wb = 0.022
 r_drag_camb(omega_m,h*100,wb=wb) #147.59690329061232
 r_drag(omega_m,h*100,wb=wb) #146.48214042341743
 #Deberia ser 147,78 Mpc
+print((1-(r_drag(omega_m,h*100,wb=wb)/r_drag_camb(omega_m,h*100,wb=wb)))*100)
 
 #Ref 17 de caro
 omega_m = 0.25
@@ -88,6 +91,7 @@ wb = 0.044*(h**2)
 r_drag_camb(omega_m,h*100,wb=wb) #153.41991935756414
 r_drag(omega_m,h*100,wb=wb) #152.31309641483853
 #Deberia ser 153.44 Mpc
+print((1-(r_drag(omega_m,h*100,wb=wb)/r_drag_camb(omega_m,h*100,wb=wb)))*100)
 
 #Ref 79 de caro
 omega_m = 0.27
@@ -96,6 +100,7 @@ wb = 0.0448*(h**2)
 r_drag_camb(omega_m,h*100,wb=wb) #148.5959478254231
 r_drag(omega_m,h*100,wb=wb) #147.51886411943823
 #Deberia ser 148.6 Mpc
+print((1-(r_drag(omega_m,h*100,wb=wb)/r_drag_camb(omega_m,h*100,wb=wb)))*100)
 
 
 #Ref 80 de caro
@@ -105,6 +110,7 @@ wb = 0.048206*(h**2)
 r_drag_camb(omega_m,h*100,wb=wb) #147.63975984449698
 r_drag(omega_m,h*100,wb=wb) #146.53313651071278
 #Deberia ser 147.78
+print((1-(r_drag(omega_m,h*100,wb=wb)/r_drag_camb(omega_m,h*100,wb=wb)))*100)
 
 #Ref 81 y 82 de caro
 omega_m = 0.3147
@@ -113,3 +119,51 @@ wb = 0.02222
 r_drag_camb(omega_m,h*100,wb=wb) #147.16624708118295
 r_drag(omega_m,h*100,wb=wb) #146.06297885462257
 #Deberia ser 147.33
+print((1-(r_drag(omega_m,h*100,wb=wb)/r_drag_camb(omega_m,h*100,wb=wb)))*100)
+
+
+#%% 2007.08993 (primera columna)
+omega_m = 0.310
+h = 0.676
+wb = 0.048*(h**2)
+r_drag_camb(omega_m,h*100,wb=wb) #147.6527750348683
+r_drag(omega_m,h*100,wb=wb) #146.53445837364097
+#Deberia ser 147.78
+print((1-(r_drag(omega_m,h*100,wb=wb)/r_drag_camb(omega_m,h*100,wb=wb)))*100)
+
+#%% 2007.08993 (segunda columna)
+omega_m = 0.307
+h = 0.678
+wb = 0.048*(h**2)
+r_drag_camb(omega_m,h*100,wb=wb) #147.6849037460614
+r_drag(omega_m,h*100,wb=wb) #146.5740849123673
+#Deberia ser 147.66
+print((1-(r_drag(omega_m,h*100,wb=wb)/r_drag_camb(omega_m,h*100,wb=wb)))*100)
+
+#%% 2007.08993 (tercer columna)
+omega_m = 0.286
+h = 0.7
+wb = 0.047*(h**2)
+r_drag_camb(omega_m,h*100,wb=wb) #147.12861165170563
+r_drag(omega_m,h*100,wb=wb) #146.06953903165717
+#Deberia ser 147.15
+print((1-(r_drag(omega_m,h*100,wb=wb)/r_drag_camb(omega_m,h*100,wb=wb)))*100)
+
+
+#%% 2007.08993 (cuarta columna)
+omega_m = 0.265
+h = 0.71
+wb = 0.045*(h**2)
+r_drag_camb(omega_m,h*100,wb=wb) #149.20552004019876
+r_drag(omega_m,h*100,wb=wb) #148.13819104498754
+#Deberia ser 149.35
+print((1-(r_drag(omega_m,h*100,wb=wb)/r_drag_camb(omega_m,h*100,wb=wb)))*100)
+
+#%% 2007.08993 (quinta columna)
+omega_m = 0.35
+h = 0.676
+wb = 0.048*(h**2)
+r_drag_camb(omega_m,h*100,wb=wb) #143.05230814145693
+r_drag(omega_m,h*100,wb=wb) #141.9431762124038
+#Deberia ser 143.17
+print((1-(r_drag(omega_m,h*100,wb=wb)/r_drag_camb(omega_m,h*100,wb=wb)))*100)

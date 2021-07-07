@@ -77,3 +77,9 @@ num_data_AGN = len(ds_AGN[0])
 datos_totales = num_data_CC+num_data_SN+num_data_AGN
 
 soln.fun/(datos_totales-len(soln.x))
+#%%
+os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
+with np.load('valores_medios_EXP_CC+SN+AGN_4params.npz') as data:
+    sol = data['sol']
+
+sol

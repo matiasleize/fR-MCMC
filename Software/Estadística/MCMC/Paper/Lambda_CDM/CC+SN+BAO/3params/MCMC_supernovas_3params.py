@@ -38,7 +38,7 @@ for i in range(5):
     ds_BAO.append(aux)
 
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-with np.load('valores_medios_HS_CC+SN+BAO_4params.npz') as data:
+with np.load('valores_medios_LCDM_CC+SN+BAO_3params.npz') as data:
     sol = data['sol']
 print(sol)
 
@@ -46,7 +46,7 @@ print(sol)
 #Parametros fijos
 params_fijos = _
 
-log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=4,
+log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=32,
                                                         dataset_SN = ds_SN,
                                                         dataset_CC = ds_CC,
                                                         dataset_BAO = ds_BAO,
@@ -57,7 +57,7 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=
 #%%
 # Definimos la distribucion del prior
 def log_prior(theta):
-    M, omega_m, b, H0 = theta
+    M, omega_m, H0 = theta
     if (-22 < M < -18 and  0.01 < omega_m < 0.4 and 60 < H0 < 80):
         return 0.0
     return -np.inf
@@ -72,10 +72,10 @@ def log_probability(theta):
 #%%
 #Defino los valores iniciales de cada cadena a partir de los valores
 #de los parametros que corresponden al minimo del chi2.
-pos = sol + 1e-4 * np.random.randn(12, 4)
+pos = sol + 1e-4 * np.random.randn(12, 3)
 
 MCMC_sampler(log_probability,pos,
             filename = "sample_LCDM_CC+SN+BAO_3params.h5",
-            witness_file = 'witness_24.txt',
-            witness_freq = 5,
-            max_samples = 100000)
+            witness_file = 'witness_14.txt',
+            witness_freq = 10,
+            max_samples = 1000000)

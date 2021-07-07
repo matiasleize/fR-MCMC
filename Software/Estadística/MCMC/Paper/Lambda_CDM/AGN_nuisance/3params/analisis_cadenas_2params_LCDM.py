@@ -32,17 +32,12 @@ print(tau)
 graficar_cadenas(reader,
                 labels = ['omega_m','beta','gamma','delta'])
  #%%
-burnin=1500
-thin=5
+burnin = 1500
+thin = 15
 graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,
                     labels = ['omega_m','beta','gamma','delta'])
-#%%
-#Ojo, siempre muestra que convergio, aun cuando no
-#plt.figure()
-#graficar_taus_vs_n(reader,num_param=0,threshold=1000)
-#graficar_taus_vs_n(reader,num_param=1,threshold=1000)
-#%% Printeo los valores!
-thin=1
+
+#Reporto contornos
 from IPython.display import display, Math
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
 labels = ['omega_m','beta','gamma','delta']
@@ -57,22 +52,8 @@ for i in range(ndim):
     display(Math(txt))
 
 #%%
-betas_2_unflitered = samples[:, 1]
-gammas_unflitered = samples[:, 2]
-
-burnin = 1500
-thin = 15
-
-def filtrar_puntos(sample, burnin=0,thin=1):
-    sample_2 = sample[burnin:]
-    sample_3 =[]
-    for i in range(len(sample_2)):
-        if (i%thin==0):
-            sample_3.append(sample_2[i])
-    return np.array(sample_3)
-
-betas_2 = filtrar_puntos(betas_2_unflitered, burnin=burnin,thin=thin)
-gammas = filtrar_puntos(gammas_unflitered, burnin=burnin,thin=thin)
+betas_2 = samples[:, 1]
+gammas = samples[:, 2]
 len(betas_2),len(gammas)
 #%%
 betas = betas_2 + (gammas-1) * (np.log10(4*np.pi) - 2 * np.log10(70))

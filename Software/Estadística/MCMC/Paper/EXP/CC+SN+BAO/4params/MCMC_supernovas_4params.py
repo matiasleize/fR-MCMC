@@ -79,4 +79,4 @@ MCMC_sampler(log_probability,pos,
             filename = "sample_EXP_CC+SN+BAO_4params.h5",
             witness_file = 'witness_34.txt',
             witness_freq = 5,
-            max_samples = 100000)
+            max_samples = 2000000)

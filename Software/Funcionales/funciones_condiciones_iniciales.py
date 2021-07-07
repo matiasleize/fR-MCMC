@@ -14,7 +14,7 @@ os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_cambio_parametros import params_fisicos_to_modelo_HS
 
-def z_condicion_inicial(params_fisicos,eps=10**(-10)):
+def z_condicion_inicial(params_fisicos, eps = 10**(-10)):
     [omega_m,b,_] = params_fisicos
     beta = 2/b
     omega_l = 1 - omega_m

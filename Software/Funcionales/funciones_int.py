@@ -240,7 +240,7 @@ def Hubble_teorico(params_fisicos, b_crit=0.2, all_analytic=False,
     elif model=='EXP': #b critico para el modelo exponencial
         log_eps_inv = -np.log10(epsilon)
         b_crit = (4 + omega_m/(1-omega_m)) / log_eps_inv
-        method = 'LSODA'
+        method = 'RK45'#'LSODA'
     else:
         pass
 
@@ -282,15 +282,15 @@ if __name__ == '__main__':
     H0 = 73.48
 
     params_fisicos = [omega_m,b,H0]
-    params_fisicos = [0.23,0.2,66.012]
+    params_fisicos = [0.35,0.1,66.012]
     zs_ode, H_HS = integrador(params_fisicos, verbose=True, model='HS')
-    _, H_ST = integrador(params_fisicos, verbose=True, model='ST')
+    #_, H_ST = integrador(params_fisicos, verbose=True, model='ST')
     _, H_EXP = integrador(params_fisicos, epsilon=10**(-10),
                 verbose=True, model='EXP', method='LSODA')
 
 
     #%% La otra funcion:
-    params_fisicos = [0.3,0.1,66.012]
+    params_fisicos = [0.3,1,66.012]
     zs_ode, H_HS = Hubble_teorico(params_fisicos, verbose=True, model='HS')
     _,  H_ST = Hubble_teorico(params_fisicos, verbose=True, model='ST')
     _, H_EXP = Hubble_teorico(params_fisicos, epsilon=10**(-10),
@@ -313,8 +313,8 @@ if __name__ == '__main__':
     plt.xlabel('z (redshift)')
     plt.ylabel('H(z) ((km/seg)/Mpc)')
     plt.plot(zs_ode,H_HS,'.',label='HS')
-    plt.plot(zs_ode,H_ST,'.',label='ST')
+    #plt.plot(zs_ode,H_ST,'.',label='ST')
     plt.plot(zs_ode,H_EXP,'.',label='Exp')
-    plt.plot(zs_ode,H_LCDM,'.',label='LCDM')
+    #plt.plot(zs_ode,H_LCDM,'.',label='LCDM')
     plt.legend(loc = 'best')
     plt.grid(True)

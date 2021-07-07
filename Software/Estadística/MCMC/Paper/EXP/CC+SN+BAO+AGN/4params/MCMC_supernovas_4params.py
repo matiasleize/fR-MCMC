@@ -15,7 +15,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_sampleo import MCMC_sampler
-from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO
+from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
 from funciones_alternativos import params_to_chi2
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
@@ -54,7 +54,7 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=
                                                         dataset_SN = ds_SN,
                                                         dataset_CC = ds_CC,
                                                         dataset_BAO = ds_BAO,
-                                                        #dataset_AGN = ds_AGN,
+                                                        dataset_AGN = ds_AGN,
                                                         #H0_Riess = True,
                                                         model = 'EXP'
                                                         )
@@ -82,4 +82,4 @@ MCMC_sampler(log_probability,pos,
             filename = "sample_EXP_CC+SN+BAO_4params.h5",
             witness_file = 'witness_35.txt',
             witness_freq = 5,
-            max_samples = 100000)
+            max_samples = 2000000)

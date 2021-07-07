@@ -18,12 +18,10 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_int import Hubble_teorico
-from funciones_LambdaCDM import E_LCDM, H_LCDM
 
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,n
 
-def zs_2_logDlH0(zs,omega_m,z_data):
-    Es = E_LCDM(zs, omega_m)
+def zs_2_logDlH0(zs,Es,z_data):
     INT = cumtrapz(Es**(-1), zs, initial=0)
     DlH0 = (c_luz_km * (1 + zs)) * INT #km/seg
     output = interp1d(zs,DlH0)
