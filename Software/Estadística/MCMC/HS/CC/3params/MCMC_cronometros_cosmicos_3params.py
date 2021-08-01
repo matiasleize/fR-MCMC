@@ -38,10 +38,9 @@ print(sol)
 #%%
 def log_prior(theta):
     omega_m, b, H_0 = theta
-    if (0.05 < omega_m < 0.4 and 0 < b < 4 and 50 < H_0 < 90):
+    if (0.05 < omega_m < 0.4 and 0 < b < 8 and 50 < H_0 < 90):
         return 0.0
     return -np.inf
-
 
 def log_probability(theta):
     lp = log_prior(theta)
@@ -50,8 +49,8 @@ def log_probability(theta):
     return lp + log_likelihood(theta)
 pos = sol + 1e-4 * np.random.randn(30, 3)
 nwalkers, ndim = pos.shape
-#%%
-# Set up the backend
+
+#%% Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/')
 filename = "sample_HS_CC_3params.h5"
 backend = emcee.backends.HDFBackend(filename)

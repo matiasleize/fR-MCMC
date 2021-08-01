@@ -86,6 +86,7 @@ def leer_data_AGN(archivo_AGN):
     sorted_eFuv = eFuv[arr1inds]
     sorted_Fx = Fx[arr1inds]
     sorted_eFx = eFx[arr1inds]
+
     return sorted_z, sorted_Fuv, sorted_eFuv, sorted_Fx, sorted_eFx
 #%%
 if __name__ == '__main__':

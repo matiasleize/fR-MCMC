@@ -17,7 +17,8 @@ with np.load('valores_medios_EXP_AGN_2params.npz') as data:
     sol = data['sol']
 
 #%% Importo las cadenas
-os.chdir(path_datos_global+'/Resultados_cadenas')
+#os.chdir(path_datos_global+'/Resultados_cadenas')
+os.chdir(path_datos_global+'/Resultados_cadenas/Paper')
 filename = "sample_EXP_AGN_2params.h5"
 reader = emcee.backends.HDFBackend(filename)
 
@@ -30,7 +31,7 @@ thin = int(0.5 * np.min(tau))
 %matplotlib qt5
 burnin = 1500
 thin = 50
-analisis = Graficador(reader, ['$\Omega_{m}$','b'], 'AGN HS')
+analisis = Graficador(reader, ['$\Omega_{m}$','b'], 'AGN EXP')
 analisis.graficar_cadenas()
 analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=False, color='k')
 analisis.reportar_intervalos(sol)

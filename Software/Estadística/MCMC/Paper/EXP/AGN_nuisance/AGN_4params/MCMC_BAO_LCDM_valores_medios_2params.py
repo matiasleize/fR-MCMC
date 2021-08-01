@@ -37,7 +37,7 @@ H0_true =  70 #Unidades de (km/seg)/Mpc
 
 nll = lambda theta: params_to_chi2_AGN_nuisance(theta, H0_true, data_agn, model='EXP')
 initial = np.array([omega_m_true,b_true,beta_true,gamma_true,delta_true])
-bnds = ((0.85,1.0),(0,0.9),(6.5,7.5),(0.5,0.8),(0.1,0.3))
+bnds = ((0.85,0.99),(0,0.9),(6.5,7.5),(0.5,0.8),(0.1,0.3))
 soln = minimize(nll, initial, bounds=bnds, options = {'eps': 0.01})
 omega_m_ml, b_ml, beta_ml, gamma_ml, delta_ml = soln.x
 print(omega_m_ml,b_ml,beta_ml, gamma_ml, delta_ml)
