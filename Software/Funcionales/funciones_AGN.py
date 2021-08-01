@@ -41,7 +41,7 @@ def chi2_AGN_nuisance(teo, data, errores_cuad):
     return chi2
 
 def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
-                                cantidad_zs=int(10**6), model='HS'):
+                                cantidad_zs=int(10**6), model='HS',less_z=False):
     '''
     Dados los parámetros del modelo devuelvo el estadítico chi2 para
     los datos de AGN.
@@ -70,7 +70,23 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
     Hs_modelo = Hs_modelo_2[mask]
 
     #Importo los datos
-    z_data, logFuv, eFuv, logFx, eFx  = dataset_AGN
+    z_data_unmasked, logFuv_unmasked, eFuv_unmasked, logFx_unmasked, eFx_unmasked  = dataset_AGN
+
+    if less_z == True:
+        mask = z_data_unmasked<1.5
+        z_data = z_data_unmasked[mask]
+        logFuv = logFuv_unmasked[mask]
+        eFuv = eFuv_unmasked[mask]
+        logFx = logFx_unmasked[mask]
+        eFx = eFx_unmasked[mask]
+    else:
+        z_data = z_data_unmasked
+        logFuv = logFuv_unmasked
+        eFuv = eFuv_unmasked
+        logFx = logFx_unmasked
+        eFx = eFx_unmasked
+
+
 
     Dl_teo = Hs_2_logDl(zs_modelo,Hs_modelo,z_data) #Mpc
     Dl_teo_cm = Dl_teo - np.log10(3.24) + 25
