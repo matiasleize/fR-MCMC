@@ -9,6 +9,10 @@ from scipy.constants import c as c_luz #metros/segundos
 c_luz_km = c_luz/1000
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m, b, H_0, n
 
+''''''''''''''''''
+'''DEPRECATED'''
+''''''''''''''''''
+
 
 def params_fisicos_to_modelo_HS(omega_m, b, n=1):
     '''Toma los parametros fisicos (omega_m, el parametro de distorsión b)
