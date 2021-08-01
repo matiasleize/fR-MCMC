@@ -19,11 +19,17 @@ from funciones_LambdaCDM import H_LCDM
 from funciones_taylor import Taylor_HS, Taylor_ST
 #%%
 
-def dX_dz(z, variables, params_modelo, model='HS'):
+def dX_dz(x, variables, params_modelo, model='HS'):
     '''
-    Sistema de ecuaciones a resolver pot la función Integrador.
+    Sistema de ecuaciones a resolver por la función Integrador.
 
     Parameters:
+        x: list?
+            Variable independiente definida como x = ln(1+z) o con un -?
+        variables: list?
+            Varibles dependientes del sistema de ecuaciones. La cantidad
+            de variables es igual a la cantidad de ecuaciones del sistema
+            a integrar.
         params_modelo: list
             lista de n parámetros, donde los primeros n-1 elementos son los
             parametros del sistema, mientras que el útimo argumento especifica el modelo
@@ -32,66 +38,30 @@ def dX_dz(z, variables, params_modelo, model='HS'):
             Modelo que estamos integrando.
 
     Returns: list
-        Set de ecuaciones diferenciales para las variables (x,y,v,w,r).
+        Set de ecuaciones diferenciales para las variables (E, tildeR).
     '''
+    E = variables[0]
+    tildeR = variables[1]
+
+    [omega_m,beta] = params_modelo
+    omega_l = 1 - omega_m
+
+    s0 = omega_l * tildeR/E - 2 * E
     if model == 'EXP':
-        E = variables[0]
-        tildeR = variables[1]
-
-        [omega_m,beta] = params_modelo
-        omega_l = 1 - omega_m
-
-        s0 = omega_l * tildeR/E - 2 * E
-        s1 = (np.exp(beta*tildeR)/(beta**2)) * (omega_m * np.exp(-3*z)/(E**2)-1+beta*np.exp(-beta*tildeR) + omega_l*(1-(1+beta*tildeR)*np.exp(-beta*tildeR))/(E**2))
-
-        return [s0,s1]
-
-    else:
-        x = variables[0]
-        y = variables[1]
-        v = variables[2]
-        w = variables[3]
-        r = variables[4]
-
-        if model == 'ST': #Para el modelo de Starobinsky
-            [lamb,N] = params_modelo
-            if N==1:
-                gamma = lambda r,lamb: -(r**2 + 1)*(2*lamb*r - (r**2 + 1)**2)/(2*lamb*r*(3*r**2 - 1))
-                G = gamma(r,lamb) #Va como r^6/r^3 = r^3
-            else:
-                gamma = lambda r,lamb, N: (r**2 + 1)**(N + 2)*(-lamb*N*r*(r**2 + 1)**(-N - 1) + 1/2)/(lamb*N*r*(2*N*r**2 + r**2 - 1))
-                G = gamma(r,lamb,N)
-                #print('Guarda que estas poniendo n!=1')
-                pass
-
-        elif model == 'HS': #Para el modelo de Hu-Sawicki
-            [B,D,N] = params_modelo
-            if N==1:
-                gamma = lambda r,c1,c2: -(c1 - (c2*r + 1)**2)*(c2*r + 1)/(2*c1*c2*r)
-                G = gamma(r,B,D) #Va como r^3/r = r^2
-            elif N==2:
-                gamma = lambda r,c1,c2: (-2*c1*c2*r**3 - 2*c1*r + c2**3*r**6 + 3*c2**2*r**4 + 3*c2*r**2 + 1)/(2*c1*r*(3*c2*r**2 - 1))
-                G = gamma(r,B,D) #Va como r^6/r^3 = r^3
-            else:
-                gamma = lambda r,c1,c2,n: r**(-n)*(-c1*c2*n*r**(2*n) - c1*n*r**n + c2**3*r**(3*n + 1) + 3*c2**2*r**(2*n + 1) + 3*c2*r**(n + 1) + r)/(c1*n*(c2*n*r**n + c2*r**n - n + 1))
-                G = gamma(r,B,D,N)
-                #print('Guarda que estas poniendo n!=1')
-        else:
-            print('Elegir un modelo válido!')
-            pass
-
-        s0 = (-w + x**2 + (1+v)*x - 2*v + 4*y) / (z+1)
-        s1 = (- (v*x*G - x*y + 4*y - 2*y*v)) / (z+1)
-        s2 = (-v * (x*G + 4 - 2*v)) / (z+1)
-        s3 = (w * (-1 + x + 2*v)) / (z+1)
-        s4 = (-(x * r * G)) / (1+z)
-        return [s0,s1,s2,s3,s4]
+        s1 = (np.exp(beta*tildeR)/(beta**2)) * (omega_m * np.exp(-3*x)/(E**2)-1+beta*np.exp(-beta*tildeR) + omega_l*(1-(1+beta*tildeR)*np.exp(-beta*tildeR))/(E**2))
+    elif model == 'HS':
+        alpha = 1 + beta * tildeR
+        s1 = alpha**3/(2*beta**2) * (omega_m * np.exp(-3*x)/(E**2)-1+beta*alpha**(-2) + omega_l*(1-alpha**(-1)-tildeR*beta*alpha**(-2))/(E**2))
+    elif model == 'ST':
+        gamma = 1 + (beta * tildeR)**2
+        s1 = gamma**3/(8*beta**2) * (omega_m * np.exp(-3*x)/(E**2)-1+2*beta*gamma**(-2) + omega_l*(1-gamma**(-1)-tildeR*2*beta*gamma**(-2))/(E**2))
+    return [s0,s1]
 
 
-def integrador(params_fisicos,epsilon=10**(-10), n=1, cantidad_zs=int(10**5),
-                max_step=10**(-5), z_inicial=5, z_final=0,
+def integrador(params_fisicos,epsilon=10**(-10), cantidad_zs=int(10**5),
+                max_step=10**(-5), z_inicial=10, z_final=0,
                 sistema_ec=dX_dz, verbose=False, eval_data=False, z_data = None,
-                model='HS',method='RK45'):
+                model='HS',method='LSODA'):
     '''
     Integración numérica del sistema de ecuaciones diferenciales entre
     z_inicial y z_final, dadas las condiciones iniciales de las variables
@@ -118,26 +88,29 @@ def integrador(params_fisicos,epsilon=10**(-10), n=1, cantidad_zs=int(10**5),
     [omega_m, b, H0] = params_fisicos
     if model=='EXP':
         z_ci = z_condicion_inicial(params_fisicos,epsilon)
-        #print(z_ci)
-        #if (np.isnan(z_ci)==True or z_ci<=0):
-        beta = 2/b
-        params_modelo = [omega_m,beta]
-        cond_iniciales = condiciones_iniciales(omega_m, b, z0=z_ci, model='EXP')
-        #Integramos el sistema
-        zs_int = np.linspace(z_ci,z_final,cantidad_zs)
+    elif (model=='HS' or model=='ST'):
+        z_ci = z_inicial
 
-        x_ci = -np.log(1 + z_ci)
-        x_final = -np.log(1 + z_final)
-        xs_int = -np.log(1 + zs_int)
+    beta = 2/b
+    params_modelo = [omega_m,beta]
+    cond_iniciales = condiciones_iniciales(omega_m, z0 = z_ci)
 
-        sol = solve_ivp(sistema_ec, (x_ci,x_final),
-            cond_iniciales, t_eval=xs_int, args=(params_modelo,model),
-             max_step=max_step,method=method)
+    #Integramos el sistema
+    zs_int = np.linspace(z_ci,z_final,cantidad_zs)
 
-        xs_ode = sol.t[::-1]
-        zs_ode = np.exp(-xs_ode)-1
-        Hs_ode = H0 * sol.y[0][::-1]
+    x_ci = -np.log(1 + z_ci)
+    x_final = -np.log(1 + z_final)
+    xs_int = -np.log(1 + zs_int)
 
+    sol = solve_ivp(sistema_ec, (x_ci,x_final),
+        cond_iniciales, t_eval=xs_int, args=(params_modelo,model),
+         max_step=max_step,method=method)
+
+    xs_ode = sol.t[::-1]
+    zs_ode = np.exp(-xs_ode)-1
+    Hs_ode = H0 * sol.y[0][::-1]
+
+    if model=='EXP':
         ## La parte LCDM
         zs_LCDM = np.linspace(z_ci,z_inicial,cantidad_zs)
         Hs_LCDM = H0 * np.sqrt(omega_m * (1+zs_LCDM)**3 + (1-omega_m))
@@ -155,81 +128,27 @@ def integrador(params_fisicos,epsilon=10**(-10), n=1, cantidad_zs=int(10**5),
             zs_final = z_data
             Hs_final = f(zs_final)
 
-        t2 = time.time()
-        if verbose == True:
-            print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
-            int((t2-t1) - 60*int((t2-t1)/60))))
-        return zs_final,Hs_final
-
-    else:
-        if model=='HS':
-            if n==1:
-                max_step = 0.003 #Resultado de la tesis
-            #Calculo las condiciones cond_iniciales, eta
-            # y los parametros de la ecuación
-            cond_iniciales = condiciones_iniciales(omega_m, b, z0=z_inicial, n=n)
-
-            h = H0/100
-            R_HS = (omega_m * h**2)/(0.13*8315**2) #Mpc**(-2)
-            eta = c_luz_km * np.sqrt(R_HS/6) #(km/seg)/Mpc
-
-            c1, c2 = params_fisicos_to_modelo_HS(omega_m, b, n=n)
-
-            params_modelo = [c1,c2,n]
-
-        elif model=='ST':
-            #OJO Rs depende de H0, pero no se usa :) No como HS!! Cambiarlo en la tesis!!!
-            lamb = 2/b
-            if n==1:
-                max_step = 0.0001 #Resultado de la tesis
-
-            cond_iniciales = condiciones_iniciales(omega_m, b, z0=z_inicial,model='ST')
-
-            R_ST = 3 * (H0/c_luz_km)**2 * (1-omega_m) * b #Mpc**(-2)
-            eta = c_luz_km * np.sqrt(R_ST/6) #(km/seg)/Mpc
-
-            params_modelo=[lamb, n]
-
+    elif (model=='HS' or model=='ST'):
         if eval_data == False:
-            zs_int = np.linspace(z_inicial,z_final,cantidad_zs)
-            sol = solve_ivp(sistema_ec, (z_inicial,z_final),
-                cond_iniciales, t_eval=zs_int, args=(params_modelo,model),
-                max_step=max_step,method=method)
+            zs_final = zs_ode
+            Hs_final = Hs_ode
 
-            if (len(sol.t)!=cantidad_zs):
-                print('Está integrando mal!')
-            if np.all(zs_int==sol.t)==False:
-                print('Hay algo raro!')
         else:
-            sol = solve_ivp(sistema_ec, (z_inicial,z_final),
-                cond_iniciales, t_eval=z_data.reverse(), args=(params_modelo,model),
-                max_step=max_step,method=method)
+            f = interp1d(zs_ode,Hs_ode)
+            zs_final = z_data
+            Hs_final = f(z_data)
 
-            if (len(sol.t)!=len(z_data)):
-                print('Está integrando mal!')
-            if np.all(z_data==sol.t)==False:
-                print('Hay algo raro!')
+    t2 = time.time()
+    if verbose == True:
+        print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
+        int((t2-t1) - 60*int((t2-t1)/60))))
+    return zs_final,Hs_final
 
-        #Calculamos el Hubble
-        zs = sol.t[::-1]
-        v=sol.y[2][::-1]
-        r=sol.y[4][::-1]
-        Hs = eta * np.sqrt(r/v)
-
-        t2 = time.time()
-
-        if verbose == True:
-            print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
-                  int((t2-t1) - 60*int((t2-t1)/60))))
-
-        return zs, Hs
-
-
-def Hubble_teorico(params_fisicos, b_crit=0.2, all_analytic=False,
+def Hubble_teorico(params_fisicos, b_crit=0.15, all_analytic=False,
                     eval_data=False, z_data=None, epsilon=10**(-10), n=1,
-                    cantidad_zs=int(10**5), max_step=10**(-5),
-                    z_min=0, z_max=5, sistema_ec=dX_dz,
-                    verbose=False, model='HS', method='RK45'):
+                    cantidad_zs=int(10**5), max_step=10**(-4),
+                    z_min=0, z_max=10, sistema_ec=dX_dz,
+                    verbose=False, model='HS', method='LSODA'):
 
     [omega_m,b,H0] = params_fisicos
     if model=='LCDM':
@@ -240,7 +159,6 @@ def Hubble_teorico(params_fisicos, b_crit=0.2, all_analytic=False,
     elif model=='EXP': #b critico para el modelo exponencial
         log_eps_inv = -np.log10(epsilon)
         b_crit = (4 + omega_m/(1-omega_m)) / log_eps_inv
-        method = 'RK45'#'LSODA'
     else:
         pass
 
@@ -250,23 +168,21 @@ def Hubble_teorico(params_fisicos, b_crit=0.2, all_analytic=False,
         else:
             zs_modelo = z_data
 
-        if (model=='HS') and (n==1):
+        if model=='HS':
             Hs_modelo = Taylor_HS(zs_modelo, omega_m, b, H0)
-        elif (model=='HS') and (n==2):
-            Hs_modelo = Taylor_ST(zs_modelo, omega_m, b, H0)
-        elif (model=='ST') and (n==1):
+        elif model=='ST':
             Hs_modelo = Taylor_ST(zs_modelo, omega_m, b, H0)
         elif model=='EXP': #Devuelvo LCDM
             Hs_modelo = H_LCDM(zs_modelo, omega_m, H0)
 
     else: #Integro
         if eval_data == False:
-            zs_modelo, Hs_modelo = integrador(params_fisicos, epsilon=epsilon, n=n,
+            zs_modelo, Hs_modelo = integrador(params_fisicos, epsilon=epsilon,
                                     cantidad_zs=cantidad_zs, max_step=max_step,
                                     z_inicial=z_max, z_final=z_min, sistema_ec=sistema_ec,
                                     verbose=verbose, model=model, method=method)
         else:
-            zs_modelo, Hs_modelo = integrador(params_fisicos, epsilon=epsilon, n=n,
+            zs_modelo, Hs_modelo = integrador(params_fisicos, epsilon=epsilon,
                                     cantidad_zs=cantidad_zs, max_step=max_step,
                                     z_inicial=z_max, z_final=z_min, sistema_ec=sistema_ec,
                                     verbose=verbose, eval_data=True, z_data = z_data,
@@ -277,44 +193,44 @@ def Hubble_teorico(params_fisicos, b_crit=0.2, all_analytic=False,
 if __name__ == '__main__':
     from matplotlib import pyplot as plt
 
-    b = 1
+    #Esto correrlo con b grande para que ande!
+    b = 0.15
     omega_m = 0.3
     H0 = 73.48
 
     params_fisicos = [omega_m,b,H0]
-    params_fisicos = [0.35,0.1,66.012]
-    zs_ode, H_HS = integrador(params_fisicos, verbose=True, model='HS')
-    #_, H_ST = integrador(params_fisicos, verbose=True, model='ST')
-    _, H_EXP = integrador(params_fisicos, epsilon=10**(-10),
-                verbose=True, model='EXP', method='LSODA')
+    zs_ode, Hs_HS = integrador(params_fisicos, verbose=True, model='HS',z_inicial=10)
+    #_, Hs_EXP = integrador(params_fisicos, epsilon=10**(-10),
+    #            verbose=True, model='EXP',z_inicial=10)
 
 
     #%% La otra funcion:
-    params_fisicos = [0.3,1,66.012]
-    zs_ode, H_HS = Hubble_teorico(params_fisicos, verbose=True, model='HS')
-    _,  H_ST = Hubble_teorico(params_fisicos, verbose=True, model='ST')
-    _, H_EXP = Hubble_teorico(params_fisicos, epsilon=10**(-10),
-                    verbose=True, model='EXP', method='LSODA')
-    _, H_LCDM = Hubble_teorico(params_fisicos, epsilon=10**(-10),
-                    verbose=True, model='LCDM', method='LSODA')
+    b = 0.5
+    omega_m = 0.1
+    H0 = 73.48
 
-    #%% La otra funcion: (PARA PROBAR)
+    params_fisicos = [omega_m,b,H0]
+    zs_ode, Hs_HS = Hubble_teorico(params_fisicos, verbose=True, model='HS')
+    _, Hs_EXP = Hubble_teorico(params_fisicos, epsilon=10**(-10),
+                    verbose=True, model='EXP')
+    _, Hs_LCDM = Hubble_teorico(params_fisicos, model='LCDM')
+
+    #%% Evaluado en z determinados
     params_fisicos = [0.28,1,66.012]
-    zs_ode, H_HS = Hubble_teorico(params_fisicos, eval_data=True,z_data=[1,2],verbose=True, model='HS')
-    _,  H_ST = Hubble_teorico(params_fisicos, eval_data=True,z_data=[1,2], verbose=True, model='ST')
-    _, H_EXP = Hubble_teorico(params_fisicos, eval_data=True,z_data=[1,2], epsilon=10**(-10),
-                    verbose=True, model='EXP', method='LSODA')
+    zs_ode_data, Hs_HS_data = Hubble_teorico(params_fisicos, eval_data=True,z_data=[1,2],verbose=True,
+                        model='HS')
+    _, Hs_EXP_data = Hubble_teorico(params_fisicos, eval_data=True,z_data=[1,2],
+                    epsilon=10**(-10), verbose=True, model='EXP')
+    _, Hs_LCDM_data = Hubble_teorico(params_fisicos, z_data=[1,2], model='LCDM')
 
-#%%
-
+    #%%
     #%matplotlib qt5
     plt.figure()
     plt.title('Integrador $f(R)$')
     plt.xlabel('z (redshift)')
     plt.ylabel('H(z) ((km/seg)/Mpc)')
-    plt.plot(zs_ode,H_HS,'.',label='HS')
-    #plt.plot(zs_ode,H_ST,'.',label='ST')
-    plt.plot(zs_ode,H_EXP,'.',label='Exp')
-    #plt.plot(zs_ode,H_LCDM,'.',label='LCDM')
+    plt.plot(zs_ode,Hs_HS,'.',label='HS')
+    plt.plot(zs_ode,Hs_EXP,'.',label='Exp')
+    plt.plot(zs_ode,Hs_LCDM,'.',label='LCDM')
     plt.legend(loc = 'best')
     plt.grid(True)
