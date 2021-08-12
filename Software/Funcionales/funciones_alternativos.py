@@ -65,7 +65,8 @@ def all_parameters(theta, params_fijos, index):
 def params_to_chi2(theta, params_fijos, index=0,
                     dataset_SN=None, dataset_CC=None,
                     dataset_BAO=None, dataset_AGN=None, H0_Riess=False,
-                    cantidad_zs=int(10**5), model='HS',n=1):
+                    cantidad_zs=int(10**5), model='HS',n=1,
+                    nuisance_2 = False, errores_agrandados=False):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
     de supernovas.'''
 
@@ -127,16 +128,27 @@ def params_to_chi2(theta, params_fijos, index=0,
         #Importo los datos
         z_data, logFuv, eFuv, logFx, eFx  = dataset_AGN
 
-        beta = 7.735
-        ebeta = 0.244
-        gamma = 0.648
-        egamma = 0.007
+        if nuisance_2 == True:
+            beta = 8.513
+            ebeta = 0.437
+            gamma = 0.622
+            egamma = 0.014
+        elif errores_agrandados == True:
+            beta = 7.735
+            ebeta = 2.44
+            gamma = 0.648
+            egamma = 0.07
+        else: #Caso Estandar
+            beta = 7.735
+            ebeta = 0.244
+            gamma = 0.648
+            egamma = 0.007
 
         Es_modelo = Hs_modelo/H_0
         DlH0_teo = zs_2_logDlH0(zs_modelo,Es_modelo,z_data)
         DlH0_obs =  np.log10(3.24) - 25 + (logFx - gamma * logFuv - beta) / (2*gamma - 2)
 
-        df_dgamma = (1/(2*(gamma-1))**2) * (-logFx+beta+logFuv)
+        df_dgamma =  (-logFx+beta+logFuv) / (2*(gamma-1)**2)
         eDlH0_cuad = (eFx**2 + gamma**2 * eFuv**2 + ebeta**2)/ (2*gamma - 2)**2 + (df_dgamma)**2 * egamma**2 #El cuadrado de los errores
 
         chi2_AGN = chi2_sin_cov(DlH0_teo, DlH0_obs, eDlH0_cuad)
