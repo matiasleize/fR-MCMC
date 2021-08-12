@@ -18,6 +18,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_int import Hubble_teorico
+from funciones_LambdaCDM import H_LCDM
 
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,n
 
@@ -50,7 +51,9 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
     if model == 'LCDM':
         if len(theta) == 4:
             [omega_m, beta, gamma, delta] = theta #Este beta es distinto al otro!
-            [b,H_0] = params_fijos
+            H_0 = params_fijos
+            zs_modelo_2 = np.linspace(0,10,10**5)
+            Hs_modelo_2 = H_LCDM(zs_modelo_2,omega_m,H_0)
 
     else:
         if len(theta) == 5:
@@ -60,9 +63,9 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
             [omega_m, b, gamma, delta] = theta #Este beta es distinto al otro!
             [H_0, beta] = params_fijos
 
-    params_fisicos = [omega_m,b,H_0]
-    zs_modelo_2, Hs_modelo_2 = Hubble_teorico(params_fisicos, n=n, model=model,
-                            z_min=0,z_max=10)
+        params_fisicos = [omega_m,b,H_0]
+        zs_modelo_2, Hs_modelo_2 = Hubble_teorico(params_fisicos, n=n, model=model,
+                                    z_min=0,z_max=10)
 
     #Filtro para z=0 para que no diverja la integral de (1/H)
     mask = zs_modelo_2 > 0.001
@@ -107,6 +110,7 @@ if __name__ == '__main__':
     data_agn = leer_data_AGN('table3.dat')
 
     theta = [0.99,0.1,8.3,0.4,0.2]
-    params_fijos = [70,1]
-    chi_2_AGN_nuisance = params_to_chi2_AGN_nuisance(theta, params_fijos, data_agn, model='EXP')
+    params_fijos = 70
+    chi_2_AGN_nuisance = params_to_chi2_AGN_nuisance(theta, params_fijos,
+                        data_agn, model='EXP')
     print(chi_2_AGN_nuisance)
