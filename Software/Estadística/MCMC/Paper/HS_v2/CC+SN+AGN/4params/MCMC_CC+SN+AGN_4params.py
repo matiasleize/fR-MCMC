@@ -71,7 +71,7 @@ def log_probability(theta):
 pos = sol + 1e-4 * np.random.randn(12, 4)
 
 MCMC_sampler(log_probability,pos,
-            filename = "sample_HS_CC+SN+AGN_4params.h5",
+            filename = "sample_HS_CC+SN+AGN_4params_v2.h5",
             witness_file = 'witness_232.txt',
             witness_freq = 5,
             max_samples = 2000000)

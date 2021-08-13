@@ -42,7 +42,7 @@ os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
 ds_AGN = leer_data_AGN('table3.dat')
 
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-with np.load('valores_medios_HS_CC+SN+BAO+AGN_4params.npz') as data:
+with np.load('valores_medios_HS_CC+SN+BAO+AGN_4params_v2.npz') as data:
     sol = data['sol']
 print(sol)
 
@@ -80,7 +80,7 @@ def log_probability(theta):
 pos = sol + 1e-4 * np.random.randn(12, 4)
 
 MCMC_sampler(log_probability,pos,
-            filename = "sample_HS_CC+SN+BAO+AGN_4params.h5",
+            filename = "sample_HS_CC+SN+BAO+AGN_4params_v2.h5",
             witness_file = 'witness_252.txt',
             witness_freq = 5,
             max_samples = 2000000)
