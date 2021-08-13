@@ -88,8 +88,8 @@ plt.hist(beta_posta,density=True,bins=round(np.sqrt(len(beta_posta))),label=r'$\
 plt.grid(True)
 plt.legend()
 plt.savefig( '/home/matias/propagacion_beta_EXP.png')
-
-mcmc = np.percentile(betas, [16, 50, 84]) #Hay coincidencia a 1 sigma :)
+#%%
+mcmc = np.percentile(betas, [5, 50, 95]) #Hay coincidencia a 2 sigma :/
 q = np.diff(mcmc)
 txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{+{2:.3f}}}"
 txt = txt.format(mcmc[1], q[0], q[1], r'\beta')
@@ -110,8 +110,8 @@ plt.grid(True)
 plt.legend()
 plt.savefig( '/home/matias/propagacion_gamma_EXP.png')
 
-
-mcmc = np.percentile(gammas, [16, 50, 84]) #Hay coincidencia a 1 sigma :)
+#%%
+mcmc = np.percentile(gammas, [5, 50, 95]) #Hay coincidencia a 2 sigma :/
 q = np.diff(mcmc)
 txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{+{2:.3f}}}"
 txt = txt.format(mcmc[1], q[0], q[1], r'\gamma')

@@ -12,13 +12,13 @@ os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_analisis_cadenas import graficar_cadenas,graficar_contornos,graficar_taus_vs_n
 #%%
-os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones')
+os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/LCDM')
 
-with np.load('valores_medios_HS_AGN_5params_nuisance_less_z.npz') as data:
+with np.load('valores_medios_LCDM_AGN_5params_nuisance_z_less.npz') as data:
     sol = data['sol']
 #%%
 os.chdir(path_datos_global+'/Resultados_cadenas')
-filename = "sample_HS_AGN_5params_nuisance_less_z.h5"
+filename = "sample_LCDM_AGN_5params_nuisance_z_less.h5"
 
 reader = emcee.backends.HDFBackend(filename)
 # Algunos valores
@@ -30,12 +30,12 @@ print(tau)
 #%%
 %matplotlib qt5
 graficar_cadenas(reader,
-                labels = ['omega_m','b','beta','gamma','delta'])
+                labels = ['omega_m','beta','gamma','delta'])
  #%%
 burnin=1500
-thin=50
+thin=1
 graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,
-                    labels = ['omega_m','b','beta','gamma','delta'])
+                    labels = ['omega_m','beta','gamma','delta'])
 #%%
 #Ojo, siempre muestra que convergio, aun cuando no
 #plt.figure()
@@ -45,7 +45,7 @@ graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,
 thin=1
 from IPython.display import display, Math
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
-labels = ['omega_m','b','beta','gamma','delta']
+labels = ['omega_m','beta','gamma','delta']
 len_chain,nwalkers,ndim=reader.get_chain().shape
 print(len_chain)
 for i in range(ndim):
@@ -57,8 +57,8 @@ for i in range(ndim):
     display(Math(txt))
 
 #%%
-betas_2_unflitered = samples[:, 2]
-gammas_unflitered = samples[:, 3]
+betas_2_unflitered = samples[:, 1]
+gammas_unflitered = samples[:, 2]
 
 burnin = 1500
 thin = 15
@@ -81,16 +81,16 @@ np.std(betas)
 beta_posta = np.random.normal(7.735,0.244,10**7)
 plt.close()
 plt.figure()
-plt.title('Hu-Sawicki')
+plt.title('LCDM')
 plt.xlabel(r'$\beta$')
 plt.hist(betas,density=True,bins=round(np.sqrt(len(betas))),label=r'$\beta_{propagacion}$')
 plt.hist(beta_posta,density=True,bins=round(np.sqrt(len(beta_posta))),label=r'$\beta_{paper}$')
 plt.grid(True)
 plt.legend()
-plt.savefig( '/home/matias/propagacion_beta_HS.png')
+plt.savefig( '/home/matias/propagacion_beta_LCDM.png')
 #%%
 
-mcmc = np.percentile(betas, [5, 50, 95]) #Hay coincidencia a 1 sigma :)
+mcmc = np.percentile(betas, [5, 50, 95]) #Hay coincidencia a 2 sigma :/
 q = np.diff(mcmc)
 txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{+{2:.3f}}}"
 txt = txt.format(mcmc[1], q[0], q[1], r'\beta')
@@ -103,16 +103,16 @@ display(Math(txt))
 gamma_posta = np.random.normal(0.648,0.007,10**7)
 plt.close()
 plt.figure()
-plt.title('Hu-Sawicki')
+plt.title('LCDM')
 plt.xlabel(r'$\gamma$')
 plt.hist(gammas,density=True,bins=round(np.sqrt(len(gammas))),label=r'$\gamma_{cadenas}$')
 plt.hist(gamma_posta,density=True,bins=round(np.sqrt(len(gamma_posta))),label=r'$\gamma_{paper}$')
 plt.grid(True)
 plt.legend()
-plt.savefig( '/home/matias/propagacion_gamma_HS.png')
+plt.savefig( '/home/matias/propagacion_gamma_LCDM.png')
 
 #%%
-mcmc = np.percentile(gammas, [5, 50, 95]) #Hay coincidencia a 1 sigma :)
+mcmc = np.percentile(gammas, [5, 50, 95]) #Hay coincidencia a 2 sigma :/
 q = np.diff(mcmc)
 txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{+{2:.3f}}}"
 txt = txt.format(mcmc[1], q[0], q[1], r'\gamma')
