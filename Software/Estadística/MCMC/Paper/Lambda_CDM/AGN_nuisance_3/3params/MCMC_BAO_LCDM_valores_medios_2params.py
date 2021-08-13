@@ -23,15 +23,15 @@ from funciones_AGN import params_to_chi2_AGN_nuisance
 os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN/')
 data_agn = leer_data_AGN('table3.dat')
 #%% Predeterminados:
-omega_m_true = 0.8
+omega_m_true = 0.3
 beta_true = 7
 gamma_true = 0.6
 delta_true = 0.2
-H0_true =  70 #Unidades de (km/seg)/Mpc
+H0_true =  73.24 #Unidades de (km/seg)/Mpc
 
-nll = lambda theta: params_to_chi2_AGN_nuisance(theta, H0_true, data_agn,model='LCDM')
+nll = lambda theta: params_to_chi2_AGN_nuisance(theta, H0_true, data_agn,model='LCDM',less_z=True)
 initial = np.array([omega_m_true,beta_true,gamma_true,delta_true])
-bnds = ((0.75,1.0),(6.5,7.5),(0.5,0.8),(0.1,0.3))
+bnds = ((0.2,0.4),(6.5,7.5),(0.5,0.8),(0.1,0.3))
 soln = minimize(nll, initial, bounds=bnds, options = {'eps': 0.01})
 omega_m_ml,beta_ml, gamma_ml, delta_ml = soln.x
 print(omega_m_ml,beta_ml, gamma_ml, delta_ml)
@@ -39,4 +39,4 @@ soln.fun
 print(soln.fun/(len(data_agn[0])-4))
 
 os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
-np.savez('valores_medios_LCDM_AGN_4params_nuisance', sol=soln.x)
+np.savez('valores_medios_LCDM_AGN_4params_nuisance_3', sol=soln.x)

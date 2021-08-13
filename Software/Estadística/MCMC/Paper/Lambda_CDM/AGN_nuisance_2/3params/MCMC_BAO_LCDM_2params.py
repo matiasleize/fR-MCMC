@@ -29,20 +29,23 @@ os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN/')
 data_agn = leer_data_AGN('table3.dat')
 
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones')
-with np.load('valores_medios_LCDM_AGN_4params_nuisance.npz') as data:
+with np.load('valores_medios_LCDM_AGN_4params_nuisance_2.npz') as data:
    sol = data['sol']
 print(sol)
-H0_true =  70
+H0_true =  73.24 #EL valor de Pantheon, pero con 70 da bastante similar!
 
-log_likelihood = lambda theta: -0.5 * params_to_chi2_AGN_nuisance(theta,H0_true, data_agn, model='LCDM')
+log_likelihood = lambda theta: -0.5 * params_to_chi2_AGN_nuisance(theta,H0_true,
+                                        data_agn, model='LCDM')
 
 #%% Definimos la distribucion del prior
 def log_prior(theta):
     omega_m, beta, gamma, delta = theta
-    if (0.1 < omega_m < 0.99 and 5 < beta < 15
-        and 0.1 < gamma < 0.8 and 0 < delta < 0.5):
-        return 0.0
-    return -np.inf
+    if not (5 < beta < 15 and 0.1 < gamma < 0.8 and 0 < delta < 0.5):
+        return -np.inf
+    #gaussian prior on a
+    mu = 0.298#0.307
+    sigma = 0.022#0.012
+    return np.log(1.0/(np.sqrt(2*np.pi)*sigma))-0.5*(omega_m-mu)**2/sigma**2
 
 # Definimos la distribución del posterior
 def log_probability(theta):
@@ -57,7 +60,7 @@ def log_probability(theta):
 pos = sol + 1e-4 * np.random.randn(12, 4)
 
 MCMC_sampler(log_probability,pos,
-            filename = "sample_LCDM_AGN_4params_nuisance.h5",
-            witness_file = 'witness_12.txt',
+            filename = "sample_LCDM_AGN_4params_nuisance_2.h5",
+            witness_file = 'witness_122.txt',
             witness_freq = 5,
             max_samples = 1000000)
