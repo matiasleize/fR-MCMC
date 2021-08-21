@@ -11,19 +11,36 @@ import emcee
 import corner
 import seaborn as sns
 import pandas as pd
+from itertools import cycle
+cycol = cycle('bgrcmk')
 
-
-def graficar_cadenas(sampler,labels= ['omega_m','b'],title=None):
+def graficar_cadenas(sampler,labels= ['omega_m','b','H0'],title=None):
 	'''Esta función grafica las cadenas en función del largo de las mismas.'''
 	samples = sampler.get_chain()
 	len_chain,nwalkers,ndim=sampler.get_chain().shape
 	fig, axes = plt.subplots(ndim, figsize=(10, 7), sharex=True)
 	for i in range(ndim):
-	    ax = axes[i]
-	    ax.plot(samples[:, :, i], "k", alpha=0.3)
-	    ax.set_xlim(0, len(samples))
-	    ax.set_ylabel(labels[i])
-	ax.yaxis.set_label_coords(-0.1, 0.5)
+		#ax.plot(samples[:, :, i], "k", alpha=0.3)
+		ax = axes[i]
+		ax.plot(samples[:, :, i],c=next(cycol), alpha=0.3)
+		ax.set_xlim(0, len(samples))
+		ax.set_ylabel(labels[i])
+		ax.yaxis.set_label_coords(-0.1, 0.5)
+	axes[-1].set_xlabel("step number");
+	if not title==None:
+		fig.suptitle(title);
+
+def graficar_cadenas_flat(sampler,labels= ['omega_m','b'],title=None):
+	'''Esta función grafica las cadenas en función del largo de las mismas.'''
+	samples = sampler.get_chain() #Entra un array!
+	len_chain,ndim=sampler.get_chain().shape
+	fig, axes = plt.subplots(ndim, figsize=(10, 7), sharex=True)
+	for i in range(ndim):
+		ax = axes[i]
+		ax.plot(samples[:, i], "k", alpha=0.3)
+		ax.set_xlim(0, len(samples))
+		ax.set_ylabel(labels[i])
+		ax.yaxis.set_label_coords(-0.1, 0.5)
 	axes[-1].set_xlabel("step number");
 	if not title==None:
 		fig.suptitle(title);
@@ -32,8 +49,11 @@ def graficar_contornos(sampler,params_truths,discard=20,
 						thin=1,labels= ['omega_m','b'],title=None,
 						poster=False,color='b'):
 	'''Grafica los contornos de confianza.'''
-	if poster==True:
+	if isinstance(reader,emcee.backends.hdf.HDFBackend)==True:
 		flat_samples = sampler.get_chain(discard=discard, flat=True, thin=thin)
+	elif isinstance(reader,np.ndarray)==True:
+		flat_samples=sampler
+	if poster==True:
 		df = pd.DataFrame(flat_samples,columns=labels)
 		sns.set(style='darkgrid', palette="muted", color_codes=True)
 		sns.set_context("paper", font_scale=1.5, rc={"font.size":10,"axes.labelsize":17})
@@ -46,8 +66,6 @@ def graficar_contornos(sampler,params_truths,discard=20,
 			# Access the Figure
 			g.fig.suptitle(title, fontsize=20)
 	else:
-		flat_samples = sampler.get_chain(discard=discard, flat=True, thin=thin)
-		print(flat_samples.shape)
 		fig = corner.corner(flat_samples, labels=labels, truths=params_truths,
 			 plot_datapoints=False,quantiles=(0.16, 0.84));
 		if not title==None:
