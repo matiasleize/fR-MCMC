@@ -10,7 +10,7 @@ class Cadenas:
 		num_cadenas=12,tol=0.001,check_tol=20):
 #		pass
 
-		pos = sol + 1e-4 * np.random.randn(num_cadenas, len(sol))
+		pos = sol (1 +  0.1 * np.random.randn(num_cadenas, len(sol)))
 		nwalkers, ndim = pos.shape
 
 		# Set up the backend
