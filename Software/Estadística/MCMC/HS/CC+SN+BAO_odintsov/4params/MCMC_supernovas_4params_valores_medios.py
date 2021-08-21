@@ -38,7 +38,7 @@ ds_CC = leer_data_cronometros('datos_cronometros.txt')
 
 # BAO de odintsov
 os.chdir(path_git+'/Software/Estadística/Datos/BAO/Datos_odintsov')
-ds_BAO = leer_data_BAO_odintsov('datos_bao_odintsov.txt')
+ds_BAO = leer_data_BAO_odintsov('datos_BAO_odintsov.txt')
 
 
 #%% Parametros a ajustar
@@ -63,7 +63,7 @@ np.savez('valores_medios_HS_CC+SN+BAO_4params_odintsov.npz', sol=soln.x)
 
 num_data_CC = len(ds_CC[0])
 num_data_SN = len(ds_SN[0])
-# num_data_BAO = 20
+num_data_BAO = len(ds_BAO[0])
 #num_data_AGN = len(ds_AGN[0])
 datos_totales = num_data_CC+num_data_SN
 
