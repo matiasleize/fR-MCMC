@@ -70,7 +70,13 @@ def params_to_chi2(theta, params_fijos, index=0,
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
     de supernovas.'''
 
-    chi2_SN = chi2_CC = chi2_BAO = chi2_AGN = chi2_H0 =  0
+#    chi2_SN = chi2_CC = chi2_BAO = chi2_AGN = chi2_H0 =  0
+
+    chi2_SN = 0
+    chi2_CC = 0
+    chi2_BAO = 0
+    chi2_AGN = 0
+    chi2_H0 =  0
 
     [Mabs, omega_m, b, H_0] = all_parameters(theta, params_fijos, index)
 
@@ -242,3 +248,78 @@ if __name__ == '__main__':
     y = chi2.pdf(x, df, loc=0, scale=1)
     plt.vlines(a,0,np.max(y),'r')
     plt.plot(x,y)
+
+
+    #%%
+    bs = np.linspace(0.1,4,100)
+    chis_1 = np.zeros(len(bs))
+    chis_2 = np.zeros(len(bs))
+    chis_3 = np.zeros(len(bs))
+    chis_4 = np.zeros(len(bs))
+    chis_5 = np.zeros(len(bs))
+    chis_6 = np.zeros(len(bs))
+    for (i,b) in enumerate(bs):
+        #print(i,b)
+        chis_1[i] = params_to_chi2([-19.41, 0.352, b, 62], _, index=4,
+                    dataset_SN = ds_SN,
+                    dataset_CC = ds_CC,
+                    dataset_BAO = ds_BAO,
+                    #dataset_AGN = ds_AGN,
+                    #H0_Riess = True,
+                    model = 'EXP'
+                    )
+        chis_2[i] = params_to_chi2([-19.41, 0.352, b, 63], _, index=4,
+                    dataset_SN = ds_SN,
+                    dataset_CC = ds_CC,
+                    dataset_BAO = ds_BAO,
+                    #dataset_AGN = ds_AGN,
+                    #H0_Riess = True,
+                    model = 'EXP'
+                    )
+
+        chis_3[i] = params_to_chi2([-19.41, 0.352, b, 64], _, index=4,
+                    dataset_SN = ds_SN,
+                    dataset_CC = ds_CC,
+                    dataset_BAO = ds_BAO,
+                    #dataset_AGN = ds_AGN,
+                    #H0_Riess = True,
+                    model = 'EXP'
+                    )
+        chis_4[i] = params_to_chi2([-19.41, 0.352, b, 65], _, index=4,
+                    dataset_SN = ds_SN,
+                    dataset_CC = ds_CC,
+                    dataset_BAO = ds_BAO,
+                    #dataset_AGN = ds_AGN,
+                    #H0_Riess = True,
+                    model = 'EXP'
+                    )
+        chis_5[i] = params_to_chi2([-19.41, 0.352, b, 66], _, index=4,
+                    dataset_SN = ds_SN,
+                    dataset_CC = ds_CC,
+                    dataset_BAO = ds_BAO,
+                    #dataset_AGN = ds_AGN,
+                    #H0_Riess = True,
+                    model = 'EXP'
+                    )
+        chis_6[i] = params_to_chi2([-19.41, 0.352, b, 67], _, index=4,
+                    dataset_SN = ds_SN,
+                    dataset_CC = ds_CC,
+                    dataset_BAO = ds_BAO,
+                    #dataset_AGN = ds_AGN,
+                    #H0_Riess = True,
+                    model = 'EXP'
+                    )
+    #1077.8293845284927/(1048+20+len(ds_CC[0])-4)
+    #%%
+    plt.title('EXP: CC+SN+BAO, omega_m=0.352, M=-19.41')
+    plt.grid(True)
+    plt.plot(bs,chis_1,label='H0=62')
+    plt.plot(bs,chis_2,label='H0=63')
+    plt.plot(bs,chis_3,label='H0=64')
+    plt.plot(bs,chis_4,label='H0=65')
+    plt.plot(bs,chis_5,label='H0=66')
+    plt.plot(bs,chis_6,label='H0=67')
+    plt.ylabel(r'$\chi^2$')
+    plt.xlabel('b')
+    plt.legend()
+    plt.savefig('/home/matias/Barrido_en_b.png')

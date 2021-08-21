@@ -88,6 +88,11 @@ def leer_data_AGN(archivo_AGN):
     sorted_eFx = eFx[arr1inds]
 
     return sorted_z, sorted_Fuv, sorted_eFuv, sorted_Fx, sorted_eFx
+
+def leer_data_BAO_odintsov(archivo_BAO_odintsov):
+    # leo la tabla de datos:
+    z, h, dh, rd_fid = np.loadtxt(archivo_BAO_odintsov, usecols=(0,1,2,3), unpack=True)
+    return z, h, dh, rd_fid
 #%%
 if __name__ == '__main__':
     import sys

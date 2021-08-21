@@ -31,7 +31,6 @@ class Graficador:
 	def graficar_cadenas(self):
 		'''Esta función grafica las cadenas en función del largo
 		de las mismas para cada parámetro.'''
-
 		samples = self.sampler.get_chain()
 		len_chain,nwalkers,ndim=self.sampler.get_chain().shape
 		sns.set(style='darkgrid', palette="muted", color_codes=True)
@@ -40,13 +39,34 @@ class Graficador:
 
 		for i in range(ndim):
 		    ax = axes[i]
-		    ax.plot(samples[:, :, i], "k", alpha=0.3)
+		    ax.plot(samples[:, :, i], alpha=0.3)
 		    ax.set_xlim(0, len(samples))
 		    ax.set_ylabel(self.labels[i])
 		ax.yaxis.set_label_coords(-0.1, 0.5)
 		axes[-1].set_xlabel("Número de pasos N");
 		if not self.title==None:
 			fig.suptitle(self.title);
+
+	def graficar_cadenas_derivs(self):
+		'''Esta función grafica las cadenas en función del largo
+		de las mismas para cada parámetro.'''
+		if isinstance(self.sampler, np.ndarray)==True: #Es una cadenas procesada
+			samples = self.sampler
+			len_chain,ndim=samples.shape
+		sns.set(style='darkgrid', palette="muted", color_codes=True)
+		sns.set_context("paper", font_scale=1.5, rc={"font.size":10,"axes.labelsize":17})
+		fig, axes = plt.subplots(ndim, figsize=(10, 7), sharex=True)
+
+		for i in range(ndim):
+		    ax = axes[i]
+		    ax.plot(samples[:, i], alpha=0.3)
+		    ax.set_xlim(0, len(samples))
+		    ax.set_ylabel(self.labels[i])
+		ax.yaxis.set_label_coords(-0.1, 0.5)
+		axes[-1].set_xlabel("Número de pasos N");
+		if not self.title==None:
+			fig.suptitle(self.title);
+
 
 	def graficar_contornos(self, params_truths, discard=20,
 							thin=1, poster=False, color='b', nuisance_only=False):
@@ -62,8 +82,12 @@ class Graficador:
 				libreria corner, que es mas rapido pero es más feo.
 
 		 '''
+		if isinstance(self.sampler, np.ndarray)==True: #Es una cadenas procesada
+			flat_samples = self.sampler
+		else:
+			flat_samples = self.sampler.get_chain(discard=discard, flat=True, thin=thin)
 
-		flat_samples = self.sampler.get_chain(discard=discard, flat=True, thin=thin)
+
 		if nuisance_only==True:
 			flat_samples=flat_samples[:,3:] #Solo para el grafico de nuisance only!
 

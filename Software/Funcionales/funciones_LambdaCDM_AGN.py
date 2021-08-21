@@ -14,6 +14,17 @@ from scipy.interpolate import interp1d
 from scipy.constants import c as c_luz #metros/segundos
 c_luz_km = c_luz/1000
 
+import sys
+import os
+from os.path import join as osjoin
+from pc_path import definir_path
+path_git, path_datos_global = definir_path()
+os.chdir(path_git)
+sys.path.append('./Software/Funcionales/')
+
+from funciones_int import Hubble_teorico
+from funciones_AGN import zs_2_logDlH0
+
 #%%
 '''
 DEPRECATED: Antes de eliminar este archivo copiar este ejemplo en otro .py

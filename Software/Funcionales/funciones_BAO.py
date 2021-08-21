@@ -116,3 +116,10 @@ if __name__ == '__main__':
     [omega_m,b,H_0] = [0.28,1,66.012] #Usando los datos nuevos
     theta = [omega_m,b,H_0]
     #params_to_chi2_BAO(theta,1, dataset_BAO,model='EXP')
+
+
+
+
+    omega_m = 0.3
+    H_0
+    r_drag(omega_m,H_0,wb = 0.0225)
