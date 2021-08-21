@@ -13,25 +13,18 @@ from funciones_graficador import Graficador
 
 #%% Importo los mínimos del chi2
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-with np.load('valores_medios_EXP_CC+SN_4params.npz') as data:
+with np.load('valores_medios_EXP_CC+SN+BAO_4params.npz') as data:
     sol = data['sol']
 
 #%% Importo las cadenas
+#os.chdir(path_datos_global+'/Resultados_cadenas/Paper/EXP')
 os.chdir(path_datos_global+'/Resultados_cadenas')
-filename = "sample_EXP_CC+SN_4params.h5"
-reader = emcee.backends.HDFBackend(filename)
-
-# Algunos valores
-tau = reader.get_autocorr_time()
-burnin = int(2 * np.max(tau))
-thin = int(0.5 * np.min(tau))
+with np.load('sample_EXP_CC+SN+BAO_4params_deriv.npz') as data:
+    ns = data['new_samples']
 #%%
 %matplotlib qt5
-burnin=1000
-thin=1
-analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'')
+analisis = Graficador(ns, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'')
                     #'Supernovas tipo IA + Cronómetros Cósmicos + BAO')
-analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=False,color='r')
-#%%
-analisis.graficar_cadenas()
+analisis.graficar_cadenas_derivs()
+analisis.graficar_contornos(sol, poster=True,color='r')
 analisis.reportar_intervalos(sol)

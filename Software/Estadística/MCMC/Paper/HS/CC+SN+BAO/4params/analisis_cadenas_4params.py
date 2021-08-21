@@ -29,6 +29,8 @@ thin = int(0.5 * np.min(tau))
 %matplotlib qt5
 analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'')
                     #'Supernovas tipo IA + Cronómetros Cósmicos + BAO')
+thin=1
+burnin=0
 analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=True,color='r')
  #%%
 analisis.graficar_cadenas()

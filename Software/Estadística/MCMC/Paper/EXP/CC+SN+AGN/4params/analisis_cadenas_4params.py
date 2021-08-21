@@ -18,7 +18,8 @@ with np.load('valores_medios_EXP_CC+SN+AGN_4params.npz') as data:
 
 #%% Importo las cadenas
 #os.chdir(path_datos_global+'/Resultados_cadenas')
-os.chdir(path_datos_global+'/Resultados_cadenas/Paper')
+#os.chdir(path_datos_global+'/Resultados_cadenas/Paper')
+os.chdir(path_datos_global+'/Resultados_cadenas/Paper/Mal error AGN(Despues borrar)!/EXP')
 filename = "sample_EXP_CC+SN+AGN_4params.h5"
 reader = emcee.backends.HDFBackend(filename)
 
@@ -31,6 +32,6 @@ thin = int(0.5 * np.min(tau))
 analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'')
                     #'Supernovas tipo IA + Cronómetros Cósmicos + BAO')
 analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=True,color='r')
- #%%
+#%%
 analisis.graficar_cadenas()
 analisis.reportar_intervalos(sol)

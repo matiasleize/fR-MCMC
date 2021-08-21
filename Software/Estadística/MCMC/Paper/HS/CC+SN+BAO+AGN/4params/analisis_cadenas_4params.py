@@ -12,12 +12,12 @@ sys.path.append('./Software/Funcionales/Clases')
 from funciones_graficador import Graficador
 
 #%% Importo los mínimos del chi2
-os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-with np.load('valores_medios_HS_CC+SN+BAO_4params.npz') as data:
+os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones')
+with np.load('valores_medios_HS_CC+SN+BAO+AGN_4params.npz') as data:
     sol = data['sol']
 
 #%% Importo las cadenas
-os.chdir(path_datos_global+'/Resultados_cadenas')
+os.chdir(path_datos_global+'/Resultados_cadenas/Paper/HS')
 filename = "sample_HS_CC+SN+BAO_4params.h5"
 reader = emcee.backends.HDFBackend(filename)
 

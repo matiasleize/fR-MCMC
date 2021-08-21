@@ -25,12 +25,13 @@ reader = emcee.backends.HDFBackend(filename)
 tau = reader.get_autocorr_time()
 burnin = int(2 * np.max(tau))
 thin = int(0.5 * np.min(tau))
-thin=100
 #%%
 %matplotlib qt5
+burnin=1000
+thin=1
 analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'')
-                    #'Supernovas tipo IA + Cronómetros Cósmicos')
-analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=True,color='b')
+                    #'Supernovas tipo IA + Cronómetros Cósmicos + BAO')
+analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=False,color='r')
 #%%
 analisis.graficar_cadenas()
 analisis.reportar_intervalos(sol)
