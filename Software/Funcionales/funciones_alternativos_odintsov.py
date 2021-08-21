@@ -106,10 +106,19 @@ def params_to_chi2_odintsov(theta, params_fijos, index=0,
         chi2_CC = chi2_sin_cov(H_teo, H_data, dH**2)
 
     if dataset_BAO != None:
-        z_data_BAO, H_data_BAO, dH_BAO = dataset_BAO
+        z_data_BAO, H_data_BAO, dH_BAO, rd_fid = dataset_BAO
         H_interp = interp1d(zs_modelo, Hs_modelo)
         H_teo = H_interp(z_data_BAO)
-        chi2_BAO = chi2_sin_cov(H_teo,H_data_BAO,dH_BAO**2)
+
+        H_data_BAO_norm = np.zeros(len(H_data_BAO))
+        for i in range(len(H_data_BAO_norm)):
+            if rd_fid[i]==1:
+                factor = 1
+            else:
+                rd = r_drag(omega_m,H_0,wb=0.0225) #Calculo del rd, fijo wb!! CHequear que es correcto
+                factor = rd_fid[i]/rd
+            H_data_BAO_norm[i] = H_data_BAO[i] * factor
+        chi2_BAO = chi2_sin_cov(H_teo,H_data_BAO_norm,dH_BAO**2)
 
     return chi2_SN + chi2_CC + chi2_BAO
 
@@ -119,7 +128,7 @@ if __name__ == '__main__':
 
     os.chdir(path_git)
     sys.path.append('./Software/Funcionales/')
-    from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO
+    from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO_odintsov
 
     # Supernovas
     os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
@@ -129,53 +138,11 @@ if __name__ == '__main__':
     os.chdir(path_git+'/Software/Estadística/Datos/')
     ds_CC = leer_data_cronometros('datos_cronometros.txt')
 
-    # BAO
-    os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
-    ds_BAO = []
-    archivos_BAO = ['datos_BAO_da.txt','datos_BAO_dh.txt','datos_BAO_dm.txt',
-                    'datos_BAO_dv.txt','datos_BAO_H.txt']
-    for i in range(5):
-        aux = leer_data_BAO(archivos_BAO[i])
-        ds_BAO.append(aux)
-
+    # BAO de odintsov
+    os.chdir(path_git+'/Software/Estadística/Datos/BAO/Datos_odintsov')
+    ds_BAO = leer_data_BAO_odintsov('datos_bao_odintsov.txt')
 #%%
-    bs = np.linspace(0,2,22)
-    chies_HS = np.zeros(len(bs))
-    chies_EXP = np.zeros(len(bs))
-    for (i,b) in enumerate(bs):
-        chies_EXP[i] = params_to_chi2([0.325,b,68], -19.35, index=31,
-                        #dataset_SN = ds_SN,
-                        dataset_CC = ds_CC,
-                        #dataset_BAO = ds_BAO,
-                        #dataset_AGN = ds_AGN,
-                        H0_Riess = True,
-                        model = 'EXP'
-                        )
-        chies_HS[i] = params_to_chi2([0.325,b,68], -19.35, index=31,
-                        #dataset_SN = ds_SN,
-                        dataset_CC = ds_CC,
-                        #dataset_BAO = ds_BAO,
-                        #dataset_AGN = ds_AGN,
-                        H0_Riess = True,
-                        model = 'HS'
-                        )
-        print(i)
-#b = 5 #1296.0757648437618
-#b = 2 #1655.1381848068963
-#b = 1 #1086.2319745225054
-#b = 0.5 #1128.9476844983917
-#b = 0.1 #1133.0048315820693
-    plt.figure()
-    plt.title('CC+H0')
-    plt.ylabel(r'$\chi^2$')
-    plt.xlabel('b')
-    plt.grid(True)
-    plt.plot(bs,chies_HS,label = 'Modelo Hu-Sawicki')
-    plt.plot(bs,chies_EXP,label = 'Modelo Exponencial')
-    plt.legend()
-    plt.savefig('/home/matias/EXP+HS_CC+H0.png')
-#%%
-    a = params_to_chi2([-19.351100617405038, 0.30819459447582237, 69.2229987565787], _, index=32,
+    a = params_to_chi2_odintsov([-19.351100617405038, 0.30819459447582237, 69.2229987565787], _, index=32,
                     dataset_SN = ds_SN,
                     dataset_CC = ds_CC,
                     dataset_BAO = ds_BAO,
@@ -184,87 +151,3 @@ if __name__ == '__main__':
                     model = 'LCDM'
                     )
     print(a)
-    #%%
-    from scipy.stats import chi2
-    N = len(ds_SN[0])
-    P = 3
-    df = N - P
-    x = np.linspace(0,2000, 10**5)
-    y = chi2.pdf(x, df, loc=0, scale=1)
-    plt.vlines(a,0,np.max(y),'r')
-    plt.plot(x,y)
-
-
-    #%%
-    bs = np.linspace(0.1,4,100)
-    chis_1 = np.zeros(len(bs))
-    chis_2 = np.zeros(len(bs))
-    chis_3 = np.zeros(len(bs))
-    chis_4 = np.zeros(len(bs))
-    chis_5 = np.zeros(len(bs))
-    chis_6 = np.zeros(len(bs))
-    for (i,b) in enumerate(bs):
-        #print(i,b)
-        chis_1[i] = params_to_chi2([-19.41, 0.352, b, 62], _, index=4,
-                    dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'EXP'
-                    )
-        chis_2[i] = params_to_chi2([-19.41, 0.352, b, 63], _, index=4,
-                    dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'EXP'
-                    )
-
-        chis_3[i] = params_to_chi2([-19.41, 0.352, b, 64], _, index=4,
-                    dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'EXP'
-                    )
-        chis_4[i] = params_to_chi2([-19.41, 0.352, b, 65], _, index=4,
-                    dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'EXP'
-                    )
-        chis_5[i] = params_to_chi2([-19.41, 0.352, b, 66], _, index=4,
-                    dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'EXP'
-                    )
-        chis_6[i] = params_to_chi2([-19.41, 0.352, b, 67], _, index=4,
-                    dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'EXP'
-                    )
-    #1077.8293845284927/(1048+20+len(ds_CC[0])-4)
-    #%%
-    plt.title('EXP: CC+SN+BAO, omega_m=0.352, M=-19.41')
-    plt.grid(True)
-    plt.plot(bs,chis_1,label='H0=62')
-    plt.plot(bs,chis_2,label='H0=63')
-    plt.plot(bs,chis_3,label='H0=64')
-    plt.plot(bs,chis_4,label='H0=65')
-    plt.plot(bs,chis_5,label='H0=66')
-    plt.plot(bs,chis_6,label='H0=67')
-    plt.ylabel(r'$\chi^2$')
-    plt.xlabel('b')
-    plt.legend()
-    plt.savefig('/home/matias/Barrido_en_b.png')
