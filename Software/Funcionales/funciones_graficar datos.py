@@ -189,13 +189,24 @@ def graficar_data(theta, params_fijos, index=0,
 
     if dataset_BAO_odintsov != None:
         #Importo los datos
-        z_data, H_data, dH = dataset_BAO_odintsov
+        z_data_BAO, H_data_BAO, dH_BAO, rd_fid = dataset_BAO_odintsov
+        H_interp = interp1d(zs_modelo, Hs_modelo)
+        H_teo = H_interp(z_data_BAO)
+
+        H_data_BAO_norm = np.zeros(len(H_data_BAO))
+        for i in range(len(H_data_BAO_norm)):
+            if rd_fid[i]==1:
+                factor = 1
+            else:
+                rd = r_drag(omega_m,H_0,wb=0.0225) #Calculo del rd, fijo wb!! CHequear que es correcto
+                factor = rd_fid[i]/rd
+            H_data_BAO_norm[i] = H_data_BAO[i] * factor
 
         plt.figure()
         plt.grid()
         plt.title('BAO Odintsov ({})'.format(model))
-        plt.plot(z_modelo,Hs_modelo,label='teorico')
-        plt.errorbar(z_data,H_data,dH,fmt='.',label='datos')
+        plt.plot(z_data_BAO,H_teo,'.',label='teorico')
+        plt.errorbar(z_data_BAO,H_data_BAO_norm,dH_BAO,fmt='.',label='datos')
         plt.legend()
         plt.savefig('BAO_odintsov_omega={}_b={}_H0={}_model={}.png'.format(omega_m,b,H_0,model))
         if close==True:
