@@ -17,7 +17,7 @@ with np.load('valores_medios_HS_CC+SN_4params.npz') as data:
     sol = data['sol']
 
 #%% Importo las cadenas
-os.chdir(path_datos_global+'/Resultados_cadenas')
+os.chdir(path_datos_global+'/Resultados_cadenas/Resultados_odintsov')
 filename = "sample_HS_CC+SN_4params.h5"
 reader = emcee.backends.HDFBackend(filename)
 
