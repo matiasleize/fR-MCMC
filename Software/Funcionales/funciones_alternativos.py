@@ -16,6 +16,9 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_int import Hubble_teorico
+from funciones_int_sist_1 import Hubble_teorico_1
+from funciones_int_sist_2 import Hubble_teorico_2
+
 from funciones_supernovas import magn_aparente_teorica, chi2_supernovas
 from funciones_BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
 from funciones_AGN import zs_2_logDlH0
@@ -66,7 +69,8 @@ def params_to_chi2(theta, params_fijos, index=0,
                     dataset_SN=None, dataset_CC=None,
                     dataset_BAO=None, dataset_AGN=None, H0_Riess=False,
                     cantidad_zs=int(10**5), model='HS',n=1,
-                    nuisance_2 = False, errores_agrandados=False):
+                    nuisance_2 = False, errores_agrandados=False,
+                    integrador=0, all_analytic=False):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
     de supernovas.'''
 
@@ -81,9 +85,22 @@ def params_to_chi2(theta, params_fijos, index=0,
     [Mabs, omega_m, b, H_0] = all_parameters(theta, params_fijos, index)
 
     params_fisicos = [omega_m,b,H_0]
-    zs_modelo_2, Hs_modelo_2 = Hubble_teorico(params_fisicos, n=n, model=model,
-                                z_min=0, z_max=10, cantidad_zs=cantidad_zs)
-                                #Los datos de AGN van hasta z mas altos!
+    if integrador==0:
+        zs_modelo_2, Hs_modelo_2 = Hubble_teorico(params_fisicos, n=n, model=model,
+                                    z_min=0, z_max=10, cantidad_zs=cantidad_zs,
+                                    all_analytic=all_analytic)
+                                    #Los datos de AGN van hasta z mas altos!
+    elif integrador==1:
+        zs_modelo_2, Hs_modelo_2 = Hubble_teorico_1(params_fisicos, n=n, model=model,
+                                    z_min=0, z_max=10, cantidad_zs=cantidad_zs,
+                                    all_analytic=all_analytic)
+                                    #Los datos de AGN van hasta z mas altos!
+    elif integrador==2:
+        zs_modelo_2, Hs_modelo_2 = Hubble_teorico_2(params_fisicos, n=n, model=model,
+                                    z_min=0, z_max=10, cantidad_zs=cantidad_zs,
+                                    all_analytic=all_analytic)
+                                    #Los datos de AGN van hasta z mas altos!
+
 
     #Filtro para z=0 para que no diverja la integral de (1/H)
     mask = zs_modelo_2 > 0.001
@@ -163,7 +180,6 @@ def params_to_chi2(theta, params_fijos, index=0,
         chi2_H0 = ((H_0-73.48)/1.66)**2
 
     return chi2_SN + chi2_CC + chi2_AGN + chi2_BAO + chi2_H0
-
 #%%
 if __name__ == '__main__':
     from matplotlib import pyplot as plt
