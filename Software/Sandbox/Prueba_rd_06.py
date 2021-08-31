@@ -167,3 +167,16 @@ r_drag_camb(omega_m,h*100,wb=wb) #143.05230814145693
 r_drag(omega_m,h*100,wb=wb) #141.9431762124038
 #Deberia ser 143.17
 print((1-(r_drag(omega_m,h*100,wb=wb)/r_drag_camb(omega_m,h*100,wb=wb)))*100)
+
+#%%Datos de odintsov
+#34
+omega_m = 0.25
+h = 0.72
+wb = 0.045*(h**2)
+print(r_drag(omega_m,h*100,wb=wb))
+
+#35
+omega_m = 0.27
+h = 0.71
+wb = 0.0226
+print(r_drag(omega_m,h*100,wb=wb))

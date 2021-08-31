@@ -48,8 +48,8 @@ os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
 ds_AGN = leer_data_AGN('table3.dat')
 
 #%%
-bs = np.linspace(0.1,4,100)
-Hs = np.arange(62,74)
+bs = np.linspace(0.1,4,10)
+Hs = np.arange(67,73)
 chies = np.zeros((len(bs),len(Hs)))
 omega_m=0.24
 int=0
@@ -72,7 +72,7 @@ for (i,b) in enumerate(bs):
 plt.figure()
 plt.title('HS: CC+SN, omega_m=0.24, M=-19.41')
 plt.grid(True)
-for k in range(0,7):
+for k in range(0,6):
 #for k in range(7,len(chies[0,:])):
 #for k in range(len(chies[0,:])):
     plt.plot(bs,chies[:,k],label='H0={}'.format(Hs[k]))
