@@ -17,7 +17,7 @@ with np.load('valores_medios_EXP_CC+SN_4params.npz') as data:
     sol = data['sol']
 
 #%% Importo las cadenas
-os.chdir(path_datos_global+'/Resultados_cadenas/Resultados_odintsov')
+os.chdir(path_datos_global+'/Resultados_cadenas/Resultados_odintsov/EXP')
 filename = "sample_EXP_CC+SN_4params.h5"
 reader = emcee.backends.HDFBackend(filename)
 
@@ -27,7 +27,7 @@ burnin = int(2 * np.max(tau))
 thin = int(0.5 * np.min(tau))
 #%%
 %matplotlib qt5
-analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'')
+analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'CC+SN (EXP)')
                     #'Supernovas tipo IA + Cronómetros Cósmicos + BAO')
 analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=False,color='r')
 #%%
