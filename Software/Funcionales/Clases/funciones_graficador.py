@@ -127,9 +127,15 @@ class Graficador:
 
 
 		sns.set_context("paper", font_scale=1.2, rc={"font.size":10,"axes.labelsize":12})
-		samples = self.sampler.get_chain(discard=burnin, flat=True, thin=thin)
+
+		if isinstance(self.sampler, np.ndarray)==True: #Es una cadenas procesada
+			samples = self.sampler
+			len_chain,ndim=samples.shape
+		else:
+			samples = self.sampler.get_chain(discard=burnin, flat=True, thin=thin)
+			len_chain, nwalkers, ndim = self.sampler.get_chain().shape
+
 		labels = self.labels
-		len_chain, nwalkers, ndim = self.sampler.get_chain().shape
 		for i in range(ndim):
 			mode = params_truths[i] #Correción de mati: Ponemos la moda (el minimo del chi2)
 			one_sigma = az.hdi(samples,hdi_prob=0.68)[i]
