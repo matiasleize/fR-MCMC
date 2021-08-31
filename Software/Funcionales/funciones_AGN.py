@@ -53,7 +53,7 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
             [omega_m, beta, gamma, delta] = theta #Este beta es distinto al otro!
             H_0 = params_fijos
             zs_modelo = np.linspace(0,10,10**5)
-            Hs_modelo = H_LCDM(zs_modelo_2,omega_m,H_0)
+            Hs_modelo = H_LCDM(zs_modelo,omega_m,H_0)
 
     else:
         if len(theta) == 5:
