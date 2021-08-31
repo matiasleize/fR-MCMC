@@ -9,17 +9,15 @@ from funciones_parametros_derivados import parametros_derivados
 
 #Rellenar acá:
 model='HS'
-datasets = 'CC+SN+BAO'
+datasets = 'CC+SN+BAO+AGN'
 num_params = '4params'
 root_directory=path_datos_global+'/Resultados_cadenas/Paper/'+model
-
+root_directory
 os.chdir(root_directory)
 filename = 'sample_'+model+'_'+datasets+'_'+num_params
-
 filename_h5 = filename+'.h5'
 reader = emcee.backends.HDFBackend(filename_h5)
 nwalkers, ndim = reader.shape #Numero de caminantes y de parametros
-
 
 #%%%
 burnin = 1000
