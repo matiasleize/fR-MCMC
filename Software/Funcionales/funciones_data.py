@@ -2,7 +2,7 @@ import numpy as np
 from numpy.linalg import inv
 import numpy.ma as ma
 
-def leer_data_pantheon(archivo_pantheon,min_z = 0,max_z = 3):
+def leer_data_pantheon(archivo_pantheon,masked=False,min_z = 0,max_z = 30):
 
     '''Toma la data de Pantheon y extrae la data de los redshifts zcmb y zhel
     su error dz, además de los datos de la magnitud aparente con su error:
@@ -25,14 +25,15 @@ def leer_data_pantheon(archivo_pantheon,min_z = 0,max_z = 3):
     Ccov=Csys+Dstat
     Cinv=inv(Ccov)
 
-    mask = ma.masked_where((zcmb <= max_z) & ((zcmb >= min_z)) , zcmb).mask
-    mask_1 = mask[np.newaxis, :] & mask[:, np.newaxis]
+    if masked == True:
+        mask = ma.masked_where((zcmb <= max_z) & ((zcmb >= min_z)) , zcmb).mask
+        mask_1 = mask[np.newaxis, :] & mask[:, np.newaxis]
 
-    zhel = zhel[mask]
-    mb = mb[mask]
-    Cinv = Cinv[mask_1]
-    Cinv = Cinv.reshape(len(zhel),len(zhel))
-    zcmb = zcmb[mask]
+        zhel = zhel[mask]
+        mb = mb[mask]
+        Cinv = Cinv[mask_1]
+        Cinv = Cinv.reshape(len(zhel),len(zhel))
+        zcmb = zcmb[mask]
 
     return zcmb, zhel, Cinv, mb
 
