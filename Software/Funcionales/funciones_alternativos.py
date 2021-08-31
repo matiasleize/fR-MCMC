@@ -15,6 +15,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
+from funciones_LambdaCDM import H_LCDM
 from funciones_int import Hubble_teorico
 from funciones_int_sist_1 import Hubble_teorico_1
 from funciones_int_sist_2 import Hubble_teorico_2
@@ -86,26 +87,26 @@ def params_to_chi2(theta, params_fijos, index=0,
 
     params_fisicos = [omega_m,b,H_0]
     if integrador==0:
-        zs_modelo_2, Hs_modelo_2 = Hubble_teorico(params_fisicos, n=n, model=model,
+        zs_modelo, Hs_modelo = Hubble_teorico(params_fisicos, n=n, model=model,
                                     z_min=0, z_max=10, cantidad_zs=cantidad_zs,
                                     all_analytic=all_analytic)
                                     #Los datos de AGN van hasta z mas altos!
     elif integrador==1:
-        zs_modelo_2, Hs_modelo_2 = Hubble_teorico_1(params_fisicos, n=n, model=model,
+        zs_modelo, Hs_modelo = Hubble_teorico_1(params_fisicos, n=n, model=model,
                                     z_min=0, z_max=10, cantidad_zs=cantidad_zs,
                                     all_analytic=all_analytic)
                                     #Los datos de AGN van hasta z mas altos!
     elif integrador==2:
-        zs_modelo_2, Hs_modelo_2 = Hubble_teorico_2(params_fisicos, n=n, model=model,
+        zs_modelo, Hs_modelo = Hubble_teorico_2(params_fisicos, n=n, model=model,
                                     z_min=0, z_max=10, cantidad_zs=cantidad_zs,
                                     all_analytic=all_analytic)
                                     #Los datos de AGN van hasta z mas altos!
 
-
+    #MAL!
     #Filtro para z=0 para que no diverja la integral de (1/H)
-    mask = zs_modelo_2 > 0.001
-    zs_modelo = zs_modelo_2[mask]
-    Hs_modelo = Hs_modelo_2[mask]
+    #mask = zs_modelo_2 > 0.001
+    #zs_modelo = zs_modelo_2[mask]
+    #Hs_modelo = Hs_modelo_2[mask]
 
 
     if dataset_SN != None:
@@ -209,7 +210,28 @@ if __name__ == '__main__':
     os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
     ds_AGN = leer_data_AGN('table3.dat')
 
+
 #%%
+    a = params_to_chi2([-19.37, 0.35, 70], _, index=32,
+                    dataset_SN = ds_SN,
+                    #dataset_CC = ds_CC,
+                    #dataset_BAO = ds_BAO,
+                    #dataset_AGN = ds_AGN,
+                    #H0_Riess = True,
+                    model = 'LCDM'
+                    )
+    print(a)
+    #%%
+    from scipy.stats import chi2
+    N = len(ds_SN[0])
+    P = 3
+    df = N - P
+    x = np.linspace(0,2000, 10**5)
+    y = chi2.pdf(x, df, loc=0, scale=1)
+    plt.vlines(a,0,np.max(y),'r')
+    plt.plot(x,y)
+
+    #%%
     bs = np.linspace(0,2,22)
     chies_HS = np.zeros(len(bs))
     chies_EXP = np.zeros(len(bs))
@@ -231,40 +253,20 @@ if __name__ == '__main__':
                         model = 'HS'
                         )
         print(i)
-#b = 5 #1296.0757648437618
-#b = 2 #1655.1381848068963
-#b = 1 #1086.2319745225054
-#b = 0.5 #1128.9476844983917
-#b = 0.1 #1133.0048315820693
-    plt.figure()
-    plt.title('CC+H0')
-    plt.ylabel(r'$\chi^2$')
-    plt.xlabel('b')
-    plt.grid(True)
-    plt.plot(bs,chies_HS,label = 'Modelo Hu-Sawicki')
-    plt.plot(bs,chies_EXP,label = 'Modelo Exponencial')
-    plt.legend()
-    plt.savefig('/home/matias/EXP+HS_CC+H0.png')
-#%%
-    a = params_to_chi2([-19.351100617405038, 0.30819459447582237, 69.2229987565787], _, index=32,
-                    dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'LCDM'
-                    )
-    print(a)
-    #%%
-    from scipy.stats import chi2
-    N = len(ds_SN[0])
-    P = 3
-    df = N - P
-    x = np.linspace(0,2000, 10**5)
-    y = chi2.pdf(x, df, loc=0, scale=1)
-    plt.vlines(a,0,np.max(y),'r')
-    plt.plot(x,y)
-
+    #b = 5 #1296.0757648437618
+    #b = 2 #1655.1381848068963
+    #b = 1 #1086.2319745225054
+    #b = 0.5 #1128.9476844983917
+    #b = 0.1 #1133.0048315820693
+        plt.figure()
+        plt.title('CC+H0')
+        plt.ylabel(r'$\chi^2$')
+        plt.xlabel('b')
+        plt.grid(True)
+        plt.plot(bs,chies_HS,label = 'Modelo Hu-Sawicki')
+        plt.plot(bs,chies_EXP,label = 'Modelo Exponencial')
+        plt.legend()
+        plt.savefig('/home/matias/EXP+HS_CC+H0.png')
 
     #%%
     bs = np.linspace(0.1,4,100)

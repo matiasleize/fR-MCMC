@@ -64,13 +64,9 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
             [H_0, beta] = params_fijos
 
         params_fisicos = [omega_m,b,H_0]
-        zs_modelo_2, Hs_modelo_2 = Hubble_teorico(params_fisicos, n=n, model=model,
+        zs_modelo, Hs_modelo = Hubble_teorico(params_fisicos, n=n, model=model,
                                     z_min=0,z_max=10)
 
-    #Filtro para z=0 para que no diverja la integral de (1/H)
-    mask = zs_modelo_2 > 0.001
-    zs_modelo = zs_modelo_2[mask]
-    Hs_modelo = Hs_modelo_2[mask]
 
     #Importo los datos
     z_data_unmasked, logFuv_unmasked, eFuv_unmasked, logFx_unmasked, eFx_unmasked  = dataset_AGN

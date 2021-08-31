@@ -85,10 +85,11 @@ def params_to_chi2_odintsov(theta, params_fijos, index=0,
                                 z_min=0, z_max=10, cantidad_zs=cantidad_zs)
                                 #Los datos de AGN van hasta z mas altos!
 
+    #MAL!
     #Filtro para z=0 para que no diverja la integral de (1/H)
-    mask = zs_modelo_2 > 0.001
-    zs_modelo = zs_modelo_2[mask]
-    Hs_modelo = Hs_modelo_2[mask]
+    #mask = zs_modelo_2 > 0.001
+    zs_modelo = zs_modelo_2
+    Hs_modelo = Hs_modelo_2
 
 
     if dataset_SN != None:
