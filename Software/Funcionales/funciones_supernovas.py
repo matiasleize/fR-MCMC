@@ -32,8 +32,8 @@ def magn_aparente_teorica(zs, Hs, zcmb, zhel):
     donde d_L = (c/H_0) (1+z) int(dz'/E(z'))'''
 
     d_c =  c_luz_km * cumtrapz(Hs**(-1), zs, initial=0)
-    dc_int = interp1d(zs, d_c) #Interpolamos
-    d_L = (1 + zhel) * dc_int(zcmb) #Obs, Caro multiplica por Zhel, con Zcmb da un poquin mejor
+    dc_int = interp1d(zs, d_c)(zcmb) #Interpolamos
+    d_L = (1 + zhel) * dc_int #Obs, Caro multiplica por Zhel, con Zcmb da un poquin mejor
     #Magnitud aparente teorica
     muth = 25.0 + 5.0 * np.log10(d_L)
     return muth
