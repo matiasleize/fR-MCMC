@@ -32,11 +32,11 @@ print(tau)
 graficar_cadenas(reader,
                 labels = ['omega_m','beta','gamma','delta'])
  #%%
-burnin = 1500
-thin = 15
-graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,
-                    labels = ['omega_m','beta','gamma','delta'])
-
+#burnin = 1500
+#thin = 15
+type(reader)
+graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,labels = ['omega_m','beta','gamma','delta'])
+#%%
 #Reporto contornos
 from IPython.display import display, Math
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)

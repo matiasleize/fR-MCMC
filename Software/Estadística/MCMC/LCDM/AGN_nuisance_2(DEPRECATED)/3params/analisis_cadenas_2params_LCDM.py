@@ -5,7 +5,7 @@ import corner
 import sys
 import os
 import time
-
+'''DEPRECATED'''
 from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
