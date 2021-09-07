@@ -27,7 +27,12 @@ def H_LCDM(z, omega_m, H_0):
 def H_LCDM_rad(z, omega_m, H_0):
     omega_r = 4.18343*10**(-5) / (H_0/100)**2
     omega_lambda = 1 - omega_m - omega_r
-    H = H_0 * np.sqrt(omega_r * (1 + z)**4 + omega_m * (1 + z)**3 + omega_lambda)
+
+    if isinstance(z, (np.ndarray, list)):
+        H = H_0 * np.sqrt(omega_r * (1 + z)**4 + omega_m * (1 + z)**3 + omega_lambda)
+    else:
+        H = H_0 * (omega_r * (1 + z)**4 + omega_m * (1 + z)**3 + omega_lambda)**(1/2)
+
     return H
 
 
