@@ -5,6 +5,7 @@ Created on Sun Feb  2 13:28:48 2020
 """
 import numpy as np
 from scipy.interpolate import interp1d
+from scipy.integrate import cumtrapz as cumtrapz
 from scipy.constants import c as c_luz #metros/segundos
 c_luz_km = c_luz/1000
 
@@ -102,25 +103,25 @@ def params_to_chi2(theta, params_fijos, index=0,
                                     all_analytic=all_analytic)
                                     #Los datos de AGN van hasta z mas altos!
 
-    #MAL!
-    #Filtro para z=0 para que no diverja la integral de (1/H)
-    #mask = zs_modelo_2 > 0.001
-    #zs_modelo = zs_modelo_2[mask]
-    #Hs_modelo = Hs_modelo_2[mask]
+    if (dataset_CC != None or dataset_BAO != None or dataset_AGN != None):
+        Hs_interpolado = interp1d(zs_modelo, Hs_modelo)
+
+    if (dataset_SN != None or dataset_BAO != None or dataset_AGN != None):
+        int_inv_Hs = cumtrapz(Hs_modelo**(-1), zs_modelo, initial=0)
+        int_inv_Hs_interpolado = interp1d(zs_modelo, int_inv_Hs)
 
 
     if dataset_SN != None:
         #Importo los datos
         zcmb, zhel, Cinv, mb = dataset_SN
-        muth = magn_aparente_teorica(zs_modelo, Hs_modelo, zcmb, zhel)
+        muth = magn_aparente_teorica(int_inv_Hs_interpolado, zcmb, zhel)
         muobs =  mb - Mabs
         chi2_SN = chi2_supernovas(muth, muobs, Cinv)
 
     if dataset_CC != None:
         #Importo los datos
         z_data, H_data, dH = dataset_CC
-        H_interp = interp1d(zs_modelo, Hs_modelo)
-        H_teo = H_interp(z_data)
+        H_teo = Hs_interpolado(z_data)
         chi2_CC = chi2_sin_cov(H_teo, H_data, dH**2)
 
     if dataset_BAO != None:
@@ -130,16 +131,17 @@ def params_to_chi2(theta, params_fijos, index=0,
             (z_data_BAO, valores_data, errores_data_cuad,wb_fid) = dataset_BAO[i]
             if i==0: #Dato de Da
                 rd = r_drag(omega_m,H_0,wb_fid) #Calculo del rd
-                distancias_teoricas = Hs_to_Ds(zs_modelo,Hs_modelo,z_data_BAO,i)
+                distancias_teoricas = Hs_to_Ds(Hs_interpolado, int_inv_Hs_interpolado, z_data_BAO, i)
                 output_teorico = Ds_to_obs_final(zs_modelo, distancias_teoricas, rd, i)
             else: #De lo contrario..
-                distancias_teoricas = Hs_to_Ds(zs_modelo,Hs_modelo,z_data_BAO,i)
+                distancias_teoricas = Hs_to_Ds(Hs_interpolado, int_inv_Hs_interpolado, z_data_BAO, i)
                 output_teorico = np.zeros(len(z_data_BAO))
                 for j in range(len(z_data_BAO)): #Para cada dato de una especie
                      rd = r_drag(omega_m,H_0,wb_fid[j]) #Calculo del rd
                      output_teorico[j] = Ds_to_obs_final(zs_modelo,distancias_teoricas[j],rd,i)
             #Calculo el chi2 para cada tipo de dato (i)
             chies_BAO[i] = chi2_sin_cov(output_teorico,valores_data,errores_data_cuad)
+
 
         if np.isnan(sum(chies_BAO))==True:
             print('Hay errores!')
@@ -152,7 +154,7 @@ def params_to_chi2(theta, params_fijos, index=0,
         #Importo los datos
         z_data, logFuv, eFuv, logFx, eFx  = dataset_AGN
 
-        if nuisance_2 == True:
+        if nuisance_2 == True:#Deprecated
             beta = 8.513
             ebeta = 0.437
             gamma = 0.622
@@ -168,8 +170,7 @@ def params_to_chi2(theta, params_fijos, index=0,
             gamma = 0.648
             egamma = 0.007
 
-        Es_modelo = Hs_modelo/H_0
-        DlH0_teo = zs_2_logDlH0(zs_modelo,Es_modelo,z_data)
+        DlH0_teo = zs_2_logDlH0(int_inv_Hs_interpolado(z_data)*H_0,z_data)
         DlH0_obs =  np.log10(3.24) - 25 + (logFx - gamma * logFuv - beta) / (2*gamma - 2)
 
         df_dgamma =  (-logFx+beta+logFuv) / (2*(gamma-1)**2)
@@ -178,7 +179,7 @@ def params_to_chi2(theta, params_fijos, index=0,
         chi2_AGN = chi2_sin_cov(DlH0_teo, DlH0_obs, eDlH0_cuad)
 
     if H0_Riess == True:
-        chi2_H0 = ((H_0-73.48)/1.66)**2
+        chi2_H0 = ((Hs_modelo[0]-73.48)/1.66)**2
 
     return chi2_SN + chi2_CC + chi2_AGN + chi2_BAO + chi2_H0
 #%%
@@ -212,13 +213,13 @@ if __name__ == '__main__':
 
 
 #%%
-    a = params_to_chi2([-19.37, 0.35, 70], _, index=32,
-                    dataset_SN = ds_SN,
+    a = params_to_chi2([-19.37, 0.3, 70], 0.01, index=32,
+                    #dataset_SN = ds_SN,
                     #dataset_CC = ds_CC,
-                    #dataset_BAO = ds_BAO,
+                    dataset_BAO = ds_BAO,
                     #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'LCDM'
+                    H0_Riess = True,
+                    model = 'HS'
                     )
     print(a)
     #%%
