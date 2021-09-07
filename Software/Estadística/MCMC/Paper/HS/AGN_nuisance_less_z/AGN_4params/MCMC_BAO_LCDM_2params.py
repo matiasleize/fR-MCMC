@@ -54,7 +54,7 @@ def log_probability(theta):
 #%%
 #Defino los valores iniciales de cada cadena a partir de los valores
 #de los parametros que corresponden al minimo del chi2.
-pos = sol + 1e-4 * np.random.randn(12, 5)
+pos = sol + 1e-2 * np.random.randn(12, 5)
 
 MCMC_sampler(log_probability,pos,
             filename = "sample_HS_AGN_5params_nuisance_less_z.h5",

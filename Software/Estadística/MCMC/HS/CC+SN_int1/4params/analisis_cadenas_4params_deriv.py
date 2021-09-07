@@ -18,7 +18,7 @@ with np.load('valores_medios_HS_CC+SN_4params_int1.npz') as data:
 
 #%% Importo las cadenas
 #os.chdir(path_datos_global+'/Resultados_cadenas/Paper/EXP')
-os.chdir(path_datos_global+'/Resultados_cadenas/Resultados_odintsov/HS/')
+os.chdir(path_datos_global+'/Resultados_cadenas/')
 with np.load('sample_HS_CC+SN_4params_int1_deriv.npz') as data:
     ns = data['new_samples']
 #%%

@@ -32,8 +32,8 @@ print(tau)
 graficar_cadenas(reader,
                 labels = ['omega_m','b','beta','gamma','delta'])
  #%%
-burnin=1500
-thin=50
+#burnin=1500
+#thin=50
 graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,
                     labels = ['omega_m','b','beta','gamma','delta'])
 #%%
@@ -42,7 +42,7 @@ graficar_contornos(reader,params_truths=sol,discard=burnin,thin=thin,
 #graficar_taus_vs_n(reader,num_param=0,threshold=1000)
 #graficar_taus_vs_n(reader,num_param=1,threshold=1000)
 #%% Printeo los valores!
-thin=1
+#thin=1
 from IPython.display import display, Math
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
 labels = ['omega_m','b','beta','gamma','delta']
@@ -60,8 +60,8 @@ for i in range(ndim):
 betas_2_unflitered = samples[:, 2]
 gammas_unflitered = samples[:, 3]
 
-burnin = 1500
-thin = 15
+#burnin = 1500
+#thin = 15
 
 def filtrar_puntos(sample, burnin=0,thin=1):
     sample_2 = sample[burnin:]
@@ -89,7 +89,7 @@ plt.grid(True)
 plt.legend()
 plt.savefig( '/home/matias/propagacion_beta_EXP.png')
 #%%
-mcmc = np.percentile(betas, [5, 50, 95]) #Hay coincidencia a 2 sigma :/
+mcmc = np.percentile(betas, [16, 50, 64]) #Hay coincidencia a 2 sigma :/
 q = np.diff(mcmc)
 txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{+{2:.3f}}}"
 txt = txt.format(mcmc[1], q[0], q[1], r'\beta')
@@ -111,7 +111,7 @@ plt.legend()
 plt.savefig( '/home/matias/propagacion_gamma_EXP.png')
 
 #%%
-mcmc = np.percentile(gammas, [5, 50, 95]) #Hay coincidencia a 2 sigma :/
+mcmc = np.percentile(gammas, [5, 50, 95]) #Hay coincidencia a 2 sigma :/ (x 0.001!)
 q = np.diff(mcmc)
 txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}}}^{{+{2:.3f}}}"
 txt = txt.format(mcmc[1], q[0], q[1], r'\gamma')

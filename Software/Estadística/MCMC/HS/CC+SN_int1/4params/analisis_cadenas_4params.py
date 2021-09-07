@@ -27,9 +27,9 @@ burnin = int(2 * np.max(tau))
 thin = int(0.5 * np.min(tau))
 #%%
 %matplotlib qt5
-burnin=100
-thin=1
-analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'1 SNIA + CC (HS)')
+#burnin=100
+#thin=1
+analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}^{\Lambda CDM}$','b','$H_{0}^{\Lambda CDM}$'],'1 SNIA + CC (HS)')
 analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=False,color='r')
 #%%
 analisis.graficar_cadenas()

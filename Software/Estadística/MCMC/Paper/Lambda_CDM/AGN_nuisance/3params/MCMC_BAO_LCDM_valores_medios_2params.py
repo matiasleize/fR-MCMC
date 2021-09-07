@@ -38,5 +38,5 @@ print(omega_m_ml,beta_ml, gamma_ml, delta_ml)
 soln.fun
 print(soln.fun/(len(data_agn[0])-4))
 
-os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
+os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones/LCDM')
 np.savez('valores_medios_LCDM_AGN_4params_nuisance', sol=soln.x)
