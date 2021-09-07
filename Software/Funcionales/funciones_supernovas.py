@@ -25,14 +25,13 @@ from scipy.constants import c as c_luz #metros/segundos
 c_luz_km = c_luz/1000; #km/seg
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
-def magn_aparente_teorica(zs, Hs, zcmb, zhel):
+def magn_aparente_teorica(int_inv_Hs_interpolado, zcmb, zhel):
     '''A partir de un array de redshift y un array de la magnitud E = H_0/H
     que salen de la integración numérica, se calcula el mu teórico que deviene
     del modelo. muth = 25 + 5 * log_{10}(d_L),
     donde d_L = (c/H_0) (1+z) int(dz'/E(z'))'''
 
-    d_c =  c_luz_km * cumtrapz(Hs**(-1), zs, initial=0)
-    dc_int = interp1d(zs, d_c)(zcmb) #Interpolamos
+    dc_int =  c_luz_km * int_inv_Hs_interpolado(zcmb)
     d_L = (1 + zhel) * dc_int #Obs, Caro multiplica por Zhel, con Zcmb da un poquin mejor
     #Magnitud aparente teorica
     muth = 25.0 + 5.0 * np.log10(d_L)
