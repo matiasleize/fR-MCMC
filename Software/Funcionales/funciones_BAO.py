@@ -4,10 +4,12 @@ Created on Sun Feb  2 13:28:48 2020
 @author: matias
 """
 import numpy as np
+from numba import jit
 #import camb #Para que ande en el DF
 from scipy.interpolate import interp1d
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.integrate import simps as simps
+from scipy.integrate import quad as quad
 
 from scipy.constants import c as c_luz #metros/segundos
 c_luz_km = c_luz/1000;
@@ -38,7 +40,7 @@ def zdrag(omega_m,H_0,wb=0.0225):
     #zd =1060.31
     return zd
 
-def r_drag(omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de BBN.
+def r_drag_viejo(omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de BBN.
     #Calculo del rd:
     h = H_0/100
     zd = zdrag(omega_m,H_0)
@@ -54,36 +56,54 @@ def r_drag(omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de BBN.
     rd_log = simps(integrando_log,zs_int_log)
     return rd_log
 
-# def r_drag_camb(omega_m,H_0,wb = 0.0225): #Para que ande en el DF
-#     pars = camb.CAMBparams()
-#     h = (H_0/100)
-#     pars.set_cosmology(H0=H_0, ombh2=wb, omch2=omega_m*h**2-wb)
-#     results = camb.get_background(pars)
-#     rd = results.get_derived_params()['rdrag']
-#     #print('Derived parameter dictionary: %s'%results.get_derived_params()['rdrag'])
-#     return rd
+@jit
+def integrand(z, Om_m_0, H_0, wb):
+    R_bar = wb * 10**5 / 2.473
 
-def Hs_to_Ds(zs, Hs, z_data, index):
+    Om_r = 4.18343*10**(-5) / (H_0/100)**2
+    Om_Lambda = 1 - Om_m_0 - Om_r
+    H = H_0 * ((Om_r * (1 + z)**4 + Om_m_0 * (1 + z)**3 + Om_Lambda) ** (1/2))
+    return c_luz_km/(H * (3*(1 + R_bar*(1+z)**(-1)))**(1/2))
+
+def r_drag(omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de BBN.
+    #Calculo del rd:
+    h = H_0/100
+    zd = zdrag(omega_m,H_0)
+    #R_bar = 31500 * wb * (2.726/2.7)**(-4)
+    R_bar = wb * 10**5 / 2.473
+
+
+   # Calculo del rd:
+    zd = zdrag(omega_m, H_0)
+    # zd = 1000
+    R_bar = wb * 10**5 / 2.473
+
+    rd_log, _ = quad(lambda z: integrand(z, omega_m, H_0, wb), zd, np.inf)
+
+    return rd_log
+
+def Hs_to_Ds(Hs_interpolado, int_inv_Hs_interpolado, z_data, index):
     if index == 4: #H
-        aux = Hs
+        output = Hs_interpolado(z_data)
+
     elif index == 1: #DH
-        DH = c_luz_km * (Hs**(-1))
-        aux = DH
+        output = c_luz_km * (Hs_interpolado(z_data))**(-1)
+
     else:
-        INT = cumtrapz(Hs**(-1), zs, initial=0)
-        DA = (c_luz_km/(1 + zs)) * INT
+        INT = int_inv_Hs_interpolado(z_data)
+
         if index == 0: #DA
-            aux = DA
+            output = (c_luz_km/(1 + z_data)) * INT
+
         elif index == 2: #DM
-            #aux = (1+zs) * DA
-            DM = c_luz_km * INT
-            aux = DM
+            #output = (1 + z_data) * DA
+            output = c_luz_km * INT
+
         elif index == 3: #DV
-            #aux = (((1 +zs) * DA)**2 * c_luz_km * zs * (Hs**(-1))) ** (1/3)
-            DV = c_luz_km * (INT**2 * zs * (Hs**(-1))) ** (1/3)
-            aux = DV
-    output = interp1d(zs,aux)
-    return output(z_data)
+            #output = (((1 +z_data) * DA)**2 * c_luz_km * z_data * (Hs**(-1))) ** (1/3)
+            output = c_luz_km * (INT**2 * z_data * (Hs_interpolado(z_data)**(-1))) ** (1/3)
+
+    return output
 
 def Ds_to_obs_final(zs, Dist, rd, index):
     if index == 4: #H
