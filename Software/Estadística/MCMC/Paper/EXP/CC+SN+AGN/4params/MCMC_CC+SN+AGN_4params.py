@@ -33,7 +33,7 @@ os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
 ds_AGN = leer_data_AGN('table3.dat')
 
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-with np.load('valores_medios_HS_CC+SN+AGN_4params.npz') as data:
+with np.load('valores_medios_EXP_CC+SN+AGN_4params.npz') as data:
     sol = data['sol']
 print(sol)
 
@@ -67,7 +67,7 @@ def log_probability(theta):
 #%%
 #Defino los valores iniciales de cada cadena a partir de los valores
 #de los parametros que corresponden al minimo del chi2.
-pos = sol + 1e-4 * np.random.randn(12, 4)
+pos = sol + 1e-2 * np.random.randn(12, 4)
 
 MCMC_sampler(log_probability,pos,
             filename = "sample_EXP_CC+SN+AGN_4params.h5",
