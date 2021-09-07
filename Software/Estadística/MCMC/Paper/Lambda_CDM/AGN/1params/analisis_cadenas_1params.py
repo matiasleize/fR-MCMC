@@ -38,17 +38,17 @@ plt.xlim(0, len(samples))
 plt.ylabel(label)
 plt.xlabel("step number");
 plt.savefig( '/home/matias/cadenas_omega_m_LCDM.png')
-#%%
 
+#%%
 sample = reader.get_chain(discard=burnin, flat=True, thin=thin)
 plt.close()
 plt.figure()
 plt.grid(True)
 plt.title('Lambda CDM')
-plt.xlabel(r'$\beta$')
-plt.hist(sample,density=True,bins=round(np.sqrt(len(samples))),label=r'$\omega_m$')
+plt.xlabel(r'$\Omega_{m}$')
+plt.hist(sample,density=True,bins=round(np.sqrt(len(samples))),label=r'$\Omega_m$')
 plt.hist(sample)
-
+plt.legend()
 
 #Reporto intevalo
 from IPython.display import display, Math
