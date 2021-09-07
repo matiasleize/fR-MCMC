@@ -23,18 +23,19 @@ def leer_data_pantheon(archivo_pantheon,masked=False,min_z = 0,max_z = 30):
     Csys=Csys.reshape(sn,sn)
     #armamos la matriz de cov final y la invertimos:
     Ccov=Csys+Dstat
-    Cinv=inv(Ccov)
 
-    if masked == True:
+
+    if masked == True: #OJO ESTABA MAL: SE TIENE QUE RESHAPEAR CCOV Y LUEGO INVERTIR.
         mask = ma.masked_where((zcmb <= max_z) & ((zcmb >= min_z)) , zcmb).mask
         mask_1 = mask[np.newaxis, :] & mask[:, np.newaxis]
 
         zhel = zhel[mask]
         mb = mb[mask]
-        Cinv = Cinv[mask_1]
-        Cinv = Cinv.reshape(len(zhel),len(zhel))
+        Ccov = Ccov[mask_1]
+        Ccov = Ccov.reshape(len(zhel),len(zhel))
         zcmb = zcmb[mask]
 
+    Cinv=inv(Ccov)
     return zcmb, zhel, Cinv, mb
 
 def leer_data_pantheon_2(archivo_pantheon,archivo_pantheon_2):
