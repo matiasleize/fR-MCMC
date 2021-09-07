@@ -22,14 +22,11 @@ from funciones_LambdaCDM import H_LCDM
 
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,n
 
-def zs_2_logDlH0(zs,Es,z_data):
-    INT = cumtrapz(Es**(-1), zs, initial=0)
-    DlH0 = (c_luz_km * (1 + zs)) * INT #km/seg
-    output = interp1d(zs,DlH0)
-    return np.log10(output(z_data)) #log(km/seg)
+def zs_2_logDlH0(INT,z_data):
+    DlH0 = (c_luz_km * (1 + z_data)) * INT #km/seg
+    return np.log10(DlH0) #log(km/seg)
 
 ### Nuisance AGN
-
 def Hs_2_logDl(zs,Hs,z_data):
     INT = cumtrapz(Hs**(-1), zs, initial=0)
 
