@@ -11,7 +11,7 @@ import arviz as az
 #b_w=0.25 #CC+H0 Mejor sin smoothear!
 #b_w=0.005 #Nuisance Mejor sin smoothear!
 #b_w=0.12 #CC+SN
-b_w=0.15 #CC+SN+BAO
+#b_w=0.15 #CC+SN+BAO
 class Graficador:
 	'''
 	Esta clase genera un objeto "Graficador" que toma el objeto sampler
@@ -68,8 +68,9 @@ class Graficador:
 			fig.suptitle(self.title);
 
 
-	def graficar_contornos(self, params_truths, discard=20,
-							thin=1, poster=False, color='b', nuisance_only=False):
+	def graficar_contornos(self, discard=20,
+							thin=1, poster=False,
+							color='b', nuisance_only=False):
 		'''
 		Grafica los cornerplots para los parámetros a partir de las cadenas
 		de Markov. En la diagonal aparecen las  distribuciones de probabilidad
@@ -87,6 +88,9 @@ class Graficador:
 		else:
 			flat_samples = self.sampler.get_chain(discard=discard, flat=True, thin=thin)
 
+		params_truths = np.zeros(len(flat_samples[0,:]))
+		for i in range(len(params_truths)):
+			params_truths[i] = np.mean(flat_samples[:,i])
 
 		if nuisance_only==True:
 			flat_samples=flat_samples[:,3:] #Solo para el grafico de nuisance only!
@@ -118,15 +122,14 @@ class Graficador:
 				fig.suptitle(self.title);
 
 
-	def reportar_intervalos(self, params_truths, burnin=20, thin=1,UL_index=None):
+	def reportar_intervalos(self, burnin=20, thin=1,UL_index=None):
 		'''
 		Imprimer los valores de los parámetros, tanto los valores más
 		probables, como las incertezas a uno y dos sigmas.
 		'''
 		sns.set(style='darkgrid', palette="muted", color_codes=True)
-
-
 		sns.set_context("paper", font_scale=1.2, rc={"font.size":10,"axes.labelsize":12})
+
 
 		if isinstance(self.sampler, np.ndarray)==True: #Es una cadenas procesada
 			samples = self.sampler
@@ -135,17 +138,19 @@ class Graficador:
 			samples = self.sampler.get_chain(discard=burnin, flat=True, thin=thin)
 			len_chain, nwalkers, ndim = self.sampler.get_chain().shape
 
+
 		labels = self.labels
 		for i in range(ndim):
-			mode = params_truths[i] #Correción de mati: Ponemos la moda (el minimo del chi2)
+			#mode = params_truths[i] #Correción de mati: Ponemos la moda (el minimo del chi2)
+			mean = np.mean(samples[:,i])
 			one_sigma = az.hdi(samples,hdi_prob=0.68)[i]
 			two_sigma = az.hdi(samples,hdi_prob=0.95)[i]
 
-			q1 = np.diff([one_sigma[0],mode,one_sigma[1]])
-			q2 = np.diff([two_sigma[0],mode,two_sigma[1]])
+			q1 = np.diff([one_sigma[0],mean,one_sigma[1]])
+			q2 = np.diff([two_sigma[0],mean,two_sigma[1]])
 
 			txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}({4:.3f})}}^{{+{2:.3f}({5:.3f})}}"
-			txt = txt.format(mode, q1[0], q1[1], labels[i], q2[0], q2[1])
+			txt = txt.format(mean, q1[0], q1[1], labels[i], q2[0], q2[1])
 			display(Math(txt))
 
 
@@ -255,7 +260,7 @@ if __name__ == '__main__':
 				contour=True,
             	divergences=True,
 				marginals = True,
-				point_estimate = 'mode',
+				point_estimate = 'mean',
             	textsize=18)
 #%%
 	az.plot_posterior(emcee_data)
