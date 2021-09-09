@@ -47,22 +47,25 @@ for i in range(5):
 os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
 ds_AGN = leer_data_AGN('table3.dat')
 
+
+
+
+
 #%%
-bs = np.linspace(0.1,4,10)
-Hs = np.arange(67,73)
+bs = np.linspace(0.01,7,40)
+Hs = np.arange(67,71)
 chies = np.zeros((len(bs),len(Hs)))
-omega_m=0.24
-int=0
+omega_m=0.3
 for (i,b) in enumerate(bs):
     print(i,b)
     for (j,H0) in enumerate(Hs):
         chies[i,j] = params_to_chi2([-19.41, omega_m, b, H0], _, index=4,
                     dataset_SN = ds_SN,
                     dataset_CC = ds_CC,
-                    #dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
+                    dataset_BAO = ds_BAO,
+                    dataset_AGN = ds_AGN,
                     #H0_Riess = True,
-                    model = 'HS',
+                    model = 'EXP',
                     integrador=int
                     )
 
@@ -70,16 +73,71 @@ for (i,b) in enumerate(bs):
 #%%
 %matplotlib qt5
 plt.figure()
-plt.title('HS: CC+SN, omega_m=0.24, M=-19.41')
+plt.title('EXP: CC+SN+BAO+AGN, omega_m=0.3, M=-19.41')
 plt.grid(True)
-for k in range(0,6):
+#for k in range(0,6):
 #for k in range(7,len(chies[0,:])):
-#for k in range(len(chies[0,:])):
+for k in range(len(chies[0,:])):
     plt.plot(bs,chies[:,k],label='H0={}'.format(Hs[k]))
 plt.ylabel(r'$\chi^2$')
 plt.xlabel('b')
 plt.legend()
-plt.savefig('/home/matias/integrador/Barrido_b_H0_bajos.png')
+plt.savefig('/home/matias/Barrido_en_b/Barrido_b.png')
+
+
+
+
+
+
+#%%
+bs = np.linspace(0.01,7,40)
+omegas = np.linspace(0.25,0.45,10)
+chies = np.zeros((len(bs),len(omegas)))
+H0 = 73.48
+int = 0
+for (i,b) in enumerate(bs):
+    print(i,b)
+    for (j,omega_m) in enumerate(omegas):
+        chies[i,j] = params_to_chi2([-19.41, omega_m, b, H0], _, index=4,
+                    #dataset_SN = ds_SN,
+                    #dataset_CC = ds_CC,
+                    #dataset_BAO = ds_BAO,
+                    dataset_AGN = ds_AGN,
+                    #H0_Riess = True,
+                    model = 'EXP',
+                    integrador=int
+                    )
+
+#%%
+%matplotlib qt5
+plt.figure()
+plt.title('EXP: AGN, H0=73.48, M=-19.41')
+plt.grid(True)
+#for k in range(0,6):
+#for k in range(7,len(chies[0,:])):
+for k in range(len(chies[0,:])):
+    plt.plot(bs,chies[:,k],label='omega_m={}'.format(omegas[k]))
+plt.ylabel(r'$\chi^2$')
+plt.xlabel('b')
+plt.legend()
+plt.savefig('/home/matias/Barrido_en_b/Barrido_b.png')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #%%
 bs = np.linspace(0.1,4,20)
 chies = np.zeros((len(bs),3))
@@ -87,7 +145,7 @@ for j in range(3):
     for (i,b) in enumerate(bs):
         print(j)
         print(i,b)
-        chies[i,j] = params_to_chi2([-19.41, 0.352, b, 62], _, index=4,
+        chies[i,j] = params_to_chi2([-19.41, 0.352, b, ], _, index=4,
                     dataset_SN = ds_SN,
                     dataset_CC = ds_CC,
                     #dataset_BAO = ds_BAO,
