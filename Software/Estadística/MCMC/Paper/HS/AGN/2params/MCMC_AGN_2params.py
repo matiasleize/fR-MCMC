@@ -27,7 +27,7 @@ print(sol)
 #Parametros fijos
 H0 = 73.48
 
-params_fijos = [_, H0]
+params_fijos = [0, H0]
 
 
 log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=21,
