@@ -23,24 +23,34 @@ from funciones_data import leer_data_AGN
 from funciones_alternativos import params_to_chi2
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,l,n,beta,n_agn
 
+#Datos de AGN
+os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
+ds_AGN = leer_data_AGN('table3.dat')
+
+
 #%% Predeterminados:
+#Parametros fijos
 omega_m_true = 0.3
-b_true = 0.1
+b_true = 1
 
 H0_true =  73.48 #Unidades de (km/seg)/Mpc
 
 params_fijos = [_, H0_true]
 
-#Datos de AGN
-os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
-data_agn = leer_data_AGN('table3.dat')
-
 #%% Parametros a ajustar
-nll = lambda theta: params_to_chi2(theta, params_fijos, dataset_AGN=data_agn, index=21, model='EXP')
+
+nll = lambda theta: params_to_chi2(theta, params_fijos, index=21,
+                            #dataset_SN = ds_SN,
+                            #dataset_CC = ds_CC,
+                            #dataset_BAO = ds_BAO,
+                            dataset_AGN = ds_AGN,
+                            #H0_Riess = True,
+                            model = 'EXP'
+                            )
 
 initial = np.array([omega_m_true,b_true])
-soln = minimize(nll, initial, options = {'eps': 0.01},
-                bounds =((0.01,0.7),(0,0.5)))
+soln = minimize(nll, initial, options = {'eps': 0.001},
+                bounds =((0.2,0.5),(0,3)))
 omega_m_ml,b_ml = soln.x
 
 print(omega_m_ml,b_ml)
