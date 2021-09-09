@@ -49,9 +49,9 @@ def graficar_contornos(sampler,params_truths,discard=20,
 						thin=1,labels= ['omega_m','b'],title=None,
 						poster=False,color='b'):
 	'''Grafica los contornos de confianza.'''
-	if isinstance(reader,emcee.backends.hdf.HDFBackend)==True:
+	if isinstance(sampler,emcee.backends.hdf.HDFBackend)==True:
 		flat_samples = sampler.get_chain(discard=discard, flat=True, thin=thin)
-	elif isinstance(reader,np.ndarray)==True:
+	elif isinstance(sampler,np.ndarray)==True:
 		flat_samples=sampler
 	if poster==True:
 		df = pd.DataFrame(flat_samples,columns=labels)
