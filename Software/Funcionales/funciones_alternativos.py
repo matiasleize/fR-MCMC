@@ -72,7 +72,7 @@ def params_to_chi2(theta, params_fijos, index=0,
                     dataset_BAO=None, dataset_AGN=None, H0_Riess=False,
                     cantidad_zs=int(10**5), model='HS',n=1,
                     nuisance_2 = False, errores_agrandados=False,
-                    integrador=0, all_analytic=False):
+                    integrador=1, all_analytic=False):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
     de supernovas.'''
 
