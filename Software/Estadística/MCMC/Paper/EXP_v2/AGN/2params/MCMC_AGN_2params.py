@@ -27,17 +27,23 @@ print(sol)
 #Parametros fijos
 H0 = 73.48
 
-params_fijos = [0,H0]
+params_fijos = [_, H0]
 
-log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos,
-                                            dataset_AGN=data_agn, index=21,
-                                            errores_agrandados=True)
 
+log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=21,
+                                                        #dataset_SN = ds_SN,
+                                                        #dataset_CC = ds_CC,
+                                                        #dataset_BAO = ds_BAO,
+                                                        dataset_AGN = ds_AGN,
+                                                        #H0_Riess = True,
+                                                        model = 'EXP',
+                                                        errores_agrandados=True
+                                                        )
 #%%
 # Definimos la distribucion del prior
 def log_prior(theta):
     omega_m, b = theta
-    if (0.1 < omega_m < 0.5 and 0 < b < 3):
+    if (0.2 < omega_m < 0.6 and 0 < b < 3):
         return 0.0
     return -np.inf
 

@@ -31,9 +31,8 @@ samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
 print(len(samples)) #numero de pasos efectivos
 print('Tiempo estimado:{} min'.format(len(samples)/60))
 new_samples = parametros_derivados(reader,discard=burnin,thin=thin,model=model)
-
-#%%
 np.savez(filename+'_deriv', new_samples=new_samples)
+#%%
 
 with np.load(filename+'_deriv.npz') as data:
     ns = data['new_samples']

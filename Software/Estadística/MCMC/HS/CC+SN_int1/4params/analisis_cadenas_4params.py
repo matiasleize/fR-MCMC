@@ -11,11 +11,6 @@ os.chdir(path_git)
 sys.path.append('./Software/Funcionales/Clases')
 from funciones_graficador import Graficador
 
-#%% Importo los mínimos del chi2
-os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-with np.load('valores_medios_HS_CC+SN_4params_int1.npz') as data:
-    sol = data['sol']
-
 #%% Importo las cadenas
 os.chdir(path_datos_global+'/Resultados_cadenas/')
 filename = "sample_HS_CC+SN_4params_int1.h5"
@@ -30,7 +25,7 @@ thin = int(0.5 * np.min(tau))
 #burnin=100
 #thin=1
 analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}^{\Lambda CDM}$','b','$H_{0}^{\Lambda CDM}$'],'1 SNIA + CC (HS)')
-analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=False,color='r')
+analisis.graficar_contornos(discard=burnin, thin=thin, poster=False,color='r')
 #%%
 analisis.graficar_cadenas()
-analisis.reportar_intervalos(sol)
+analisis.reportar_intervalos()
