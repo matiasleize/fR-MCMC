@@ -19,7 +19,7 @@ from funciones_data import leer_data_AGN
 #%%
 #Datos de AGN
 os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
-data_agn = leer_data_AGN('table3.dat')
+ds_AGN = leer_data_AGN('table3.dat')
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_HS_AGN_2params.npz') as data:
     sol = data['sol']
