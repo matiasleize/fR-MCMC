@@ -8,7 +8,7 @@ from os.path import join as osjoin
 from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 
-def MCMC_sampler(probability, initial_values,
+def MCMC_sampler(log_probability, initial_values,
                 filename = "default.h5",
                 witness_file = 'witness.txt',
                 max_samples = 10000,
@@ -25,7 +25,12 @@ def MCMC_sampler(probability, initial_values,
     textfile_witness.close()
     #%%
     #Initialize the sampler
-    sampler = emcee.EnsembleSampler(nwalkers, ndim, probability, backend=backend)
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend)
+
+	#sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend,
+	#        moves=[(emcee.moves.DEMove(), 0.4), (emcee.moves.DESnookerMove(), 0.3)
+	#        , (emcee.moves.KDEMove(), 0.3)])
+
     # This will be useful to testing convergence
     old_tau = np.inf
     t1 = time.time()
