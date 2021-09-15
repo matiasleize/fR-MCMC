@@ -25,7 +25,7 @@ thin = int(0.5 * np.min(tau))
 #burnin = 200
 %matplotlib qt5
 analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],
-                        'SnIA + CC + BAO + AGN')
+                        'EXP (SnIA + CC + BAO + AGN)')
 analisis.graficar_contornos(discard=burnin, thin=thin, poster=False,color='r')
  #%%
 analisis.graficar_cadenas()
