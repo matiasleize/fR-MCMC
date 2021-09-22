@@ -71,5 +71,5 @@ pos = sol * (1 +  0.01 * np.random.randn(20,4))
 MCMC_sampler(log_probability,pos,
             filename = "sample_HS_CC+SN_4params.h5",
             witness_file = 'witness_26_augusto.txt',
-            witness_freq = 5,
+            witness_freq = 100,
             max_samples = 2000000)
