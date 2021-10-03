@@ -7,6 +7,7 @@ import seaborn as sns
 import pandas as pd
 from IPython.display import display, Math
 import arviz as az
+from scipy.stats import scoreatpercentile
 
 #b_w=0.25 #CC+H0 Mejor sin smoothear!
 #b_w=0.005 #Nuisance Mejor sin smoothear!
@@ -28,7 +29,7 @@ class Graficador:
 		self.labels=labels
 		self.title=title
 
-	def graficar_cadenas(self):
+	def graficar_cadenas(self, num_chains = None):
 		'''Esta función grafica las cadenas en función del largo
 		de las mismas para cada parámetro.'''
 		samples = self.sampler.get_chain()
@@ -38,10 +39,13 @@ class Graficador:
 		fig, axes = plt.subplots(ndim, figsize=(10, 7), sharex=True)
 
 		for i in range(ndim):
-		    ax = axes[i]
-		    ax.plot(samples[:, :, i], alpha=0.3)
-		    ax.set_xlim(0, len(samples))
-		    ax.set_ylabel(self.labels[i])
+			ax = axes[i]
+			if num_chains != None:
+				ax.plot(samples[:, 0:num_chains, i], alpha=0.3)
+			else: #Grafico todas las cadenas
+				ax.plot(samples[:, :, i], alpha=0.3)
+			ax.set_xlim(0, len(samples))
+			ax.set_ylabel(self.labels[i])
 		ax.yaxis.set_label_coords(-0.1, 0.5)
 		axes[-1].set_xlabel("Número de pasos N");
 		if not self.title==None:
@@ -68,8 +72,8 @@ class Graficador:
 			fig.suptitle(self.title);
 
 
-	def graficar_contornos(self, discard=20,
-							thin=1, poster=False,
+	def graficar_contornos(self, discard,
+							thin, poster=False,
 							color='b', nuisance_only=False):
 		'''
 		Grafica los cornerplots para los parámetros a partir de las cadenas
@@ -122,7 +126,7 @@ class Graficador:
 				fig.suptitle(self.title);
 
 
-	def reportar_intervalos(self, burnin=20, thin=1,UL_index=None):
+	def reportar_intervalos(self, discard, thin,hdi=True):
 		'''
 		Imprimer los valores de los parámetros, tanto los valores más
 		probables, como las incertezas a uno y dos sigmas.
@@ -135,20 +139,31 @@ class Graficador:
 			samples = self.sampler
 			len_chain,ndim=samples.shape
 		else:
-			samples = self.sampler.get_chain(discard=burnin, flat=True, thin=thin)
+			samples = self.sampler.get_chain(discard=discard, flat=True, thin=thin)
 			len_chain, nwalkers, ndim = self.sampler.get_chain().shape
-
 
 		labels = self.labels
 		for i in range(ndim):
-			#mode = params_truths[i] #Correción de mati: Ponemos la moda (el minimo del chi2)
 			mean = np.mean(samples[:,i])
-			one_sigma = az.hdi(samples,hdi_prob=0.68)[i]
-			two_sigma = az.hdi(samples,hdi_prob=0.95)[i]
+			one_s = 68
+			two_s = 95
+
+			if hdi==True:
+				one_sigma = az.hdi(samples,hdi_prob = one_s/100)[i]
+				two_sigma = az.hdi(samples,hdi_prob = two_s/100)[i]
+			else:
+				one_sigma = [scoreatpercentile(samples[:,i], 100-one_s), scoreatpercentile(samples[:,i], one_s)]
+				two_sigma = [scoreatpercentile(samples[:,i], 100-two_s), scoreatpercentile(samples[:,i], two_s)]
 
 			q1 = np.diff([one_sigma[0],mean,one_sigma[1]])
 			q2 = np.diff([two_sigma[0],mean,two_sigma[1]])
+			#print(one_sigma,two_sigma)
 
+		#	if np.abs(one_sigma[0]) < 10**(-2): #Reporto intervalo inferior
+		#		txt = "\mathrm{{{1}}} < {2:.3f}({3:.3f})"
+		#		txt = txt.format(mean, labels[i], mean + q1[1], mean + q2[1])
+
+		#	else:
 			txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}({4:.3f})}}^{{+{2:.3f}({5:.3f})}}"
 			txt = txt.format(mean, q1[0], q1[1], labels[i], q2[0], q2[1])
 			display(Math(txt))
@@ -183,8 +198,8 @@ class Graficador:
 				taus=np.cumsum(taus)
 
 				#plt.axhline(true_tau, color="k", label="truth", zorder=-100)
-				plt.loglog(N, taus, '.-', label="{}".format(labels[j]))
-
+				#plt.loglog(N, taus, '.-', label="{}".format(labels[j]))
+				plt.plot(N, taus, '.-', label="{}".format(labels[j]))
 			ylim = plt.gca().get_ylim()
 			plt.ylim(ylim)
 			plt.plot(N, N / threshold, "--k", label=r"$\tau = N/{}$".format(threshold))
@@ -222,6 +237,12 @@ if __name__ == '__main__':
 	from pc_path import definir_path
 	path_git, path_datos_global = definir_path()
 
+
+	samples = np.random.normal(size=100000)
+	one_sigma = [scoreatpercentile(samples, 32), scoreatpercentile(samples, 68)]
+	one_sigma
+	q1 = np.diff([one_sigma[0],np.mean(samples),one_sigma[1]])
+	q1
 	#%%
 	os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 	with np.load('valores_medios_HS_CC+H0_3params.npz') as data:
