@@ -21,4 +21,5 @@ with np.load('sample_EXP_CC+SN+BAO+AGN_4params_deriv.npz') as data:
 analisis = Graficador(ns, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'EXP (CC+SN+BAO+AGN)')
 analisis.graficar_cadenas_derivs()
 analisis.graficar_contornos(poster=False,color='r')
-analisis.reportar_intervalos()
+plt.savefig('/home/matias/Desktop/Entrega 17_09/Corridas/CC+SN+BAO+AGN')
+analisis.reportar_intervalos(discard=1,thin=1)

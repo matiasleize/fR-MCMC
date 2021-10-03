@@ -24,7 +24,7 @@ def MCMC_sampler(log_probability, initial_values,
                 witness_file = 'witness.txt',
                 max_samples = 10000,
                 witness_freq = 100,
-                tolerance = 0.01):
+                tolerance = 0.001):
 
     nwalkers, ndim = initial_values.shape
 
@@ -37,7 +37,8 @@ def MCMC_sampler(log_probability, initial_values,
 
     #Initialize the sampler
     sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend,
-            moves = emcee.moves.KDEMove())
+        moves=[(emcee.moves.DEMove(), 0.4), (emcee.moves.DESnookerMove(), 0.3),
+        (emcee.moves.KDEMove(), 0.3)])
 
     # This will be useful to testing convergence
     old_tau = np.inf
@@ -124,7 +125,7 @@ def log_probability(theta):
 #pos = sol + 1e-4 * np.random.randn(12, 3)
 pos = sol * (1 +  0.01 * np.random.randn(12,3))
 MCMC_sampler(log_probability,pos,
-            filename = "sample_LCDM_CC+SN_4params_m1.h5",
-            witness_file = 'witness_16_m1.txt',
+            filename = "sample_LCDM_CC+SN_4params_m2_t2.h5",
+            witness_file = 'witness_16_m2_t2.txt',
             witness_freq = 10,
             max_samples = 2000000)

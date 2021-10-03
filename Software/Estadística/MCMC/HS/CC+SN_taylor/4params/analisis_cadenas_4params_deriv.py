@@ -21,4 +21,4 @@ with np.load('sample_HS_CC+SN_4params_taylor_deriv.npz') as data:
 analisis = Graficador(ns, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'CC+SNIA (HS) Taylor - Params Deriv')
 analisis.graficar_cadenas_derivs()
 analisis.graficar_contornos(poster=False,color='r')
-analisis.reportar_intervalos()
+analisis.reportar_intervalos(hdi=True)

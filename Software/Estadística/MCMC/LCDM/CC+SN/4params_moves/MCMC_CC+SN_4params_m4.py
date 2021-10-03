@@ -34,10 +34,10 @@ def MCMC_sampler(log_probability, initial_values,
     backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
     textfile_witness = open(witness_file,'w+')
     textfile_witness.close()
-    #%%
+
     #Initialize the sampler
     sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend,
-	        moves = emcee.moves.DESnookerMove())
+            moves = emcee.moves.DESnookerMove())
 
     # This will be useful to testing convergence
     old_tau = np.inf

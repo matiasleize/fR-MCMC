@@ -18,7 +18,8 @@ with np.load('sample_HS_CC+SN+BAO+AGN_4params_deriv.npz') as data:
     ns = data['new_samples']
 #%%
 %matplotlib qt5
-analisis = Graficador(ns, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'HS (SnIA + CC + BAO)')
+analisis = Graficador(ns, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'HS (SnIA + CC + BAO+AGN)')
 analisis.graficar_cadenas_derivs()
 analisis.graficar_contornos(poster=False,color='r')
+plt.savefig('/home/matias/Desktop/Entrega 17_09/Corridas/CC+SN+BAO+AGN')
 analisis.reportar_intervalos()

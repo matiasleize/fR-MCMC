@@ -12,22 +12,27 @@ sys.path.append('./Software/Funcionales/Clases')
 from funciones_graficador import Graficador
 
 #%% Importo las cadenas
-os.chdir(path_datos_global+'/Resultados_cadenas/Paper/HS')
+os.chdir(path_datos_global+'/Resultados_cadenas/Paper/HS/')
 filename = "sample_HS_CC+SN+BAO_4params.h5"
 reader = emcee.backends.HDFBackend(filename)
 
 # Algunos valores
 tau = reader.get_autocorr_time()
 #burnin = int(2 * np.max(tau))
-burnin= 0.2 * long de las cadenas
-thin = int(0.5 * np.min(tau))
-burnin
+#thin = int(0.5 * np.min(tau))
+
+
+samples = reader.get_chain()
+burnin= burnin=int(0.2*len(samples[:,0]))
+thin=1
+# Saving the array in a text file
+#np.savez('/home/matias/Desktop/HS_CC+SN+BAO_bs.npz', bs=samples[:,2])
+#with np.load('/home/matias/Desktop/HS_CC+SN+BAO_bs.npz') as data:
+#    bs = data['bs']
 #%%
 %matplotlib qt5
-analisis = Graficador(reader, ['$M_{abs}$', '$\Omega_{m}^{\Lambda CDM}$','b','$H_{0}^{\Lambda CDM}$'],
-                    'HS (SnIA + CC + BAO)')
 
+analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}^{\Lambda CDM}$','b','$H_{0}^{\Lambda CDM}$'],'SNIA + CC + BAO (HS)')
 analisis.graficar_contornos(discard=burnin, thin=thin, poster=False,color='r')
- #%%
 analisis.graficar_cadenas()
-analisis.reportar_intervalos()
+analisis.reportar_intervalos(discard=burnin, thin=thin)

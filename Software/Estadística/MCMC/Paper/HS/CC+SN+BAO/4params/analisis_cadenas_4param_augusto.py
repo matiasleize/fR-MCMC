@@ -1,0 +1,54 @@
+import numpy as np
+from matplotlib import pyplot as plt
+import emcee
+import sys
+import os
+
+from pc_path import definir_path
+path_git, path_datos_global = definir_path()
+
+os.chdir(path_git)
+sys.path.append('./Software/Funcionales/Clases')
+from funciones_graficador import Graficador
+
+#%% Importo las cadenas
+os.chdir(path_datos_global+'/Resultados_cadenas')
+filename = 'CC+SnIa+BAO_HS_NN.h5' #Corridas de Augusto
+reader = emcee.backends.HDFBackend(filename)
+# Algunos valores
+tau = reader.get_autocorr_time()
+#burnin = int(2 * np.max(tau))
+#thin = int(0.5 * np.min(tau))
+
+
+samples = reader.get_chain()
+burnin= burnin=int(0.2*len(samples[:,0]))
+thin=1
+# Saving the array in a text file
+#np.savez('/home/matias/Desktop/HS_CC+SN+BAO_bs.npz', bs=samples[:,2])
+#with np.load('/home/matias/Desktop/HS_CC+SN+BAO_bs.npz') as data:
+#    bs = data['bs']
+#%%
+%matplotlib qt5
+
+#analisis = Graficador(reader, ['b','$\Omega_{m}^{\Lambda CDM}$','$H_{0}^{\Lambda CDM}$','$M_{abs}$'],'SNIA + CC + BAO (HS)')
+#analisis.reportar_intervalos(discard=burnin, thin=thin)
+#%%
+os.chdir(path_datos_global+'/Resultados_cadenas/Paper/HS/')
+filename_mati = "sample_HS_CC+SN+BAO_4params.h5"
+reader_mati = emcee.backends.HDFBackend(filename_mati)
+aux = reader_mati.get_chain()
+burnin= burnin=int(0.2*len(aux[:,0]))
+thin=1
+analisis = Graficador(reader_mati, ['$M_{abs}$','$\Omega_{m}^{\Lambda CDM}$','b','$H_{0}^{\Lambda CDM}$'],'SNIA + CC + BAO (HS)')
+analisis.reportar_intervalos(discard=burnin, thin=thin)
+
+#%%
+os.chdir(path_datos_global+'/Resultados_cadenas')
+filename = 'CC+SnIa+BAO_HS_NN.h5' #Corridas de Augusto
+reader_agus = emcee.backends.HDFBackend(filename)
+samples = reader_agus.get_chain()
+burnin= burnin=int(0.2*len(samples[:,0]))
+thin=1
+analisis = Graficador(reader_agus, ['b','$\Omega_{m}^{\Lambda CDM}$','$H_{0}^{\Lambda CDM}$','$M_{abs}$'],'SNIA + CC + BAO (HS)')
+analisis.reportar_intervalos(discard=burnin, thin=thin)

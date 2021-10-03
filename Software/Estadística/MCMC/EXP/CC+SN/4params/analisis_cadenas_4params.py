@@ -25,13 +25,37 @@ reader = emcee.backends.HDFBackend(filename)
 #tau = reader.get_autocorr_time()
 #burnin = int(2 * np.max(tau))
 #thin = int(0.5 * np.min(tau))
-burnin=1000
-thin=10
+sample = reader.get_chain()
+burnin= burnin=int(0.2*len(sample[:,0]))
+thin=1
 #%%
 %matplotlib qt5
 analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'CC+SN (EXP)')
                     #'Supernovas tipo IA + Cronómetros Cósmicos + BAO')
 analisis.graficar_contornos(discard=burnin, thin=thin, poster=False,color='r')
+plt.savefig('/home/matias/Desktop/CC+SN')
 #%%
 analisis.graficar_cadenas()
 analisis.reportar_intervalos()
+#%% Calculamos el intervalo de beta
+bs = reader.get_chain(discard=burnin,thin=thin,flat=True)[:,2]
+betas = 2/bs
+bi=int(np.sqrt(len(betas)))
+plt.close()
+plt.figure()
+plt.grid()
+plt.hist(betas,bins=bi*5,density=True);
+plt.xlim([0,200])
+len(betas)
+betas
+min(bs)
+max(betas)
+import arviz as az
+mean = np.mean(betas)
+one_s = 68
+two_s = 95
+one_sigma = az.hdi(betas,hdi_prob = one_s/100)
+two_sigma = az.hdi(betas,hdi_prob = two_s/100)
+one_sigma
+two_sigma
+mean

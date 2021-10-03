@@ -23,7 +23,13 @@ sample = reader.get_chain()
 len(sample)
 burnin= burnin=int(0.2*len(sample[:,0]))
 thin = int(0.5 * np.min(tau))
-burnin
+
+#%% Saving the array in a text file without thin and burnin
+flat_samples = reader.get_chain(discard=0, flat=True, thin=1)
+np.savez('/home/matias/Desktop/HS_CC+SN+BAO_bs.npz', bs=flat_samples[:,2])
+with np.load('/home/matias/Desktop/HS_CC+SN+BAO_bs.npz') as data:
+    bs = data['bs']
+bs
 #%%
 %matplotlib qt5
 analisis = Graficador(reader, ['$M_{abs}$', '$\Omega_{m}^{\Lambda CDM}$','b','$H_{0}^{\Lambda CDM}$'],

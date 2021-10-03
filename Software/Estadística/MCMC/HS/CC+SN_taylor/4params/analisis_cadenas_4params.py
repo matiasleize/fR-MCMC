@@ -20,10 +20,14 @@ reader = emcee.backends.HDFBackend(filename)
 tau = reader.get_autocorr_time()
 burnin = int(2 * np.max(tau))
 thin = int(0.5 * np.min(tau))
+samples = reader.get_chain()
+#burnin= int(0.2*len(samples[:,0]))
+#thin=1
+
 #%%
 %matplotlib qt5
 analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'SNIA + CC (HS) Taylor')
 analisis.graficar_contornos(discard=burnin, thin=thin, poster=False,color='r')
 #%%
 analisis.graficar_cadenas()
-analisis.reportar_intervalos()
+analisis.reportar_intervalos(hdi=True)

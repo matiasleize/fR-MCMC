@@ -25,4 +25,5 @@ ns = ns[burnin:,:]
 analisis = Graficador(ns, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'HS (SnIA + CC + BAO)')
 analisis.graficar_cadenas_derivs()
 analisis.graficar_contornos(poster=False,color='r')
-analisis.reportar_intervalos()
+#plt.savefig('/home/matias/Desktop/Entrega 17_09/Corridas/CC+SN+BAO')
+analisis.reportar_intervalos(hdi=True)
