@@ -20,12 +20,9 @@ reader = emcee.backends.HDFBackend(filename_h5)
 nwalkers, ndim = reader.shape #Numero de caminantes y de parametros
 
 #%%%
-burnin = 1000
-thin = 1000#50
-#%% Defino el burnin y el thin a partir de tau o los pongo a mano
-tau = reader.get_autocorr_time()
-burnin = int(2 * np.max(tau))
-thin = int(0.5 * np.min(tau))
+sample = reader.get_chain()
+burnin= burnin=int(0.2*len(sample[:,0]))
+thin = 1
 #%%
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
 print(len(samples)) #numero de pasos efectivos

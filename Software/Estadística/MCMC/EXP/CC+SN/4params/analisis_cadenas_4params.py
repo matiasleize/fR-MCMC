@@ -33,10 +33,9 @@ thin=1
 analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'CC+SN (EXP)')
                     #'Supernovas tipo IA + Cronómetros Cósmicos + BAO')
 analisis.graficar_contornos(discard=burnin, thin=thin, poster=False,color='r')
-plt.savefig('/home/matias/Desktop/CC+SN')
-#%%
+#plt.savefig('/home/matias/Desktop/CC+SN')
 analisis.graficar_cadenas()
-analisis.reportar_intervalos()
+analisis.reportar_intervalos(discard=burnin,thin=thin)
 #%% Calculamos el intervalo de beta
 bs = reader.get_chain(discard=burnin,thin=thin,flat=True)[:,2]
 betas = 2/bs
