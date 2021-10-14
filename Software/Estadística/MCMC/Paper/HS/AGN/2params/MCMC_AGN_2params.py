@@ -42,7 +42,7 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=
 # Definimos la distribucion del prior
 def log_prior(theta):
     omega_m, b = theta
-    if (0.2 < omega_m < 0.6 and 0 < b < 2):
+    if (0.2 < omega_m < 0.6 and 0 < b < 4):
         return 0.0
     return -np.inf
 
@@ -56,7 +56,7 @@ def log_probability(theta):
 #%%
 #Defino los valores iniciales de cada cadena a partir de los valores
 #de los parametros que corresponden al minimo del chi2.
-pos = sol + 1e-4 * np.random.randn(12, 2)
+pos = sol + 1e-4 * np.random.randn(20, 2)
 
 MCMC_sampler(log_probability,pos,
             filename = "sample_HS_AGN_2params.h5",
