@@ -11,7 +11,8 @@ from funciones_parametros_derivados import parametros_derivados
 model='HS'
 datasets = 'CC+SN+AGN'
 num_params = '4params'
-root_directory=path_datos_global+'/Resultados_cadenas/Paper/'+model
+#root_directory=path_datos_global+'/Resultados_cadenas/Paper/'+model
+root_directory=path_datos_global+'/Resultados_cadenas'
 root_directory
 os.chdir(root_directory)
 filename = 'sample_'+model+'_'+datasets+'_'+num_params
