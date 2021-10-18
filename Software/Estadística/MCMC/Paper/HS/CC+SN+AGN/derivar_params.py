@@ -38,7 +38,7 @@ new_samples = parametros_derivados(reader,discard=burnin,thin=thin,model=model)
 
 #%%
 np.savez(filename+'_deriv', new_samples=new_samples)
-dir = path_datos_global+'/Resultados_cadenas/posprocesado'
+#dir = path_datos_global+'/Resultados_cadenas/posprocesado'
 os.chdir(root_directory)
 with np.load(filename+'_deriv.npz') as data:
     ns = data['new_samples']
