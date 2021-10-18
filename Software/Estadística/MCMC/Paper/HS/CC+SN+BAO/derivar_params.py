@@ -5,15 +5,16 @@ import os
 from os.path import join as osjoin
 from pc_path import definir_path
 path_git, path_datos_global = definir_path()
-os.chdir(path_git+'/Software/Funcionales')
+os.chdir(path_git)
+sys.path.append('./Software/Funcionales/')
 from funciones_parametros_derivados import parametros_derivados
 
 #Rellenar acá:
-model = 'HS'
+model='HS'
 datasets = 'CC+SN+BAO'
 num_params = '4params'
-root_directory = path_datos_global+'/Resultados_cadenas/Paper/'+model
-#root_directory=path_datos_global+'/Resultados_cadenas'
+#root_directory=path_datos_global+'/Resultados_cadenas/Paper/'+model
+root_directory=path_datos_global+'/Resultados_cadenas'
 root_directory
 os.chdir(root_directory)
 filename = 'sample_'+model+'_'+datasets+'_'+num_params
