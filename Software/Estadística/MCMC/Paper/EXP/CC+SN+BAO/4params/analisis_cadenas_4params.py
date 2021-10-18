@@ -13,7 +13,7 @@ from funciones_graficador import Graficador
 
 
 #%% Importo las cadenas
-os.chdir(path_datos_global+'/Resultados_cadenas/Paper/EXP')
+os.chdir(path_datos_global+'/Resultados_cadenas/Paper/12 cadenas/EXP')
 filename = "sample_EXP_CC+SN+BAO_4params.h5"
 reader = emcee.backends.HDFBackend(filename)
 
@@ -29,3 +29,15 @@ analisis.graficar_contornos(discard=burnin, thin=thin,
                             poster=False,color='r')
 analisis.graficar_cadenas()
 analisis.reportar_intervalos()
+#%%
+%matplotlib qt5
+bs = reader.get_chain(discard=burnin,thin=thin,flat=True)[:,2]
+max(bs)
+betas = 2/bs
+#betas = betas[betas<50]
+len(betas)
+bi=int(np.sqrt(len(betas)))
+plt.close()
+plt.figure()
+plt.grid()
+plt.hist(betas,bins=bi,density=True);

@@ -12,7 +12,7 @@ sys.path.append('./Software/Funcionales/Clases')
 from funciones_graficador import Graficador
 
 #%% Importo las cadenas
-os.chdir(path_datos_global+'/Resultados_cadenas/Paper/HS/')
+os.chdir(path_datos_global+'/Resultados_cadenas/Paper/12 cadenas/HS/')
 filename = "sample_HS_CC+SN+BAO_4params.h5"
 reader = emcee.backends.HDFBackend(filename)
 

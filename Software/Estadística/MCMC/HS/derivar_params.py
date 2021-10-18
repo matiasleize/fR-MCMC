@@ -20,7 +20,7 @@ reader = emcee.backends.HDFBackend(filename_h5)
 nwalkers, ndim = reader.shape #Numero de caminantes y de parametros
 
 #%%%
-burnin = 1000s
+burnin = 1000
 thin = 50
 #%% Defino el burnin y el thin a partir de tau o los pongo a mano
 tau = reader.get_autocorr_time()

@@ -12,7 +12,7 @@ sys.path.append('./Software/Funcionales/Clases')
 from funciones_graficador import Graficador
 
 #%% Importo las cadenas
-os.chdir(path_datos_global+'/Resultados_cadenas/Paper/HS')
+os.chdir(path_datos_global+'/Resultados_cadenas/Paper/12 cadenas/HS')
 #os.chdir(path_datos_global+'/Resultados_cadenas')
 with np.load('sample_HS_CC+SN+AGN_4params_deriv.npz') as data:
     ns = data['new_samples']
@@ -22,4 +22,4 @@ analisis = Graficador(ns, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'HS (SnIA +
 analisis.graficar_cadenas_derivs()
 analisis.graficar_contornos(poster=False,color='r')
 plt.savefig('/home/matias/Desktop/Entrega 17_09/Corridas/CC+SN+AGN')
-analisis.reportar_intervalos()
+analisis.reportar_intervalos(_,_)
