@@ -9,7 +9,6 @@ import numpy as np
 import sys
 import os
 from os.path import join as osjoin
-
 from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 
