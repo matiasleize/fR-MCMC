@@ -28,6 +28,7 @@ reader = emcee.backends.HDFBackend(filename)
 sample = reader.get_chain()
 burnin= burnin=int(0.2*len(sample[:,0]))
 thin=1
+len(reader.get_chain()[0])
 #%%
 %matplotlib qt5
 analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'CC+SN (EXP)')

@@ -11,14 +11,9 @@ os.chdir(path_git)
 sys.path.append('./Software/Funcionales/Clases')
 from funciones_graficador import Graficador
 
-#%% Importo los mínimos del chi2
-os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones')
-with np.load('valores_medios_LCDM_CC+SN+BAO_3params.npz') as data:
-    sol = data['sol']
-
 #%% Importo las cadenas
 os.chdir(path_datos_global+'/Resultados_cadenas/Paper/LCDM')
-filename = "sample_LCDM_CC+SN+BAO_3params.h5"
+filename = "sample_LCDM_CC+SN_4params.h5"
 reader = emcee.backends.HDFBackend(filename)
 
 # Algunos valores
@@ -28,10 +23,10 @@ thin = 1
 #%%
 %matplotlib qt5
 analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','$H_{0}$'],
-                    'SnIA + CC + BAO')
+                    'SnIA + CC')
 
 analisis.graficar_contornos(discard=burnin, thin=thin, poster=False,color='r')
-plt.savefig( '/home/matias/contornos_SN+CC+BAO+LCDM.png')
+plt.savefig( '/home/matias/contornos_SN+CC+LCDM.png')
 #%%
 analisis.graficar_cadenas()
 analisis.reportar_intervalos(discard=burnin, thin=thin)

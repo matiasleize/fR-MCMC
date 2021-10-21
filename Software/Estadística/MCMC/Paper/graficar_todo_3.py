@@ -51,4 +51,4 @@ samples0 = samples0.copy(label=r'Lowest-order with $0.3\sigma$ smoothing',
 g = plots.get_subplot_plotter()
 g.triangle_plot([samples0,samples1, samples2, samples3], filled=True,legend_labels = ['CC+SN','CC+SN+AGN', 'CC+SN+BAO','CC+SN+BAO+AGN'])
 #g.triangle_plot([samples0,samples1, samples2, samples3], filled=True, params = names ,legend_labels = ['CC+SN','CC+SN+AGN', 'CC+SN+BAO','CC+SN+BAO+AGN'])
-plt.savefig('/home/matias/Desktop/graf_2.png')
+plt.savefig('/home/matias/Desktop/contornos_EXP.png')

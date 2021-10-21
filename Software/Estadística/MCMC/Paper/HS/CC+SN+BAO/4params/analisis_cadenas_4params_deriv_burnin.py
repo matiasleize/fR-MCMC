@@ -17,13 +17,13 @@ os.chdir(path_datos_global+'/Resultados_cadenas/Paper/HS')
 with np.load('sample_HS_CC+SN+BAO_4params_deriv.npz') as data:
     ns = data['new_samples']
 
-burnin=int(0.2*len(ns[:,0]))
-burnin
-ns = ns[burnin:,:]
+#burnin=int(0.2*len(ns[:,0]))
+#burnin
+#ns = ns[burnin:,:]
 #%%
 %matplotlib qt5
 analisis = Graficador(ns, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'HS (SnIA + CC + BAO)')
 analisis.graficar_cadenas_derivs()
 analisis.graficar_contornos(poster=False,color='r')
 #plt.savefig('/home/matias/Desktop/Entrega 17_09/Corridas/CC+SN+BAO')
-analisis.reportar_intervalos(hdi=True)
+analisis.reportar_intervalos(discard=0, thin=1)

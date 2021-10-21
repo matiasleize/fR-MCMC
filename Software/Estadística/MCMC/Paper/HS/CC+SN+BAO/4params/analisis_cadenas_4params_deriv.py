@@ -18,9 +18,9 @@ with np.load('sample_HS_CC+SN+BAO_4params_deriv.npz') as data:
     ns = data['new_samples']
 
 # Saving the array in a text file
-np.savez('/home/matias/Desktop/HS_CC+SN+BAO_bs.npz', bs=ns[:,2])
-with np.load('/home/matias/Desktop/HS_CC+SN+BAO_bs.npz') as data:
-    bs = data['bs']
+#np.savez('/home/matias/Desktop/HS_CC+SN+BAO_bs.npz', bs=ns[:,2])
+#with np.load('/home/matias/Desktop/HS_CC+SN+BAO_bs.npz') as data:
+#    bs = data['bs']
 
 #%%
 %matplotlib qt5
@@ -28,4 +28,4 @@ analisis = Graficador(ns, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'HS (SnIA +
 analisis.graficar_cadenas_derivs()
 analisis.graficar_contornos(poster=False,color='r')
 plt.savefig('/home/matias/Desktop/Entrega 17_09/Corridas/CC+SN+BAO_sin_burnin')
-analisis.reportar_intervalos()
+analisis.reportar_intervalos(discard=0,thin=1)

@@ -13,8 +13,8 @@ from funciones_graficador import Graficador
 
 
 #%% Importo las cadenas
-#os.chdir(path_datos_global+'/Resultados_cadenas/Paper//EXP')
-os.chdir(path_datos_global+'/Resultados_cadenas/')
+os.chdir(path_datos_global+'/Resultados_cadenas/Paper/EXP')
+#os.chdir(path_datos_global+'/Resultados_cadenas/')
 with np.load('sample_EXP_CC+SN_4params_deriv.npz') as data:
     ns = data['new_samples']
 
@@ -23,6 +23,7 @@ with np.load('sample_EXP_CC+SN_4params_deriv.npz') as data:
 #with np.load('/home/matias/Desktop/EXP_CC+SN_bs.npz') as data:
 #    bs = data['bs']
 
+len(ns)
 #%%
 %matplotlib qt5
 analisis = Graficador(ns, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'CC+SnIA (EXP) - Params Deriv')

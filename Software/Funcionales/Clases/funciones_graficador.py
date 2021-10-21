@@ -158,14 +158,13 @@ class Graficador:
 			q1 = np.diff([one_sigma[0],mean,one_sigma[1]])
 			q2 = np.diff([two_sigma[0],mean,two_sigma[1]])
 			#print(one_sigma,two_sigma)
+			if np.abs(one_sigma[0]) < 10**(-3): #Reporto intervalo inferior
+				txt = "\mathrm{{{0}}} < {1:.3f}({2:.3f})"
+				txt = txt.format(labels[i], mean + q1[1], mean + q2[1])
 
-		#	if np.abs(one_sigma[0]) < 10**(-2): #Reporto intervalo inferior
-		#		txt = "\mathrm{{{1}}} < {2:.3f}({3:.3f})"
-		#		txt = txt.format(mean, labels[i], mean + q1[1], mean + q2[1])
-
-		#	else:
-			txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}({4:.3f})}}^{{+{2:.3f}({5:.3f})}}"
-			txt = txt.format(mean, q1[0], q1[1], labels[i], q2[0], q2[1])
+			else:
+				txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}({4:.3f})}}^{{+{2:.3f}({5:.3f})}}"
+				txt = txt.format(mean, q1[0], q1[1], labels[i], q2[0], q2[1])
 			display(Math(txt))
 
 

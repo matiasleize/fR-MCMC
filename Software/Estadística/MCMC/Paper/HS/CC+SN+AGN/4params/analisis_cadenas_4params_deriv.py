@@ -22,4 +22,4 @@ analisis = Graficador(ns, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'HS (SnIA +
 analisis.graficar_cadenas_derivs()
 analisis.graficar_contornos(poster=False,color='r')
 plt.savefig('/home/matias/Desktop/Entrega 17_09/Corridas/CC+SN+AGN')
-analisis.reportar_intervalos(_,_)
+analisis.reportar_intervalos(discard=0,thin=1)
