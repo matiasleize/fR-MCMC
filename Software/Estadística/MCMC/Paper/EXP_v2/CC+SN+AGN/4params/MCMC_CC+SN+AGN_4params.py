@@ -54,7 +54,7 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=
 # Definimos la distribucion del prior
 def log_prior(theta):
     M, omega_m, b, H0 = theta
-    if (-22 < M < -18 and  0.01 < omega_m < 0.5 and 0 < b < 3 and 60 < H0 < 80):
+    if (-22 < M < -18 and  0.01 < omega_m < 0.5 and 0 < b < 5 and 60 < H0 < 80):
         return 0.0
     return -np.inf
 
