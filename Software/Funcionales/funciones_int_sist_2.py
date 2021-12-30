@@ -262,7 +262,7 @@ def Hubble_teorico_2(params_fisicos, b_crit=0.15, all_analytic=False,
                     eval_data=False, z_data=None, epsilon=10**(-10), n=1,
                     cantidad_zs=int(10**5), max_step=10**(-4),
                     z_min=0, z_max=10, sistema_ec=dX_dz,
-                    verbose=False, model='HS', method='LSODA'):
+                    verbose=False, model='HS', method='RK45'):
 
     [omega_m,b,H0] = params_fisicos
     if model=='LCDM':
@@ -271,6 +271,7 @@ def Hubble_teorico_2(params_fisicos, b_crit=0.15, all_analytic=False,
         return zs_modelo, Hs_modelo
 
     elif model=='EXP': #b critico para el modelo exponencial
+        method='LSODA'
         log_eps_inv = -np.log10(epsilon)
         b_crit = (4 + omega_m/(1-omega_m)) / log_eps_inv
     else:
