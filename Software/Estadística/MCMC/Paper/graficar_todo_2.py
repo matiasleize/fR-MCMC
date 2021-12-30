@@ -30,25 +30,43 @@ with np.load('sample_HS_CC+SN+BAO+AGN_4params_deriv.npz') as data:
 #%%
 %matplotlib qt5
 ndim = 4
-names = ['M_abs','\omega_m', 'b','H0']
+names = ['M_{abs}','\Omega_{m}', 'b','H_{0}']
 labels=names
 
-samples0 = MCSamples(samples=samples_0,names = names, labels = labels)
+samples0 = MCSamples(samples=samples_0,names = names, labels = labels,ranges={'b':[0, None]})
 samples0 = samples0.copy(label=r'Lowest-order with $0.3\sigma$ smoothing',
              settings={'mult_bias_correction_order':0,'smooth_scale_2D':0.3, 'smooth_scale_1D':0.3})
 
-samples1 = MCSamples(samples=samples_1,names = names, labels = labels)
+samples1 = MCSamples(samples=samples_1,names = names, labels = labels,ranges={'b':[0, None]})
 samples1 = samples1.copy(label=r'Lowest-order with $0.3\sigma$ smoothing',
              settings={'mult_bias_correction_order':0,'smooth_scale_2D':0.3, 'smooth_scale_1D':0.3})
 
-samples2 = MCSamples(samples=samples_2,names = names, labels = labels)
+samples2 = MCSamples(samples=samples_2,names = names, labels = labels,ranges={'b':[0, None]})
 samples2 = samples2.copy(label=r'Lowest-order with $0.3\sigma$ smoothing',
              settings={'mult_bias_correction_order':0,'smooth_scale_2D':0.3, 'smooth_scale_1D':0.3})
 
-samples3 = MCSamples(samples=samples_3,names = names, labels = labels)
+samples3 = MCSamples(samples=samples_3,names = names, labels = labels,ranges={'b':[0, None]})
 samples3 = samples3.copy(label=r'Lowest-order with $0.3\sigma$ smoothing',
              settings={'mult_bias_correction_order':0,'smooth_scale_2D':0.3, 'smooth_scale_1D':0.3})
 
+
+#%%
 g = plots.get_subplot_plotter()
-g.triangle_plot([samples0, samples1, samples2, samples3], filled=True, params = ['M_abs','\omega_m','b','H0'] ,legend_labels = ['CC+SN', 'CC+SN+AGN', 'CC+SN+BAO','CC+SN+BAO+AGN'])
-plt.savefig('/home/matias/Desktop/contornos_HS.png')
+g.triangle_plot([samples0, samples1, samples2, samples3],
+                contour_colors=['grey','g','r','b'],
+                filled=True, params = names ,
+                contour_lws=1.5,
+#                param_limits = dict
+                legend_labels = ['CC+SN', 'CC+SN+AGN', 'CC+SN+BAO','CC+SN+BAO+AGN'])
+#%%
+
+g = plots.get_subplot_plotter()
+g.triangle_plot(samples0,
+                contour_colors='grey',
+                filled=True, params = names ,
+                contour_lws=1.5,
+#                param_limits = dict
+                legend_labels = 'CC+SN')
+
+
+plt.savefig('/home/matias/Desktop/contornos_HS_CC+SN.png')
