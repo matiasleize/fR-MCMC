@@ -12,8 +12,8 @@ sys.path.append('./Software/Funcionales/Clases')
 from funciones_graficador import Graficador
 
 #%% Importo las cadenas
-os.chdir(path_datos_global+'/Resultados_cadenas/Paper/12 cadenas/HS')
-#os.chdir(path_datos_global+'/Resultados_cadenas')
+#os.chdir(path_datos_global+'/Resultados_cadenas/Paper/12 cadenas/HS')
+os.chdir(path_datos_global+'/Resultados_cadenas/Paper/HS')
 with np.load('sample_HS_CC+SN+AGN_4params_deriv.npz') as data:
     ns = data['new_samples']
 #%%

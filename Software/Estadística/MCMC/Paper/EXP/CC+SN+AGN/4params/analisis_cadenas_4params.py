@@ -11,15 +11,10 @@ os.chdir(path_git)
 sys.path.append('./Software/Funcionales/Clases')
 from funciones_graficador import Graficador
 
-#%% Importo los mínimos del chi2
-os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-with np.load('valores_medios_EXP_CC+SN+AGN_4params.npz') as data:
-    sol = data['sol']
-
 #%% Importo las cadenas
 #os.chdir(path_datos_global+'/Resultados_cadenas')
+os.chdir(path_datos_global+'/Resultados_cadenas/Paper/12 cadenas/EXP')
 os.chdir(path_datos_global+'/Resultados_cadenas/Paper/EXP')
-#os.chdir(path_datos_global+'/Resultados_cadenas/Paper/Mal error AGN(Despues borrar)!/EXP')
 filename = "sample_EXP_CC+SN+AGN_4params.h5"
 reader = emcee.backends.HDFBackend(filename)
 
@@ -28,10 +23,14 @@ tau = reader.get_autocorr_time()
 burnin = int(2 * np.max(tau))
 thin = int(0.5 * np.min(tau))
 #%%
+
 %matplotlib qt5
 analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'')
                     #'Supernovas tipo IA + Cronómetros Cósmicos + BAO')
-analisis.graficar_contornos(discard=burnin, thin=thin, poster=False,color='r')
-#%%
-analisis.graficar_cadenas()
-analisis.reportar_intervalos()
+analisis.graficar_contornos(discard=burnin, thin=thin,
+                            poster=False,color='r')
+#analisis.graficar_cadenas()
+analisis.reportar_intervalos(discard=burnin, thin=1)
+
+#plt.savefig('/home/matias/Desktop/CC+SN+AGN+20_cadenas.png')
+#

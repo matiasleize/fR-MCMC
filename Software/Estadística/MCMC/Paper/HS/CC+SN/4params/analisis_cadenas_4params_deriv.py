@@ -13,15 +13,14 @@ from funciones_graficador import Graficador
 
 
 #%% Importo las cadenas
-os.chdir(path_datos_global+'/Resultados_cadenas/Paper/HS')
 #os.chdir(path_datos_global+'/Resultados_cadenas/')
+os.chdir(path_datos_global+'/Resultados_cadenas/Paper/HS')
 with np.load('sample_HS_CC+SN_4params_deriv.npz') as data:
     ns = data['new_samples']
 
 #%%
 %matplotlib qt5
-analisis = Graficador(ns, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'CC+SNIA (HS) - Params Deriv')
+analisis = Graficador(ns, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'CC + SnIA (HS) - Params Deriv')
 analisis.graficar_cadenas_derivs()
-analisis.graficar_contornos(poster=False,color='r')
-plt.savefig('/home/matias/Desktop/Entrega 17_09/Corridas/CC+SN')
+analisis.graficar_contornos(discard=0, thin=1, poster=False,color='r')
 analisis.reportar_intervalos(discard=0,thin=1)
