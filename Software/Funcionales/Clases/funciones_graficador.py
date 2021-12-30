@@ -158,7 +158,7 @@ class Graficador:
 			q1 = np.diff([one_sigma[0],mean,one_sigma[1]])
 			q2 = np.diff([two_sigma[0],mean,two_sigma[1]])
 			#print(one_sigma,two_sigma)
-			if np.abs(one_sigma[0]) < 10**(-3): #Reporto intervalo inferior
+			if np.abs(one_sigma[0]) < 10**(-2): #Reporto intervalo inferior
 				txt = "\mathrm{{{0}}} < {1:.3f}({2:.3f})"
 				txt = txt.format(labels[i], mean + q1[1], mean + q2[1])
 
