@@ -108,6 +108,7 @@ if __name__ == '__main__':
     #%% AGN
     os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
     aux = leer_data_AGN('table3.dat')
+
     #%% Supernovas
     os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
     zcmb, zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')

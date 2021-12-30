@@ -91,17 +91,17 @@ def params_to_chi2(theta, params_fijos, index=0,
         zs_modelo, Hs_modelo = Hubble_teorico(params_fisicos, n=n, model=model,
                                     z_min=0, z_max=10, cantidad_zs=cantidad_zs,
                                     all_analytic=all_analytic)
-                                    #Los datos de AGN van hasta z mas altos!
+                                    #Los datos de AGN van hasta 7 y pico
     elif integrador==1:
         zs_modelo, Hs_modelo = Hubble_teorico_1(params_fisicos, n=n, model=model,
                                     z_min=0, z_max=10, cantidad_zs=cantidad_zs,
                                     all_analytic=all_analytic)
-                                    #Los datos de AGN van hasta z mas altos!
+                                    #Los datos de AGN van hasta 7 y pico
     elif integrador==2:
         zs_modelo, Hs_modelo = Hubble_teorico_2(params_fisicos, n=n, model=model,
                                     z_min=0, z_max=10, cantidad_zs=cantidad_zs,
                                     all_analytic=all_analytic)
-                                    #Los datos de AGN van hasta z mas altos!
+                                    #Los datos de AGN van van hasta 7 y pico
 
     if (dataset_CC != None or dataset_BAO != None or dataset_AGN != None):
         Hs_interpolado = interp1d(zs_modelo, Hs_modelo)
@@ -161,9 +161,9 @@ def params_to_chi2(theta, params_fijos, index=0,
             egamma = 0.014
         elif errores_agrandados == True:
             beta = 7.735
-            ebeta = 2.44
+            ebeta = 0.6
             gamma = 0.648
-            egamma = 0.07
+            egamma = 0.007
         else: #Caso Estandar
             beta = 7.735
             ebeta = 0.244
