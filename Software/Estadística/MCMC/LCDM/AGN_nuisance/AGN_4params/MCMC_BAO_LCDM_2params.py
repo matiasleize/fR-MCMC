@@ -21,7 +21,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_data import leer_data_AGN
-from funciones_LambdaCDM import params_to_chi2_AGN_nuisance
+from funciones_AGN import params_to_chi2_AGN_nuisance
 
 os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN/')
 data_agn = leer_data_AGN('table3.dat')
@@ -30,18 +30,18 @@ os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/LCDM')
 with np.load('valores_medios_LCDM_AGN_4params_nuisance.npz') as data:
     sol = data['sol']
 sol[0] = 0.3
-sol[1] = 8.3
-sol[2] = 0.4
-sol[3] = 0.2
+sol[1] = 6.8
+sol[2] = 0.648
+sol[3] = 0.2350
 print(sol)
 H0_true =  70
 
-log_likelihood = lambda theta: -0.5 * params_to_chi2_AGN_nuisance(theta,H0_true, data_agn)
+log_likelihood = lambda theta: -0.5 * params_to_chi2_AGN_nuisance(theta,H0_true, data_agn,model='LCDM')
 
 #%% Definimos las funciones de prior y el posterior
 def log_prior(theta):
     omega_m, beta, gamma, delta = theta
-    if (0.1 < omega_m < 0.99 and 5 < beta < 15
+    if (0.2 < omega_m < 0.4 and 6.7 < beta < 6.9
         and 0.1 < gamma < 0.8 and 0 < delta < 0.5):
         return 0.0
     return -np.inf
@@ -57,8 +57,8 @@ nwalkers, ndim = pos.shape
 
 #%%
 # Set up the backend
-os.chdir(path_datos_global+'/Resultados_cadenas/LDCM')
-filename = "sample_LCDM_AGN_4params_nuisance.h5"
+os.chdir(path_datos_global+'/Resultados_cadenas')
+filename = "sample_LCDM_AGN_4params_nuisance_2.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
 textfile_witness = open('witness.txt','w+')
@@ -70,7 +70,7 @@ textfile_witness.close()
 sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, backend=backend
         ,moves=[(emcee.moves.DEMove(), 0.3), (emcee.moves.DESnookerMove(), 0.3)
                 , (emcee.moves.KDEMove(), 0.4)])
-max_n = 10000
+max_n = 100000
 # This will be useful to testing convergence
 old_tau = np.inf
 

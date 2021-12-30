@@ -19,8 +19,8 @@ with np.load('valores_medios_LCDM_AGN_4params_nuisance.npz') as data:
 #%%
 #os.chdir(path_datos_global+'/Resultados_cadenas/LDCM')
 os.chdir(path_datos_global+'/Resultados_cadenas')
-filename = "sample_LCDM_AGN_4params_nuisance_2.h5"
-#%%
+filename = "sample_LCDM_AGN_4params_nuisance.h5"
+
 reader = emcee.backends.HDFBackend(filename)
 # Algunos valores
 tau = reader.get_autocorr_time()
