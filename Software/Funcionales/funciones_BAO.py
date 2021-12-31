@@ -4,7 +4,7 @@ Created on Sun Feb  2 13:28:48 2020
 @author: matias
 """
 import numpy as np
-#from numba import jit
+from numba import jit
 #import camb #Para que ande en el DF
 from scipy.interpolate import interp1d
 from scipy.integrate import cumtrapz as cumtrapz
@@ -56,7 +56,7 @@ def r_drag_viejo(omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de 
     rd_log = simps(integrando_log,zs_int_log)
     return rd_log
 
-#@jit
+@jit
 def integrand(z, Om_m_0, H_0, wb):
     R_bar = wb * 10**5 / 2.473
 
