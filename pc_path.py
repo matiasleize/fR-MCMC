@@ -13,3 +13,31 @@ def definir_path():
         path_git = 'mleize/tesis_licenciatura'
         path_datos_global = 'mleize'
     return path_git, path_datos_global
+
+
+if __name__ == '__main__':
+    #Much better:
+    import os
+    import git
+    path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+    path_datos_global = os.path.dirname(path_git)
+
+    print(path_git)
+    print(path_datos_global)
+
+    #For some reason this work:
+    os.chdir(path_git)
+    os.sys.path.append('./Software/Funcionales/')
+
+    #And this not:
+    os.chdir(path_git+'/Software/Funcionales/')
+
+
+    #The header of all run files should have this format:
+    import numpy as np; np.random.seed(42)
+    import emcee
+
+    import os
+    import git
+    path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+    os.chdir(path_git); os.sys.path.append('./Software/Funcionales/')

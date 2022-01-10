@@ -3,17 +3,14 @@ Created on Wed Feb  5 13:04:17 2020
 
 @author: matias
 """
-import numpy as np
-np.random.seed(42)
+import numpy as np; np.random.seed(42)
 import emcee
 
-import sys
 import os
-from os.path import join as osjoin
-from pc_path import definir_path
-path_git, path_datos_global = definir_path()
-os.chdir(path_git)
-sys.path.append('./Software/Funcionales/')
+import git
+path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+os.chdir(path_git); os.sys.path.append('./Software/Funcionales/')
+
 from funciones_sampleo import MCMC_sampler
 from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_AGN
 from funciones_alternativos import params_to_chi2
