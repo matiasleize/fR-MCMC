@@ -6,6 +6,7 @@ Created on Sun Feb  2 13:28:48 2020
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy.constants import c as c_luz #metros/segundos
+from scipy.integrate import cumtrapz as cumtrapz
 c_luz_km = c_luz/1000
 
 import sys
@@ -67,30 +68,29 @@ def graficar_data(theta, params_fijos, index=0,
                     dataset_BAO=None, dataset_AGN=None, dataset_BAO_odintsov=None,
                     H0_Riess=False, cantidad_zs=int(10**5), model='HS',n=1,
                     nuisance_2 = False, errores_agrandados=False,close=False,
-                    save_path=None):
+                    save_path=None,ebeta=None):
     '''Dados los parámetros del modelo devuelve un chi2 para los datos
     de supernovas.'''
 
     if save_path==None:
         path = os.chdir(path_datos_global+'/Graficos de datos')
+    else:
+        path = save_path
 
     [Mabs, omega_m, b, H_0] = all_parameters(theta, params_fijos, index)
 
     params_fisicos = [omega_m,b,H_0]
-    zs_modelo_2, Hs_modelo_2 = Hubble_teorico(params_fisicos, n=n, model=model,
+    zs_modelo, Hs_modelo = Hubble_teorico(params_fisicos, n=n, model=model,
                                 z_min=0, z_max=10, cantidad_zs=cantidad_zs)
                                 #Los datos de AGN van hasta z mas altos!
-
-    #Filtro para z=0 para que no diverja la integral de (1/H)
-    mask = zs_modelo_2 > 0.001
-    zs_modelo = zs_modelo_2[mask]
-    Hs_modelo = Hs_modelo_2[mask]
-
+    Hs_interpolado = interp1d(zs_modelo, Hs_modelo)
+    int_inv_Hs = cumtrapz(Hs_modelo**(-1), zs_modelo, initial=0)
+    int_inv_Hs_interpolado = interp1d(zs_modelo, int_inv_Hs)
 
     if dataset_SN != None:
         #Importo los datos
         zcmb, zhel, Cinv, mb = dataset_SN
-        muth = magn_aparente_teorica(zs_modelo, Hs_modelo, zcmb, zhel)
+        muth = magn_aparente_teorica(int_inv_Hs_interpolado, zcmb, zhel)
         muobs =  mb - Mabs
 
         plt.figure()
@@ -128,10 +128,10 @@ def graficar_data(theta, params_fijos, index=0,
             (z_data_BAO, valores_data, errores_data_cuad,wb_fid) = dataset_BAO[i]
             if i==0: #Dato de Da
                 rd = r_drag(omega_m,H_0,wb_fid) #Calculo del rd
-                distancias_teoricas = Hs_to_Ds(zs_modelo,Hs_modelo,z_data_BAO,i)
+                distancias_teoricas = Hs_to_Ds(Hs_interpolado, int_inv_Hs_interpolado, z_data_BAO, i)
                 output_teorico = Ds_to_obs_final(zs_modelo, distancias_teoricas, rd, i)
             else: #De lo contrario..
-                distancias_teoricas = Hs_to_Ds(zs_modelo,Hs_modelo,z_data_BAO,i)
+                distancias_teoricas = Hs_to_Ds(Hs_interpolado, int_inv_Hs_interpolado, z_data_BAO, i)
                 output_teorico = np.zeros(len(z_data_BAO))
                 for j in range(len(z_data_BAO)): #Para cada dato de una especie
                      rd = r_drag(omega_m,H_0,wb_fid[j]) #Calculo del rd
@@ -165,13 +165,19 @@ def graficar_data(theta, params_fijos, index=0,
             egamma = 0.07
         else: #Caso Estandar
             beta = 7.735
-            ebeta = 0.244
+            if ebeta == None:
+                ebeta = 0.244
             gamma = 0.648
             egamma = 0.007
 
         Es_modelo = Hs_modelo/H_0
-        DlH0_teo = zs_2_logDlH0(zs_modelo,Es_modelo,z_data)
+#        DlH0_teo = zs_2_logDlH0(zs_modelo,Es_modelo,z_data)
+#        DlH0_obs =  np.log10(3.24) - 25 + (logFx - gamma * logFuv - beta) / (2*gamma - 2)
+
+        DlH0_teo = zs_2_logDlH0(int_inv_Hs_interpolado(z_data)*H_0,z_data)
         DlH0_obs =  np.log10(3.24) - 25 + (logFx - gamma * logFuv - beta) / (2*gamma - 2)
+
+
 
         df_dgamma =  (-logFx+beta+logFuv) / (2*(gamma-1)**2)
         eDlH0_cuad = (eFx**2 + gamma**2 * eFuv**2 + ebeta**2)/ (2*gamma - 2)**2 + (df_dgamma)**2 * egamma**2 #El cuadrado de los errores
@@ -248,12 +254,14 @@ if __name__ == '__main__':
     ds_BAO_odintsov = leer_data_BAO_odintsov('datos_BAO_odintsov.txt')
     #%%
     %matplotlib qt5
+    os.chdir('/home/matias/Desktop/')
     graficar_data([-19.35, 0.30,5, 69.22], _, index=4,
                     dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    dataset_AGN = ds_AGN,
-                    dataset_BAO_odintsov = ds_BAO_odintsov,
+                    #dataset_CC = ds_CC,
+                    #dataset_BAO = ds_BAO,
+                    #dataset_AGN = ds_AGN,
+                    #dataset_BAO_odintsov = ds_BAO_odintsov,
                     model = 'EXP',
-                    close=True
+                    close=False,ebeta=1,
+                    save_path = '/home/matias/Desktop/'
                     )

@@ -21,7 +21,7 @@ def z_condicion_inicial(params_fisicos,eps=10**(-10)):
     z0 = (2 * omega_l*(-np.log(eps)-2*beta)/(beta*omega_m))**(1/3) - 1
     return z0
 
-def condiciones_iniciales(omega_m, b, z0=30, n=1, model='HS'):
+def condiciones_iniciales(omega_m, b, z0=30, n=1, model='HS',CI_aprox=True):
     '''
     Calculo las condiciones iniciales para el sistema de ecuaciones diferenciales
     para el modelo de Hu-Sawicki y el de Starobinsky n=1
@@ -100,14 +100,19 @@ def condiciones_iniciales(omega_m, b, z0=30, n=1, model='HS'):
     #F_R_ci(R0) # debe ser simil a 1
     #F_2R_ci(R0) # debe ser simil a 0
 
-    x0 = Ricci_t_ci(z0)*F_2R_ci(R0) / (H_ci(z0)*F_R_ci(R0))
-    y0 = F_ci(R0) / (6*(H_ci(z0)**2)*F_R_ci(R0))
 
-    #y0=1.5
-    v0 = R0 / (6*H_ci(z0)**2)
-    w0 = 1+x0+y0-v0
-    r0 = R0/R_0
-
+    if CI_aprox == True:
+        x0 = Ricci_t_ci(z0)*F_2R_ci(R0) / (H_ci(z0)*F_R_ci(R0))
+        y0 = F_ci(R0) / (6*(H_ci(z0)**2)*F_R_ci(R0))
+        v0 = R0 / (6*H_ci(z0)**2)
+        w0 = 1+x0+y0-v0
+        r0 = R0/R_0
+    else:
+        x0 = 0
+        y0 = (R0  - 2 * Lamb) / (6*H_ci(z0)**2)
+        v0 = R0 / (6*H_ci(z0)**2)
+        w0 = 1+x0+y0-v0
+        r0 = R0/R_0
     return[x0,y0,v0,w0,r0]
 
 #%%
@@ -123,7 +128,7 @@ if __name__ == '__main__':
     print(cond_iniciales)
     cond_iniciales=condiciones_iniciales(omega_m,b,z0=z0,model='ST')
     print(cond_iniciales)
-#%%
+    #%%
     bs = np.arange(0.2,1.1,0.1)
     omegas = np.arange(0.2,0.51,0.01)
     output = np.zeros((len(bs),len(omegas)))
@@ -136,3 +141,8 @@ if __name__ == '__main__':
             output[i,j] = 2 * cond_iniciales[1]/b #lo convierto en r para comparar
     np.savetxt('2darray.csv', output, delimiter=',', fmt='%1.2f')
     output
+    #%%
+    cond_iniciales=condiciones_iniciales(omega_m,b,z0=z0,model='HS')
+    cond_iniciales_1=condiciones_iniciales(omega_m,b,z0=z0,model='HS',CI_aprox=False)
+    print(cond_iniciales)
+    print(cond_iniciales_1)
