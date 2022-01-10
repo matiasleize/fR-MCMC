@@ -66,7 +66,7 @@ def log_probability(theta):
 #de los parametros que corresponden al minimo del chi2.
 pos = sol * (1 +  0.01 * np.random.randn(12,4))
 MCMC_sampler(log_probability,pos,
-            filename = "sample_HS_CC+SN_4params.h5",
+            filename = "sample_HS_CC+SN_4params_otro.h5",
             witness_file = 'witness_26.txt',
             witness_freq = 5,
             max_samples = 2000000)
