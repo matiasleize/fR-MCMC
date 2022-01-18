@@ -13,7 +13,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
-from funciones_int import Hubble_teorico
+from funciones_int_sist_1 import Hubble_teorico_1
 
 def parametros_derivados(sampler,discard, thin,model='EXP'):
 	'''Esta función convierte las cadenas de omega_m y H0 de LCDM
