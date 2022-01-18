@@ -3,9 +3,8 @@ Created on Sun Feb  2 13:28:48 2020
 
 @author: matias
 """
-
+from numba import jit
 import numpy as np
-import emcee
 
 import sys
 import os
@@ -15,6 +14,8 @@ os.chdir(path_git)
 sys.path.append('./Software/Funcionales/')
 from funciones_int_sist_1 import Hubble_teorico_1
 
+
+@jit
 def parametros_derivados(sampler,discard, thin,model='EXP'):
 	'''Esta función convierte las cadenas de omega_m y H0 de LCDM
 	en las cadenas de omega_m y H0 fisicas'''
