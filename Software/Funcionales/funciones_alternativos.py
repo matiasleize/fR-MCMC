@@ -8,14 +8,10 @@ from scipy.interpolate import interp1d
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.constants import c as c_luz #metros/segundos
 c_luz_km = c_luz/1000
-
-import sys
 import os
-from os.path import join as osjoin
-from pc_path import definir_path
-path_git, path_datos_global = definir_path()
-os.chdir(path_git)
-sys.path.append('./Software/Funcionales/')
+import git
+path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+os.chdir(path_git); os.sys.path.append('./Software/Funcionales/')
 from funciones_LambdaCDM import H_LCDM
 from funciones_int import Hubble_teorico
 from funciones_int_sist_1 import Hubble_teorico_1
@@ -186,8 +182,8 @@ def params_to_chi2(theta, params_fijos, index=0,
 if __name__ == '__main__':
     from matplotlib import pyplot as plt
 
-    os.chdir(path_git)
-    sys.path.append('./Software/Funcionales/')
+    path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+    os.chdir(path_git); os.sys.path.append('./Software/Funcionales/')
     from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
 
     # Supernovas
@@ -212,7 +208,7 @@ if __name__ == '__main__':
     ds_AGN = leer_data_AGN('table3.dat')
 
 
-#%%
+    #%%
     a = params_to_chi2([-19.37, 0.3, 70], 0.01, index=32,
                     #dataset_SN = ds_SN,
                     #dataset_CC = ds_CC,
