@@ -1,0 +1,196 @@
+'''
+Run the MCMC analyses and the calculation of the physical parameters \Omega_{m} and H_{0}.
+For now it only runs for 4 parameters on HS and EXP models and for 3 parameters on the LCDM model.
+
+Parameters order on this file: Mabs,omega_m,b,H_0,n
+'''
+
+import numpy as np; #np.random.seed(42)
+import emcee
+import yaml
+
+import os
+import git
+path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+path_datos_global = os.path.dirname(path_git)
+
+os.chdir(path_git); os.sys.path.append('./Software/Funcionales/')
+from scipy.optimize import minimize
+from funciones_sampleo import MCMC_sampler
+from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
+from funciones_alternativos import params_to_chi2
+from funciones_parametros_derivados import parametros_derivados
+
+os.chdir(path_git + '/Software/Estadística/MCMC/')
+import click #Allows to run with different configuration files
+@click.command()
+@click.argument("config_path")
+
+def run(config_path='./config.yml'):
+    # Read in yaml file
+    with open(config_path, 'r') as ymlfile:
+        config = yaml.safe_load(ymlfile)
+    #print(config)
+
+    model = config['MODEL']
+    params_fijos = config['FIXED_PARAMS'] #Fixed parameters
+    index = config['LOG_LIKELIHOOD_INDEX']
+    num_params = int(str(index)[0])
+    
+    
+    bnds = config['BOUNDS']
+    [M_min, M_max] = config['M_PRIOR']
+    [omega_m_min, omega_m_max] = config['OMEGA_M_PRIOR']
+    if model != 'LCDM':
+        [b_min, b_max] = config['B_PRIOR']
+    [H0_min, H0_max] = config['H0_PRIOR']
+
+    #%% Import cosmological data
+    path_data = path_git + '/Software/Estadística/Datos/'
+    datasets = []
+
+    # Supernovae type IA
+    if config['USE_SN'] == True:
+        os.chdir(path_data + 'Datos_pantheon/')
+        ds_SN = leer_data_pantheon('lcparam_full_long_zhel.txt')
+        datasets.append('_CC')
+    else:
+        ds_SN = None
+
+    # Cosmic Chronometers
+    if config['USE_CC'] == True:
+        os.chdir(path_data)
+        ds_CC = leer_data_cronometros('datos_cronometros.txt')
+        datasets.append('_SN')
+    else:
+        ds_CC = None
+
+    # BAO
+    if config['USE_BAO'] == True:    
+        os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
+        ds_BAO = []
+        archivos_BAO = ['datos_BAO_da.txt','datos_BAO_dh.txt','datos_BAO_dm.txt',
+                        'datos_BAO_dv.txt','datos_BAO_H.txt']
+        for i in range(5):
+            aux = leer_data_BAO(archivos_BAO[i])
+            ds_BAO.append(aux)
+        datasets.append('_BAO')
+    else:
+        ds_BAO = None
+
+
+    # AGN
+    if config['USE_AGN'] == True:
+        os.chdir(path_data+'Datos_AGN/')
+        ds_AGN = leer_data_AGN('table3.dat')
+        datasets.append('_AGN')
+    else:
+        ds_AGN = None
+
+    # Riess H0
+    if config['USE_H0'] == True:
+        H0_Riess = config['USE_H0']
+        datasets.append('_H0')
+    else:
+        H0_Riess = False
+
+    datasets = str(''.join(datasets))
+
+    #%% Define the log-likelihood distribution
+    nll = lambda theta: params_to_chi2(theta, params_fijos, 
+                                        index=index,
+                                        dataset_SN = ds_SN,
+                                        dataset_CC = ds_CC,
+                                        dataset_BAO = ds_BAO,
+                                        dataset_AGN = ds_AGN,
+                                        H0_Riess = H0_Riess,
+                                        model = model
+                                        )
+
+    def log_likelihood(*args, **kargs):  
+        return -0.5 * nll(*args, **kargs)
+
+
+    # Define the prior distribution (HERE change to depend with index)
+    def log_prior(theta):
+        if model != 'LCDM':
+            M, omega_m, b, H0 = theta
+            if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max and b_min < b < b_max and H0_min < H0 < H0_max):
+                return 0.0
+        else:
+            M, omega_m, H0 = theta
+            if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max and H0_min < H0 < H0_max):
+                return 0.0
+        return -np.inf
+    
+
+    # Define the posterior distribution
+    def log_probability(theta):
+        lp = log_prior(theta)
+        if not np.isfinite(lp): #Maybe this condition is not necessary..
+            return -np.inf
+        return lp + log_likelihood(theta)
+
+    filename_mv = 'valores_medios_' + model + datasets + '_' + str(num_params) + 'params' + '_borrarr'
+
+    # If exist, import mean values of the free parameters. If not, calculate, save and load calculation.
+    os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
+    if (os.path.exists(filename_mv + '.npz') == True):
+        with np.load(filename_mv + '.npz') as data:
+            sol = data['sol']
+    else:
+        print('No estan calculados los valores medios de los parametros')
+        initial = np.array(config['GUEST'])
+        soln = minimize(nll, initial, options = {'eps': 0.01}, bounds = bnds)
+
+        os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
+        np.savez(filename_mv, sol=soln.x)
+        with np.load(filename_mv + '.npz') as data:
+            sol = data['sol']
+    print(sol)
+
+
+    #%% Define initial values of each chain using the minimun 
+    # values of the chisquare.
+    pos = sol * (1 +  0.01 * np.random.randn(config['NUM_WALKERS'], num_params))
+    
+    filename = 'sample_' + model + datasets + '_' + str(num_params) + 'params' + '_borrarr' 
+    filename_h5 = filename + '.h5'
+    
+    MCMC_sampler(log_probability,pos,
+                filename = filename_h5,
+                witness_file = 'witness_' + str(config['WITNESS_NUM']) + '.txt',
+                witness_freq = config['WITNESS_FREQ'],
+                max_samples = config['MAX_SAMPLES'])
+
+    #%% If it corresponds, derive physical parameters
+    #Fill in here:
+    if model != 'LCDM':
+        root_directory=path_datos_global+'/Resultados_cadenas/'
+        os.chdir(root_directory)
+        reader = emcee.backends.HDFBackend(filename_h5)
+        nwalkers, ndim = reader.shape #Number of walkers and parameters
+
+        #%% Define burnin and thin using autocorrelation time tau when it's possible. 
+        # If not, hardcoding. HERE CHANGE TO thin=1 and burnin 0.2 * num_steps
+        tau = reader.get_autocorr_time()
+        burnin = int(2 * np.max(tau))
+        thin = int(0.5 * np.min(tau))
+
+        #burnin = 1000
+        #thin = 50
+
+        #%%
+        samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
+        print(len(samples)) #Number of effective steps
+        print('Tiempo estimado:{} min'.format(len(samples)/60))
+        new_samples = parametros_derivados(reader,discard=burnin,thin=thin,model=model)
+        np.savez(filename+'_deriv', new_samples=new_samples)
+        #%% Print the output
+        with np.load(filename+'_deriv.npz') as data:
+            ns = data['new_samples']
+
+
+if __name__ == "__main__":
+    run()
+    #pass
