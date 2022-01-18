@@ -1,7 +1,5 @@
 """
-Created on Sun Feb  2 13:28:48 2020
-
-@author: matias
+Convertir este archivo en un notebook!
 """
 import numpy as np
 from scipy.interpolate import interp1d
