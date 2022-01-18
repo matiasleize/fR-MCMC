@@ -56,6 +56,7 @@ def r_drag_viejo(omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de 
     rd_log = simps(integrando_log,zs_int_log)
     return rd_log
 
+@jit
 def integrand(z, Om_m_0, H_0, wb):
     R_bar = wb * 10**5 / 2.473
 
@@ -64,7 +65,7 @@ def integrand(z, Om_m_0, H_0, wb):
     H = H_0 * ((Om_r * (1 + z)**4 + Om_m_0 * (1 + z)**3 + Om_Lambda) ** (1/2))
     return c_luz_km/(H * (3*(1 + R_bar*(1+z)**(-1)))**(1/2))
 
-@jit
+
 def r_drag(omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de BBN.
     #Calculo del rd:
     h = H_0/100
