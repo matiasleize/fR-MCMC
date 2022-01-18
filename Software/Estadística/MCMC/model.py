@@ -18,7 +18,7 @@ os.chdir(path_git); os.sys.path.append('./Software/Funcionales/')
 from scipy.optimize import minimize
 from funciones_sampleo import MCMC_sampler
 from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
-from funciones_alternativos import params_to_chi2
+from funciones_alternativos import log_likelihood
 from funciones_parametros_derivados import parametros_derivados
 
 os.chdir(path_git + '/Software/Estadística/MCMC/')
@@ -36,7 +36,7 @@ def run(config_path='./config.yml'):
     params_fijos = config['FIXED_PARAMS'] #Fixed parameters
     index = config['LOG_LIKELIHOOD_INDEX']
     num_params = int(str(index)[0])
-    
+    all_analytic = config['ALL_ANALYTIC']
     
     bnds = config['BOUNDS']
     [M_min, M_max] = config['M_PRIOR']
@@ -46,28 +46,28 @@ def run(config_path='./config.yml'):
     [H0_min, H0_max] = config['H0_PRIOR']
 
     #%% Import cosmological data
-    path_data = path_git + '/Software/Estadística/Datos/'
+    path_data = path_git + '/Software/Estadística/source/'
     datasets = []
 
     # Supernovae type IA
     if config['USE_SN'] == True:
-        os.chdir(path_data + 'Datos_pantheon/')
+        os.chdir(path_data + 'Pantheon/')
         ds_SN = leer_data_pantheon('lcparam_full_long_zhel.txt')
-        datasets.append('_CC')
+        datasets.append('_SN')
     else:
         ds_SN = None
 
     # Cosmic Chronometers
     if config['USE_CC'] == True:
-        os.chdir(path_data)
+        os.chdir(path_data + 'CC/')
         ds_CC = leer_data_cronometros('datos_cronometros.txt')
-        datasets.append('_SN')
+        datasets.append('_CC')
     else:
         ds_CC = None
 
     # BAO
     if config['USE_BAO'] == True:    
-        os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
+        os.chdir(path_data + 'BAO/')
         ds_BAO = []
         archivos_BAO = ['datos_BAO_da.txt','datos_BAO_dh.txt','datos_BAO_dm.txt',
                         'datos_BAO_dv.txt','datos_BAO_H.txt']
@@ -81,7 +81,7 @@ def run(config_path='./config.yml'):
 
     # AGN
     if config['USE_AGN'] == True:
-        os.chdir(path_data+'Datos_AGN/')
+        os.chdir(path_data + 'AGN/')
         ds_AGN = leer_data_AGN('table3.dat')
         datasets.append('_AGN')
     else:
@@ -97,39 +97,57 @@ def run(config_path='./config.yml'):
     datasets = str(''.join(datasets))
 
     #%% Define the log-likelihood distribution
-    nll = lambda theta: params_to_chi2(theta, params_fijos, 
+    ll = lambda theta: log_likelihood(theta, params_fijos, 
                                         index=index,
                                         dataset_SN = ds_SN,
                                         dataset_CC = ds_CC,
                                         dataset_BAO = ds_BAO,
                                         dataset_AGN = ds_AGN,
                                         H0_Riess = H0_Riess,
-                                        model = model
+                                        model = model,
+                                        all_analytic = all_analytic
                                         )
 
-    def log_likelihood(*args, **kargs):  
-        return -0.5 * nll(*args, **kargs)
+    nll = lambda theta: -ll(theta) #negative log likelihood
 
-
-    # Define the prior distribution (HERE change to depend with index)
+    # Define the prior distribution
     def log_prior(theta):
-        if model != 'LCDM':
+        if index == 4:
             M, omega_m, b, H0 = theta
             if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max and b_min < b < b_max and H0_min < H0 < H0_max):
                 return 0.0
-        else:
+        elif index == 31:
+            omega_m, b, H0 = theta
+            if (omega_m_min < omega_m < omega_m_max and b_min < b < b_max and H0_min < H0 < H0_max):
+                return 0.0
+        elif index == 32:
             M, omega_m, H0 = theta
             if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max and H0_min < H0 < H0_max):
                 return 0.0
+        elif index == 33:
+            M, omega_m, b = theta
+            if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max and b_min < b < b_max):
+                return 0.0
+        elif index == 21:
+            omega_m, b = theta
+            if (omega_m_min < omega_m < omega_m_max and b_min < b < b_max):
+                return 0.0
+        elif index == 22:
+            omega_m, H0 = theta
+            if (omega_m_min < omega_m < omega_m_max and H0_min < H0 < H0_max):
+                return 0.0
+        elif index == 1:
+            omega_m = theta
+            if omega_m_min < omega_m < omega_m_max:
+                return 0.0
         return -np.inf
     
-
     # Define the posterior distribution
     def log_probability(theta):
         lp = log_prior(theta)
         if not np.isfinite(lp): #Maybe this condition is not necessary..
             return -np.inf
-        return lp + log_likelihood(theta)
+        return lp + ll(theta)
 
     filename_mv = 'valores_medios_' + model + datasets + '_' + str(num_params) + 'params' + '_borrarr'
 
@@ -171,15 +189,11 @@ def run(config_path='./config.yml'):
         reader = emcee.backends.HDFBackend(filename_h5)
         nwalkers, ndim = reader.shape #Number of walkers and parameters
 
-        #%% Define burnin and thin using autocorrelation time tau when it's possible. 
-        # If not, hardcoding. HERE CHANGE TO thin=1 and burnin 0.2 * num_steps
-        tau = reader.get_autocorr_time()
-        burnin = int(2 * np.max(tau))
-        thin = int(0.5 * np.min(tau))
-
-        #burnin = 1000
-        #thin = 50
-
+        #%% Define burnin and thin using harcoding: thin=1 and burnin 0.2*num_steps
+        
+        samples = reader.get_chain()
+        burnin= int(0.2*len(samples[:,0])) #Burnin del 20%
+        thin = 1
         #%%
         samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
         print(len(samples)) #Number of effective steps
@@ -193,4 +207,3 @@ def run(config_path='./config.yml'):
 
 if __name__ == "__main__":
     run()
-    #pass
