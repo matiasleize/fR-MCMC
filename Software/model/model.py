@@ -21,7 +21,7 @@ from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_
 from funciones_alternativos import log_likelihood
 from funciones_parametros_derivados import parametros_derivados
 
-os.chdir(path_git + '/Software/Estadística/MCMC/')
+os.chdir(path_git + '/Software/model/')
 import click #Allows to run with different configuration files
 @click.command()
 @click.argument("config_path")
@@ -46,7 +46,7 @@ def run(config_path='./config.yml'):
     [H0_min, H0_max] = config['H0_PRIOR']
 
     #%% Import cosmological data
-    path_data = path_git + '/Software/Estadística/source/'
+    path_data = path_git + '/Software/source/'
     datasets = []
 
     # Supernovae type IA
@@ -152,7 +152,7 @@ def run(config_path='./config.yml'):
     filename_mv = 'valores_medios_' + model + datasets + '_' + str(num_params) + 'params' + '_borrarr'
 
     # If exist, import mean values of the free parameters. If not, calculate, save and load calculation.
-    os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
+    os.chdir(path_git+'/Software/model/Resultados_simulaciones/')
     if (os.path.exists(filename_mv + '.npz') == True):
         with np.load(filename_mv + '.npz') as data:
             sol = data['sol']
@@ -161,7 +161,7 @@ def run(config_path='./config.yml'):
         initial = np.array(config['GUEST'])
         soln = minimize(nll, initial, options = {'eps': 0.01}, bounds = bnds)
 
-        os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
+        os.chdir(path_git + '/Software/model/Resultados_simulaciones')
         np.savez(filename_mv, sol=soln.x)
         with np.load(filename_mv + '.npz') as data:
             sol = data['sol']
