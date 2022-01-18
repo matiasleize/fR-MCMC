@@ -1,22 +1,18 @@
-"""
-Created on Sun Feb  2 13:28:48 2020
+'''
+Change of parameters used in the numeric integrarion
+'''
 
-@author: matias
-"""
-
-import numpy as np
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz # meters/seconds
 c_luz_km = c_luz/1000
-#ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m, b, H_0, n
 
-''''''''''''''''''
-'''DEPRECATED'''
-''''''''''''''''''
-
+# Parameters order: omega_m, b, H_0, n
 
 def params_fisicos_to_modelo_HS(omega_m, b, n=1):
-    '''Toma los parametros fisicos (omega_m, el parametro de distorsión b)
-    y devuelve los parametros del modelo c1 y c2. Notar que no depende de H0!'''
+    '''
+    Convert physical parameters (omega_m, b)
+    into Hu-Sawicki model parameters c1 y c2. This transformation doesn't depend on H0!
+    '''
+
     aux = c_luz_km**2 * omega_m / (7800 * (8315)**2 * (1-omega_m)) #B en la tesis
     if n==1:
         c_1 =  2/b
@@ -28,10 +24,12 @@ def params_fisicos_to_modelo_HS(omega_m, b, n=1):
     return c_1, c_2
 
 def params_fisicos_to_modelo_ST(omega_m, b, H0):
-    '''Toma los parametros fisicos (omega_m, el parametro de distorsión b
-    y la constante de Hubble H0) y devuelve los parametros del modelo de
-    Starobinsky lambda y Rs. Notar que no depende de n!'''
-    Lambda = 3 * (H0/c_luz_km)**2 * (1-omega_m) #Constante cosmológica
+    '''
+    Convert physical parameters (omega_m, b, H0)
+    into Starobinsky model parameters (Lambda, Rs). This transformation doesn't depend on n!
+    '''
+
+    Lambda = 3 * (H0/c_luz_km)**2 * (1-omega_m) #Cosmological constant
     lamb = 2/b
     Rs = Lambda * b
     return lamb, Rs
@@ -39,7 +37,7 @@ def params_fisicos_to_modelo_ST(omega_m, b, H0):
 
 #%%
 if __name__ == '__main__':
-#Testeamos Hu-Sawicki
+    ## Hu-Sawicki
     omega_m_true = 0.24
     b_true = 2
     H_0=73.48
@@ -51,16 +49,10 @@ if __name__ == '__main__':
     #c2_true = 1/19
     print(1/19)
 
-#1.0 0.05262837317249587 #nuevo
-#1.0 0.05262837317249588 #viejo
-#0.05263157894736842 #1/19
+    #%% aux es B en la tesis
+    aux = c_luz_km**2 * omega_m_true / (7800 * (8315)**2 * (1-omega_m_true)) 
+    print(aux)
 
-
-
-#%%
-    aux = c_luz_km**2 * omega_m_true / (7800 * (8315)**2 * (1-omega_m_true)) #B en la tesis
-    aux
-
-#%% Testeamos Starobinsky
+    ## Starobinsky
     lamb,Rs = params_fisicos_to_modelo_ST(omega_m_true, b_true, H_0)
     print(lamb,Rs)

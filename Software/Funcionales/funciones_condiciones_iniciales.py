@@ -1,3 +1,7 @@
+'''
+Initial conditions for the sctipt "funciones_int.py"
+'''
+
 import sympy as sym
 from sympy.utilities.lambdify import lambdify
 import numpy as np

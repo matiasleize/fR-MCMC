@@ -1,3 +1,7 @@
+'''
+Initial conditions for the sctipt "funciones_int_sis_1.py"
+'''
+
 import sympy as sym
 from sympy.utilities.lambdify import lambdify
 import numpy as np
@@ -102,12 +106,14 @@ def condiciones_iniciales(omega_m, b, z0=30, n=1, model='HS',CI_aprox=True):
 
 
     if CI_aprox == True:
+        #Hibrid initial conditions
         x0 = Ricci_t_ci(z0)*F_2R_ci(R0) / (H_ci(z0)*F_R_ci(R0))
         y0 = F_ci(R0) / (6*(H_ci(z0)**2)*F_R_ci(R0))
         v0 = R0 / (6*H_ci(z0)**2)
         w0 = 1+x0+y0-v0
         r0 = R0/R_0
     else:
+        #LCDM initial conditions
         x0 = 0
         y0 = (R0  - 2 * Lamb) / (6*H_ci(z0)**2)
         v0 = R0 / (6*H_ci(z0)**2)

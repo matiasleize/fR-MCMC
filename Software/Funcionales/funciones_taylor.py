@@ -4,10 +4,11 @@ import numpy as np
 import math
 
 #%%
-
 def Taylor_ST(z,omega_m,b,H0):
-    '''Calculo del H(z) sugerido por Basilakos para el modelo de Starobinsky
-    N!=a, N=ln(a)=-ln(1+z)'''
+    '''
+    Parametrization of the Hubble parameter H(z) given by Basilakos et al. for the Starobinsky model.
+    The number of e-folds is not the same as the scale factor (N!=a). They are related according to: N=ln(a)=-ln(1+z)
+    '''
     omega_r=0
     N = sym.Symbol('N')
     St_tay = H0*(1+(-1+math.e**(-3*N))*omega_m+(-1+math.e**(-4*N))*omega_r+
@@ -40,8 +41,10 @@ def Taylor_ST(z,omega_m,b,H0):
     return numpy_array_of_results
 
 def Taylor_HS(z,omega_m,b,H0):
-    '''Calculo del H(z) sugerido por Basilakos para el modelo de Hu-Sawicki
-    N!=a, N=ln(a)=-ln(1+z)'''
+    '''
+    Parametrization of the Hubble parameter H(z) given by Basilakos et al. for the Starobinsky model.
+    The number of e-folds is not the same as the scale factor (N!=a). They are related according to: N=ln(a)=-ln(1+z)
+    '''
     omega_r=0
     N = sym.Symbol('N')
     Hs_tay=N
