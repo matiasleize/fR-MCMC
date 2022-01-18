@@ -13,6 +13,7 @@ tesis_licenciatura/Software/Sandbox --> supermodel/supermodel/tests/checks
 tesis_licenciatura/Software/Estadística/MCMC/config...yml --> supermodel/configs/config...yml
 
 supermodel/supermodel/tests/checks: aca poner todo lo que esta en la seccion "Unit test a lot" 
-
-
 (El resto de los directorios que aparecen en la página no creo que sean necesarios)
+
+### Otras cosas
+Quiza mover a test tambien las funciones viejas o que no son de uso diario (por ejemplo los otros integradores). Luego, Acordarse de cambiar de nombre int_1 por int, tanto en funciones_alternativos como en funciones_parametros_derivados )y searchear si en otro lugar).  
