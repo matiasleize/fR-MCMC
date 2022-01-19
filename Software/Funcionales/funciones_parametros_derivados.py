@@ -6,12 +6,10 @@ Created on Sun Feb  2 13:28:48 2020
 from numba import jit
 import numpy as np
 
-import sys
 import os
-from pc_path import definir_path
-path_git, path_datos_global = definir_path()
-os.chdir(path_git)
-sys.path.append('./Software/Funcionales/')
+import git
+path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+os.chdir(path_git); os.sys.path.append('./Software/Funcionales/')
 from funciones_int_sist_1 import Hubble_teorico_1
 
 

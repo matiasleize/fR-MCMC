@@ -97,12 +97,10 @@ def leer_data_BAO_odintsov(archivo_BAO_odintsov):
     return z, h, dh, rd_fid
 #%%
 if __name__ == '__main__':
-    import sys
+    import pandas as pd
     import os
-    from os.path import join as osjoin
-    from pc_path import definir_path
-
-    path_git, path_datos_global = definir_path()
+    import git
+    path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
     os.chdir(path_git)
 
     #%% AGN
@@ -126,14 +124,8 @@ if __name__ == '__main__':
 
     z, valores_data, errores_data_cuad = leer_data_BAO(archivo_BAO)
     #z, valores_data, errores_data_cuad
-#%%
-    import pandas as pd
-    import sys
-    import os
-    from os.path import join as osjoin
-    from pc_path import definir_path
-    path_git, path_datos_global = definir_path()
-    os.chdir(path_git)
+    
+    #%%
     os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
     archivo_BAO='datos_BAO.txt'
     df = pd.read_csv(archivo_BAO,sep='\t')

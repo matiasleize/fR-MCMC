@@ -2,11 +2,10 @@ import numpy as np
 import emcee
 import time
 
-import sys
 import os
-from os.path import join as osjoin
-from pc_path import definir_path
-path_git, path_datos_global = definir_path()
+import git
+path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+path_datos_global = os.path.dirname(path_git)
 
 def MCMC_sampler(log_probability, initial_values,
                 filename = "default.h5",

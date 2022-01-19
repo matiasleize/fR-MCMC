@@ -10,13 +10,11 @@ from scipy.integrate import cumtrapz as cumtrapz
 from scipy.constants import c as c_luz #metros/segundos
 c_luz_km = c_luz/1000;
 
-import sys
 import os
-from os.path import join as osjoin
-from pc_path import definir_path
-path_git, path_datos_global = definir_path()
-os.chdir(path_git)
-sys.path.append('./Software/Funcionales/')
+import git
+path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+path_datos_global = os.path.dirname(path_git)
+os.chdir(path_git); os.sys.path.append('./Software/Funcionales/')
 #from funciones_int import Hubble_teorico
 from funciones_int_sist_1 import Hubble_teorico_1
 from funciones_LambdaCDM import H_LCDM
