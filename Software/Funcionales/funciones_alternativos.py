@@ -69,6 +69,10 @@ def all_parameters(theta, params_fijos, index):
         [omega_m, H_0] = theta
         [Mabs, b] = params_fijos
 
+    elif index == 23:
+        [Mabs, omega_m] = theta
+        [b, H_0] = params_fijos
+
     elif index == 1:
         omega_m = theta
         [Mabs, b, H_0] = params_fijos
