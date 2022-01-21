@@ -12,7 +12,7 @@ from os.path import join as osjoin
 from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
-sys.path.append('./Software/Funcionales/')
+sys.path.append('./Software/utils/')
 from funciones_int import Hubble_teorico
 from funciones_supernovas import magn_aparente_teorica, chi2_supernovas
 from funciones_BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
@@ -21,7 +21,7 @@ from funciones_alternativos import params_to_chi2
 from matplotlib import pyplot as plt
 
 os.chdir(path_git)
-sys.path.append('./Software/Funcionales/')
+sys.path.append('./Software/utils/')
 from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
 
 # Supernovas

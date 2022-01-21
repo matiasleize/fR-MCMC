@@ -10,7 +10,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 
 os.chdir(path_git)
-sys.path.append('./Software/Funcionales/')
+sys.path.append('./Software/utils/')
 
 import numpy as np
 from matplotlib import pyplot as plt

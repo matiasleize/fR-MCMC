@@ -14,7 +14,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 
 os.chdir(path_git)
-sys.path.append('./Software/Funcionales/')
+sys.path.append('./Software/utils/')
 
 from funciones_int import integrador
 from funciones_cambio_parametros import params_fisicos_to_modelo
@@ -69,7 +69,7 @@ from os.path import join as osjoin
 from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
-sys.path.append('./Software/Funcionales/')
+sys.path.append('./Software/utils/')
 from funciones_data import leer_data_cronometros
 os.chdir(path_git+'/Software/Estadística/Datos/')
 z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
