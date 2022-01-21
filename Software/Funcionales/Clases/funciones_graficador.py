@@ -126,7 +126,7 @@ class Graficador:
 				fig.suptitle(self.title);
 
 
-	def reportar_intervalos(self, discard, thin,hdi=True):
+	def reportar_intervalos(self, discard, thin, save_path, hdi=True):
 		'''
 		Imprimer los valores de los parámetros, tanto los valores más
 		probables, como las incertezas a uno y dos sigmas.
@@ -142,6 +142,7 @@ class Graficador:
 			samples = self.sampler.get_chain(discard=discard, flat=True, thin=thin)
 			len_chain, nwalkers, ndim = self.sampler.get_chain().shape
 
+		textfile_witness = open(save_path + '/intervals.dat','w')
 		labels = self.labels
 		for i in range(ndim):
 			mean = np.mean(samples[:,i])
@@ -165,7 +166,8 @@ class Graficador:
 			else:
 				txt = "\mathrm{{{3}}} = {0:.3f}_{{-{1:.3f}({4:.3f})}}^{{+{2:.3f}({5:.3f})}}"
 				txt = txt.format(mean, q1[0], q1[1], labels[i], q2[0], q2[1])
-			display(Math(txt))
+			textfile_witness.write('{} \n'.format(txt))
+			#display(Math(txt))
 
 
 	def graficar_taus_vs_n(self, num_param=None,threshold=100.0):
@@ -231,10 +233,10 @@ class Graficador:
 
 #%%
 if __name__ == '__main__':
-	import sys
 	import os
-	from pc_path import definir_path
-	path_git, path_datos_global = definir_path()
+	import git
+	path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+	path_datos_global = os.path.dirname(path_git)
 
 
 	samples = np.random.normal(size=100000)
