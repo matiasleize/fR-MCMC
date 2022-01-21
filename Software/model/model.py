@@ -15,7 +15,7 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 
-#Obs: Para importar paquetes la sintaxis de cambio de path es esta
+# Obs: Para importar paquetes la sintaxis de cambio de path es esta
 os.chdir(path_git); os.sys.path.append('./Software/')
 from utils.sampleo import MCMC_sampler
 from utils.data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
@@ -29,10 +29,12 @@ os.chdir(path_git + '/Software/model/')
 def run():
     output_dir = config['OUTPUT_DIR']
     model = config['MODEL']
-    params_fijos = config['FIXED_PARAMS'] #Fixed parameters
+    params_fijos = config['FIXED_PARAMS'] # Fixed parameters
     index = config['LOG_LIKELIHOOD_INDEX']
     num_params = int(str(index)[0])
     all_analytic = config['ALL_ANALYTIC']
+
+    witness_file = 'witness_' + str(config['WITNESS_NUM']) + '.txt'
     
     bnds = config['BOUNDS']
     [M_min, M_max] = config['M_PRIOR']
@@ -91,7 +93,8 @@ def run():
         H0_Riess = False
 
     datasets = str(''.join(datasets))
-    #%% Define the log-likelihood distribution
+
+    # Define the log-likelihood distribution
     ll = lambda theta: log_likelihood(theta, params_fijos, 
                                         index=index,
                                         dataset_SN = ds_SN,
@@ -103,7 +106,7 @@ def run():
                                         all_analytic = all_analytic
                                         )
 
-    nll = lambda theta: -ll(theta) #negative log likelihood
+    nll = lambda theta: -ll(theta) # negative log likelihood
 
     # Define the prior distribution
     def log_prior(theta):
@@ -145,12 +148,12 @@ def run():
     # Define the posterior distribution
     def log_probability(theta):
         lp = log_prior(theta)
-        if not np.isfinite(lp): #Maybe this condition is not necessary..
+        if not np.isfinite(lp): # Maybe this condition is not necessary..
             return -np.inf
         return lp + ll(theta)
 
 
-    filename = 'sample_' + model + datasets + '_' + str(num_params) + 'params' + '_borrarr' 
+    filename = 'sample_' + model + datasets + '_' + str(num_params) + 'params'
     output_directory = path_datos_global + output_dir + filename
 
     if not os.path.exists(output_directory):
@@ -160,13 +163,12 @@ def run():
 
     
     # If exist, import mean values of the free parameters. If not, calculate, save and load calculation.
-    #os.chdir(path_git+ '/Software' + '/Resultados_simulaciones/')
     os.chdir(output_directory)
     if (os.path.exists(filename_ml + '.npz') == True):
         with np.load(filename_ml + '.npz') as data:
             sol = data['sol']
     else:
-        print('No estan calculados los maximum likelihood parameters')
+        print('Calculating maximum likelihood parameters ..')
         initial = np.array(config['GUEST'])
         soln = minimize(nll, initial, options = {'eps': 0.01}, bounds = bnds)
 
@@ -176,7 +178,7 @@ def run():
     print(sol)
 
 
-    #%% Define initial values of each chain using the minimun 
+    # Define initial values of each chain using the minimun 
     # values of the chisquare.
     pos = sol * (1 +  0.01 * np.random.randn(config['NUM_WALKERS'], num_params))
 
@@ -185,34 +187,47 @@ def run():
 
     MCMC_sampler(log_probability,pos, 
                 filename = filename_h5,
-                witness_file = 'witness_' + str(config['WITNESS_NUM']) + '.txt',
+                witness_file = witness_file,
                 witness_freq = config['WITNESS_FREQ'],
                 max_samples = config['MAX_SAMPLES'],
                 save_path = output_directory)
 
-    #%% If it corresponds, derive physical parameters
-    #Fill in here:
+    # If it corresponds, derive physical parameters
     if model != 'LCDM':
         os.chdir(output_directory)
+ 
+        textfile_witness = open(witness_file,'a')
+        textfile_witness.write('\n Initializing derivation of parameters..')
+        textfile_witness.close()
+
         reader = emcee.backends.HDFBackend(filename_h5)
         nwalkers, ndim = reader.shape #Number of walkers and parameters
 
-        #%% Define burnin and thin using harcoding: thin=1 and burnin 0.2*num_steps
-        
+        # Hardcode definition of burnin and thin
         samples = reader.get_chain()
-        burnin= int(0.2*len(samples[:,0])) #Burnin del 20%
+        burnin= int(0.2*len(samples[:,0])) # Burnin 20% 
         thin = 1
-        #%%
+
         samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
-        print(len(samples)) #Number of effective steps
-        print('Tiempo estimado:{} min'.format(len(samples)/60))
+
+        textfile_witness = open(witness_file,'a')
+        textfile_witness.write('\n Number of effective steps: {}'.format(len(samples))) 
+        textfile_witness.write(('\n Estimated time: {} min'.format(len(samples)/60)))
+        textfile_witness.close()
+
         new_samples = parametros_derivados(reader,discard=burnin,thin=thin,model=model)
         np.savez(filename+'_deriv', new_samples=new_samples)
-        #%% Print the output
+
+        textfile_witness = open(witness_file,'a')
+        textfile_witness.write('\n Done!')
+        textfile_witness.close()
+
+        # Print the output
         with np.load(filename+'_deriv.npz') as data:
             ns = data['new_samples']
+        
 
-    # Plot data
+    # Plot the results
     analysis.run(filename)
 
 
