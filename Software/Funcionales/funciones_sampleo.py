@@ -12,12 +12,13 @@ def MCMC_sampler(log_probability, initial_values,
                 witness_file = 'witness.txt',
                 max_samples = 10000,
                 witness_freq = 100,
-                tolerance = 0.01):
+                tolerance = 0.01,
+                save_path = path_datos_global+'/Resultados_cadenas/'):
 
     nwalkers, ndim = initial_values.shape
 
     # Set up the backend
-    os.chdir(path_datos_global+'/Resultados_cadenas/')
+    os.chdir(save_path)
     backend = emcee.backends.HDFBackend(filename)
     backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
     textfile_witness = open(witness_file,'w+')
@@ -39,7 +40,7 @@ def MCMC_sampler(log_probability, initial_values,
         if sampler.iteration % witness_freq: #'witness_freq' es cada cuanto chequea convergencia
             continue
 
-        os.chdir(path_datos_global+'/Resultados_cadenas/')
+        os.chdir(save_path)
         textfile_witness = open(witness_file,'w')
         textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
 
@@ -59,7 +60,7 @@ def MCMC_sampler(log_probability, initial_values,
         converged &= np.all((np.abs(old_tau - tau) / tau) < tolerance)
         if converged:
             textfile_witness = open(witness_file,'a')
-            textfile_witness.write('Convergió!')
+            textfile_witness.write('\n Convergió!')
             textfile_witness.close()
             break
         old_tau = tau

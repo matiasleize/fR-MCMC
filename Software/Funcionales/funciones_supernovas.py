@@ -6,14 +6,13 @@ Created on Sun Feb  2 13:28:48 2020
 
 import numpy as np
 
-import sys
 import os
-from os.path import join as osjoin
-from pc_path import definir_path
-path_git, path_datos_global = definir_path()
+import git
+path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+path_datos_global = os.path.dirname(path_git)
 
 os.chdir(path_git)
-sys.path.append('./Software/Funcionales/')
+os.sys.path.append('./Software/Funcionales/')
 
 from funciones_int import Hubble_teorico
 from funciones_LambdaCDM import H_LCDM
@@ -118,11 +117,10 @@ if __name__ == '__main__':
     np.random.seed(42)
     from matplotlib import pyplot as plt
 
-    import sys
     import os
-    from os.path import join as osjoin
-    from pc_path import definir_path
-    path_git, path_datos_global = definir_path()
+    import git
+    path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+    path_datos_global = os.path.dirname(path_git)
     os.chdir(path_git)
     sys.path.append('./Software/Funcionales/')
     from funciones_data import leer_data_pantheon_2

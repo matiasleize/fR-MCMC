@@ -9,13 +9,12 @@ import math
 from scipy.constants import c as c_luz #metros/segundos
 c_luz_km = c_luz/1000;
 
-import sys
 import os
-from os.path import join as osjoin
-from pc_path import definir_path
-path_git, path_datos_global = definir_path()
+import git
+path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git)
-sys.path.append('./Software/Funcionales/')
+os.sys.path.append('./Software/Funcionales/')
 from funciones_cambio_parametros import params_fisicos_to_modelo_HS
 
 def z_condicion_inicial(params_fisicos,eps=10**(-10)):

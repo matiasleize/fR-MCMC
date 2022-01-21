@@ -102,14 +102,13 @@ if __name__ == '__main__':
 	import seaborn as sns
 	from matplotlib import pyplot as plt
 	import corner
-	import sys
-	import os
 	import time
 	import pandas as pd
 
-	from pc_path import definir_path
-	path_git, path_datos_global = definir_path()
-	os.chdir(path_git)
+	import os
+	import git
+	path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+	path_datos_global = os.path.dirname(path_git)
 	#%%
 	os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 	with np.load('valores_medios_HS_cronom_2params_taylor.npz') as data:

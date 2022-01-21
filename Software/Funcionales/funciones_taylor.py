@@ -76,11 +76,10 @@ if __name__ == '__main__':
     from matplotlib import pyplot as plt
     #%matplotlib qt5
 
-    import sys
     import os
-    from os.path import join as osjoin
-    from pc_path import definir_path
-    path_git, path_datos_global = definir_path()
+    import git
+    path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+    path_datos_global = os.path.dirname(path_git)
     os.chdir(path_git)
     sys.path.append('./Software/Funcionales/')
     from funciones_LambdaCDM import H_LCDM

@@ -78,11 +78,9 @@ class DataFrame:
 
 #%%
 if __name__ == '__main__':
-	import sys
 	import os
-	from os.path import join as osjoin
-	from pc_path import definir_path
-	path_git, path_datos_global = definir_path()
+	import git
+	path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 
 	#%% Supernovas Nuisence
 	os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
