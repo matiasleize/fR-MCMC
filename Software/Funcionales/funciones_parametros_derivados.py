@@ -27,7 +27,7 @@ def parametros_derivados(sampler,discard, thin,model='EXP'):
 			omega_m_lcdm = flat_samples[i,0]
 			b = flat_samples[i,1]
 			H0_lcdm = flat_samples[i,2]
-			_, Hubble = Hubble_teorico([omega_m_lcdm,b,H0_lcdm], verbose=False, model=model)
+			_, Hubble = Hubble_teorico_1([omega_m_lcdm,b,H0_lcdm], verbose=False, model=model)
 			H0 = Hubble[0]
 			omega_m  = omega_m_lcdm * (H0_lcdm/H0)**2
 
@@ -38,7 +38,7 @@ def parametros_derivados(sampler,discard, thin,model='EXP'):
 			omega_m_lcdm = flat_samples[i,1]
 			b = flat_samples[i,2]
 			H0_lcdm = flat_samples[i,3]
-			_, Hubble = Hubble_teorico([omega_m_lcdm,b,H0_lcdm], verbose=False, model=model)
+			_, Hubble = Hubble_teorico_1([omega_m_lcdm,b,H0_lcdm], verbose=False, model=model)
 			H0 = Hubble[0]
 			omega_m  = omega_m_lcdm * (H0_lcdm/H0)**2
 
