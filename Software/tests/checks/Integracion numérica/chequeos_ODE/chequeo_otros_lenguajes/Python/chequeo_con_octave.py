@@ -28,8 +28,8 @@ path_git, path_datos_global = definir_path()
 
 os.chdir(path_git)
 sys.path.append('./Software/utils')
-from funciones_int import plot_sol
-from funciones_cambio_parametros import params_fisicos_to_modelo
+from int import plot_sol
+from cambio_parametros import params_fisicos_to_modelo
 
 # Importo los datos de Octave H(z) y d_L
 df = pd.read_csv(

@@ -82,7 +82,7 @@ if __name__ == '__main__':
     path_datos_global = os.path.dirname(path_git)
     os.chdir(path_git)
     sys.path.append('./Software/utils/')
-    from funciones_LambdaCDM import H_LCDM
+    from LambdaCDM import H_LCDM
 
     omega_m = 0.24
     b = 0.2

@@ -11,7 +11,7 @@ path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git)
 os.sys.path.append('./Software/utils/')
-from funciones_cambio_parametros import params_fisicos_to_modelo_HS, params_fisicos_to_modelo_ST
+from cambio_parametros import params_fisicos_to_modelo_HS, params_fisicos_to_modelo_ST
 
 
 import sympy as sym
@@ -27,9 +27,9 @@ path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git)
 os.sys.path.append('./Software/utils/')
-from funciones_cambio_parametros import params_fisicos_to_modelo_HS
-from funciones_LambdaCDM import H_LCDM
-from funciones_taylor import Taylor_HS, Taylor_ST
+from cambio_parametros import params_fisicos_to_modelo_HS
+from LambdaCDM import H_LCDM
+from taylor import Taylor_HS, Taylor_ST
 #%%
 def condiciones_iniciales(omega_m, b, z0=30, n=1, model='HS'):
     '''

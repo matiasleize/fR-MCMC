@@ -72,8 +72,8 @@ if __name__ == '__main__':
 
 	os.chdir(path_git)
 	sys.path.append('./Software/utils/')
-	from funciones_data import leer_data_cronometros
-	from funciones_cronometros import params_to_chi2
+	from data import leer_data_cronometros
+	from cronometros import params_to_chi2
 
 	#ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 	#%% Predeterminados:

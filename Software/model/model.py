@@ -17,10 +17,10 @@ path_datos_global = os.path.dirname(path_git)
 
 #Obs: Para importar paquetes la sintaxis de cambio de path es esta
 os.chdir(path_git); os.sys.path.append('./Software/')
-from utils.funciones_sampleo import MCMC_sampler
-from utils.funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
-from utils.funciones_alternativos import log_likelihood
-from utils.funciones_parametros_derivados import parametros_derivados
+from utils.sampleo import MCMC_sampler
+from utils.data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
+from utils.alternativos import log_likelihood
+from utils.parametros_derivados import parametros_derivados
 from config import cfg as config
 os.chdir(path_git); os.sys.path.append('./Software/plotting/')
 import analysis
@@ -156,23 +156,22 @@ def run():
     if not os.path.exists(output_directory):
         os.mkdir(output_directory)
 
-    filename_mv = 'valores_medios_' + model + datasets + '_' + str(num_params) + 'params' + '_borrarr'
+    filename_ml = 'maximun_likelihood' + '_' + model + datasets + '_' + str(num_params) + 'params'
 
     
     # If exist, import mean values of the free parameters. If not, calculate, save and load calculation.
     #os.chdir(path_git+ '/Software' + '/Resultados_simulaciones/')
     os.chdir(output_directory)
-    if (os.path.exists(filename_mv + '.npz') == True):
-        with np.load(filename_mv + '.npz') as data:
+    if (os.path.exists(filename_ml + '.npz') == True):
+        with np.load(filename_ml + '.npz') as data:
             sol = data['sol']
     else:
-        print('No estan calculados los valores medios de los parametros')
+        print('No estan calculados los maximum likelihood parameters')
         initial = np.array(config['GUEST'])
         soln = minimize(nll, initial, options = {'eps': 0.01}, bounds = bnds)
 
-        os.chdir(path_git + '/Software' + output_dir)
-        np.savez(filename_mv, sol=soln.x)
-        with np.load(filename_mv + '.npz') as data:
+        np.savez(filename_ml, sol=soln.x)
+        with np.load(filename_ml + '.npz') as data:
             sol = data['sol']
     print(sol)
 

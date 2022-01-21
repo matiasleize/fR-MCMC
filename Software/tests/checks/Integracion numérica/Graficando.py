@@ -12,7 +12,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from funciones_int import integrador
+from int import integrador
 
 def H_LCDM(z, omega_m, H_0):
     omega_lambda = 1 - omega_m

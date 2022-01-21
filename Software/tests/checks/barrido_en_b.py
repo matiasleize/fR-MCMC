@@ -13,16 +13,16 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from funciones_int import Hubble_teorico
-from funciones_supernovas import magn_aparente_teorica, chi2_supernovas
-from funciones_BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
-from funciones_AGN import zs_2_logDlH0
-from funciones_alternativos import params_to_chi2
+from int import Hubble_teorico
+from supernovas import magn_aparente_teorica, chi2_supernovas
+from BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
+from AGN import zs_2_logDlH0
+from alternativos import params_to_chi2
 from matplotlib import pyplot as plt
 
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
+from data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
 
 # Supernovas
 os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')

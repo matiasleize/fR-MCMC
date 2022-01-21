@@ -8,8 +8,8 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from funciones_int import integrador
-from funciones_taylor import Taylor_HS,Taylor_ST
+from int import integrador
+from taylor import Taylor_HS,Taylor_ST
 
 #%%
 bs=np.linspace(0.01,0.5,500)

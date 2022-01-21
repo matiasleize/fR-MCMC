@@ -13,9 +13,9 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
 
-from funciones_condiciones_iniciales import condiciones_iniciales, z_condicion_inicial
-from funciones_cambio_parametros import params_fisicos_to_modelo_HS
-from funciones_int import integrador
+from condiciones_iniciales import condiciones_iniciales, z_condicion_inicial
+from cambio_parametros import params_fisicos_to_modelo_HS
+from int import integrador
 from matplotlib import pyplot as plt
 
 b = 0.1

@@ -10,7 +10,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from funciones_analisis_cadenas import graficar_cadenas,graficar_contornos,graficar_taus_vs_n
+from analisis_cadenas import graficar_cadenas,graficar_contornos,graficar_taus_vs_n
 #%%
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_HS_SN_4params.npz') as data:

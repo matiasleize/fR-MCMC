@@ -5,7 +5,7 @@ import os
 from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git+'/Software/utils')
-from funciones_parametros_derivados import parametros_derivados
+from parametros_derivados import parametros_derivados
 
 #Rellenar acá:
 model='EXP'

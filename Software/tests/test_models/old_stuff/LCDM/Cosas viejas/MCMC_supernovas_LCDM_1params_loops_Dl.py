@@ -20,8 +20,8 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from funciones_data import leer_data_pantheon
-from funciones_LambdaCDM_1 import params_to_chi2
+from data import leer_data_pantheon
+from LambdaCDM_1 import params_to_chi2
 #%%
 
 os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')

@@ -18,9 +18,9 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from funciones_condiciones_iniciales import condiciones_iniciales
-from funciones_cambio_parametros import params_fisicos_to_modelo
-from funciones_int import dX_dz, integrador
+from condiciones_iniciales import condiciones_iniciales
+from cambio_parametros import params_fisicos_to_modelo
+from int import dX_dz, integrador
 #%%
 def plot_sol(solucion):
     '''Grafica la solución de la ODE de 5x5, por separado

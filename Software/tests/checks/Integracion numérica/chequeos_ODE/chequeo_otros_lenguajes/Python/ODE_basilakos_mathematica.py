@@ -9,7 +9,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from funciones_int import integrador
+from int import integrador
 
 #%%
 b = 0.1

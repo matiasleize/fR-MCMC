@@ -11,9 +11,9 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from funciones_sampleo import MCMC_sampler
-from funciones_alternativos import params_to_chi2
-from funciones_data import leer_data_AGN
+from sampleo import MCMC_sampler
+from alternativos import params_to_chi2
+from data import leer_data_AGN
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,n
 
 #%%

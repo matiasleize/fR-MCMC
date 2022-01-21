@@ -20,8 +20,8 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from funciones_data import leer_data_pantheon_2
-from funciones_supernovas import testeo_supernovas
+from data import leer_data_pantheon_2
+from supernovas import testeo_supernovas
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
 #%% Predeterminados:

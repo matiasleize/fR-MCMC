@@ -10,7 +10,7 @@ import os
 import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 os.chdir(path_git); os.sys.path.append('./Software/utils/')
-from funciones_int_sist_1 import Hubble_teorico_1
+from int_sist_1 import Hubble_teorico_1
 
 
 @jit

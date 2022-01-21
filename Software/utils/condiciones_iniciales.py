@@ -1,5 +1,5 @@
 '''
-Initial conditions for the sctipt "funciones_int.py"
+Initial conditions for the sctipt "int.py"
 '''
 
 import sympy as sym

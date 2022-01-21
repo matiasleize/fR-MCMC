@@ -15,9 +15,9 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git); os.sys.path.append('./Software/utils/')
-#from funciones_int import Hubble_teorico
-from funciones_int_sist_1 import Hubble_teorico_1
-from funciones_LambdaCDM import H_LCDM
+#from int import Hubble_teorico
+from int_sist_1 import Hubble_teorico_1
+from LambdaCDM import H_LCDM
 
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,n
 
@@ -116,7 +116,7 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
 #%%
 if __name__ == '__main__':
     #Data AGN
-    from funciones_data import leer_data_AGN
+    from data import leer_data_AGN
     from matplotlib import pyplot as plt
     os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
     data_agn = leer_data_AGN('table3.dat')

@@ -14,8 +14,8 @@ path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git)
 os.sys.path.append('./Software/utils/')
 
-from funciones_int import Hubble_teorico
-from funciones_LambdaCDM import H_LCDM
+from int import Hubble_teorico
+from LambdaCDM import H_LCDM
 
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.interpolate import interp1d
@@ -123,8 +123,8 @@ if __name__ == '__main__':
     path_datos_global = os.path.dirname(path_git)
     os.chdir(path_git)
     sys.path.append('./Software/utils/')
-    from funciones_data import leer_data_pantheon_2
-    from funciones_data import leer_data_pantheon
+    from data import leer_data_pantheon_2
+    from data import leer_data_pantheon
     #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
 
     #%% Predeterminados:

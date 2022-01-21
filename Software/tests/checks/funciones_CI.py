@@ -15,8 +15,8 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
 
-from funciones_int import integrador
-from funciones_taylor import Taylor_HS, Taylor_ST
+from int import integrador
+from taylor import Taylor_HS, Taylor_ST
 
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.interpolate import interp1d

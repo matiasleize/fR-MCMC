@@ -46,7 +46,7 @@ if __name__ == '__main__':
     path_datos_global = os.path.dirname(path_git)
     os.chdir(path_git)
     sys.path.append('./Software/utils/')
-    from funciones_data import leer_data_BAO,leer_data_AGN
+    from data import leer_data_BAO,leer_data_AGN
 
     #%% BAO
     os.chdir(path_git+'/Software/Estadística/Datos/BAO/')

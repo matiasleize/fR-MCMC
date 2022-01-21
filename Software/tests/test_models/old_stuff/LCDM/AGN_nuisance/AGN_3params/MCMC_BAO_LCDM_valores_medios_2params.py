@@ -20,8 +20,8 @@ path_git, path_datos_global = definir_path()
 
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from funciones_data import leer_data_AGN
-from funciones_LambdaCDM import params_to_chi2_AGN_nuisance
+from data import leer_data_AGN
+from LambdaCDM import params_to_chi2_AGN_nuisance
 
 np.random.seed(1)
 #%%

@@ -11,10 +11,10 @@ path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git); os.sys.path.append('./Software/utils/')
 
-from funciones_condiciones_iniciales import condiciones_iniciales, z_condicion_inicial
-from funciones_cambio_parametros import params_fisicos_to_modelo_HS
-from funciones_LambdaCDM import H_LCDM
-from funciones_taylor import Taylor_HS, Taylor_ST
+from condiciones_iniciales import condiciones_iniciales, z_condicion_inicial
+from cambio_parametros import params_fisicos_to_modelo_HS
+from LambdaCDM import H_LCDM
+from taylor import Taylor_HS, Taylor_ST
 #%%
 
 def dX_dz(x, variables, params_modelo, model='HS'):

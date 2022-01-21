@@ -13,13 +13,13 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 
 os.chdir(path_git); os.sys.path.append('./Software/utils/')
-from funciones_LambdaCDM import H_LCDM
-from funciones_int import Hubble_teorico
-from funciones_int_sist_1 import Hubble_teorico_1
-from funciones_int_sist_2 import Hubble_teorico_2
-from funciones_supernovas import magn_aparente_teorica, chi2_supernovas
-from funciones_BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
-from funciones_AGN import zs_2_logDlH0
+from LambdaCDM import H_LCDM
+from int import Hubble_teorico
+from int_sist_1 import Hubble_teorico_1
+from int_sist_2 import Hubble_teorico_2
+from supernovas import magn_aparente_teorica, chi2_supernovas
+from BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
+from AGN import zs_2_logDlH0
 
 def chi2_sin_cov(teo, data, errores_cuad):
     '''
@@ -226,7 +226,7 @@ if __name__ == '__main__':
 
     path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
     os.chdir(path_git); os.sys.path.append('./Software/utils/')
-    from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
+    from data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
 
     # Supernovas
     os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')

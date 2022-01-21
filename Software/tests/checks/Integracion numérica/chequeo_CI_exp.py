@@ -12,7 +12,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from funciones_cambio_parametros import params_fisicos_to_modelo_HS
+from cambio_parametros import params_fisicos_to_modelo_HS
 #%%
 
 z0 = 30

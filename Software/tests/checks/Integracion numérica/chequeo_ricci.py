@@ -12,8 +12,8 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
 
-from funciones_condiciones_iniciales import condiciones_iniciales
-from funciones_cambio_parametros import params_fisicos_to_modelo_HS, params_fisicos_to_modelo_ST
+from condiciones_iniciales import condiciones_iniciales
+from cambio_parametros import params_fisicos_to_modelo_HS, params_fisicos_to_modelo_ST
 #%%
 
 def dX_dz(z, variables, params_modelo, model='HS'):

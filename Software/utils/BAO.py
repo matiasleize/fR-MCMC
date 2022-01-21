@@ -21,8 +21,8 @@ path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git)
 os.sys.path.append('./Software/utils/')
 
-from funciones_int import Hubble_teorico
-from funciones_LambdaCDM import H_LCDM_rad
+from int import Hubble_teorico
+from LambdaCDM import H_LCDM_rad
 
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,n
 
@@ -121,7 +121,7 @@ if __name__ == '__main__':
     path_datos_global = os.path.dirname(path_git)
     os.chdir(path_git)
     sys.path.append('./Software/utils/')
-    from funciones_data import leer_data_BAO
+    from data import leer_data_BAO
     #%% BAO
     os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
 #    os.chdir(path_git+'/Software/Estadística/Datos/BAO/Datos_sin_nuevos')

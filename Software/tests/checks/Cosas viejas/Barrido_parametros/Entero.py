@@ -15,9 +15,9 @@ sys.path.append('./Software/utils/')
 import numpy as np
 from matplotlib import pyplot as plt
 
-from funciones_int import integrador,magn_aparente_teorica
-from funciones_data import leer_data_pantheon
-from funciones_estadistica import chi_2
+from int import integrador,magn_aparente_teorica
+from data import leer_data_pantheon
+from estadistica import chi_2
 
 #%% Predeterminados:
 H_0 =  73.48

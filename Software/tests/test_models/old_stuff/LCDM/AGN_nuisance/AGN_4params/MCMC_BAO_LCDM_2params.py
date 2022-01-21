@@ -20,8 +20,8 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from funciones_data import leer_data_AGN
-from funciones_AGN import params_to_chi2_AGN_nuisance
+from data import leer_data_AGN
+from AGN import params_to_chi2_AGN_nuisance
 
 os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN/')
 data_agn = leer_data_AGN('table3.dat')
