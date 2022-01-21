@@ -72,6 +72,6 @@ def run(filename):
     textfile_witness.write('{}'.format(config))
 
 if __name__ == "__main__":
-    run('sample_LCDM_SN_2params_borrarr')
+    run('sample_LCDM_SN_2params')
 
 
