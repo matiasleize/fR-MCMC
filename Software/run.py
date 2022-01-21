@@ -1,17 +1,18 @@
+'''
+Run the modules. Module analysis doesn't work from here yet.
+'''
 import click
 import logging
-from test.source.run import main as source_main
-from test.preprocess.run import main as preprocess_main
-from test.model.train_eval import main as train_main
-from test.model.predict import main as predict_main
+from Software.model.model import run as model_main
+from Software.plotting.analysis import run as analysis_main
 
 
 tasks = {
-    "source": source_main,
-    "preprocess": preprocess_main,
-    "train": train_main,
-    "predict": predict_main,
+    "model": model_main,
+    "analysis": analysis_main,
 }
+
+
 logger = logging.getLogger(__name__)
 
 
