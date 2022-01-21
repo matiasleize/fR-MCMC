@@ -1,28 +1,31 @@
 USE_SN: True
-USE_CC: True
+USE_CC: False
 USE_BAO: False
 USE_AGN: False
 USE_H0: False
 
 MODEL: 'LCDM' #Choose between 'LCDM', 'HS' or 'EXP'
 WITNESS_NUM: 15 #Suggestion: (model_number) + (datasets_number) 
-FIXED_PARAMS: 0
-LOG_LIKELIHOOD_INDEX: 32
-NUM_WALKERS: 20
-MAX_SAMPLES: 2000000
-WITNESS_FREQ: 100
+FIXED_PARAMS: [0, 72]
+LOG_LIKELIHOOD_INDEX: 23
+NUM_WALKERS: 12
+MAX_SAMPLES: 100000
+WITNESS_FREQ: 10
 
 #For now only flat priors
-M_PRIOR: [-22, -18]
-OMEGA_M_PRIOR: [0.01, 0.5]
+M_PRIOR: [-20, -18]
+OMEGA_M_PRIOR: [0.2, 0.35]
 B_PRIOR: [0, 1] #Only read if MODEL is 'HS' or 'EXP'
-H0_PRIOR: [60, 80]
+H0_PRIOR: [65, 75]
 
-#For the mean values if needed:
-GUEST: [-19.352, 0.22, 70.87]
-BOUNDS: [[-25, -18], [0.1, 0.5], [64, 80]]
+#For the mean values if needed: 
+#(Cuidar que estos elementos tengan la misma longitud que el numero de free params)
+GUEST: [-19.352, 0.22]
+BOUNDS: [[-25, -18], [0.1, 0.5]]
 
 ALL_ANALYTIC: False
+
+OUTPUT_DIR: '/Resultados_cadenas/'
 
 #Other things that are not in use:
 #DATA_PATH: './data'
