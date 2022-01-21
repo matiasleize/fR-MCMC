@@ -1,5 +1,5 @@
 '''
-Main file. Run with: python3 -m Software --task model
+Main file. Run with: python3 -m Software --task mcmc
 '''
 
 from Software.run import main_cli

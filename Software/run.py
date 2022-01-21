@@ -3,12 +3,12 @@ Run the modules. Module analysis doesn't work from here yet.
 '''
 import click
 import logging
-from Software.model.model import run as model_main
+from Software.mcmc.mcmc import run as mcmc_main
 from Software.plotting.analysis import run as analysis_main
 
 
 tasks = {
-    "model": model_main,
+    "mcmc": mcmc_main,
     "analysis": analysis_main,
 }
 
