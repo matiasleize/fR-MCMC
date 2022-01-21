@@ -17,10 +17,10 @@ path_datos_global = os.path.dirname(path_git)
 
 #Obs: Para importar paquetes la sintaxis de cambio de path es esta
 os.chdir(path_git); os.sys.path.append('./Software/')
-from Funcionales.funciones_sampleo import MCMC_sampler
-from Funcionales.funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
-from Funcionales.funciones_alternativos import log_likelihood
-from Funcionales.funciones_parametros_derivados import parametros_derivados
+from utils.funciones_sampleo import MCMC_sampler
+from utils.funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
+from utils.funciones_alternativos import log_likelihood
+from utils.funciones_parametros_derivados import parametros_derivados
 from config import cfg as config
 os.chdir(path_git); os.sys.path.append('./Software/plotting/')
 import analysis
