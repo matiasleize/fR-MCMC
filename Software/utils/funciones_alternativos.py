@@ -12,7 +12,7 @@ import os
 import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 
-os.chdir(path_git); os.sys.path.append('./Software/Funcionales/')
+os.chdir(path_git); os.sys.path.append('./Software/utils/')
 from funciones_LambdaCDM import H_LCDM
 from funciones_int import Hubble_teorico
 from funciones_int_sist_1 import Hubble_teorico_1
@@ -225,7 +225,7 @@ if __name__ == '__main__':
     from matplotlib import pyplot as plt
 
     path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
-    os.chdir(path_git); os.sys.path.append('./Software/Funcionales/')
+    os.chdir(path_git); os.sys.path.append('./Software/utils/')
     from funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
 
     # Supernovas

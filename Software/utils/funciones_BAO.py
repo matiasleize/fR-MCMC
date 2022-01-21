@@ -19,7 +19,7 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git)
-os.sys.path.append('./Software/Funcionales/')
+os.sys.path.append('./Software/utils/')
 
 from funciones_int import Hubble_teorico
 from funciones_LambdaCDM import H_LCDM_rad
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
     path_datos_global = os.path.dirname(path_git)
     os.chdir(path_git)
-    sys.path.append('./Software/Funcionales/')
+    sys.path.append('./Software/utils/')
     from funciones_data import leer_data_BAO
     #%% BAO
     os.chdir(path_git+'/Software/Estadística/Datos/BAO/')

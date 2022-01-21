@@ -10,7 +10,7 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git)
-os.sys.path.append('./Software/Funcionales/')
+os.sys.path.append('./Software/utils/')
 
 from funciones_condiciones_iniciales_1 import condiciones_iniciales, z_condicion_inicial
 from funciones_cambio_parametros import params_fisicos_to_modelo_HS
