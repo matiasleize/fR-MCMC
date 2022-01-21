@@ -13,24 +13,21 @@ from scipy.optimize import minimize
 import os
 import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+path_datos_global = os.path.dirname(path_git)
 
+#Obs: Para importar paquetes la sintaxis de cambio de path es esta
 os.chdir(path_git); os.sys.path.append('./Software/')
 from Funcionales.funciones_sampleo import MCMC_sampler
 from Funcionales.funciones_data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
 from Funcionales.funciones_alternativos import log_likelihood
 from Funcionales.funciones_parametros_derivados import parametros_derivados
-from config import cfg # Still is not implemented in this script
+from config import cfg as config
+os.chdir(path_git); os.sys.path.append('./Software/plotting/')
+import analysis
 
 os.chdir(path_git + '/Software/model/')
-import click #Allows to run with different configuration files
-@click.command()
-@click.argument("config_path")
-def run(config_path='./config.yml'):
-    # Read in yaml file
-    with open(config_path, 'r') as ymlfile:
-        config = yaml.safe_load(ymlfile)
-    #print(config)
-
+def run():
+    output_dir = config['OUTPUT_DIR']
     model = config['MODEL']
     params_fijos = config['FIXED_PARAMS'] #Fixed parameters
     index = config['LOG_LIKELIHOOD_INDEX']
@@ -94,7 +91,6 @@ def run(config_path='./config.yml'):
         H0_Riess = False
 
     datasets = str(''.join(datasets))
-
     #%% Define the log-likelihood distribution
     ll = lambda theta: log_likelihood(theta, params_fijos, 
                                         index=index,
@@ -135,6 +131,11 @@ def run(config_path='./config.yml'):
             omega_m, H0 = theta
             if (omega_m_min < omega_m < omega_m_max and H0_min < H0 < H0_max):
                 return 0.0
+        elif index == 23:
+            M, omega_m = theta
+            if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max):
+                return 0.0
+
         elif index == 1:
             omega_m = theta
             if omega_m_min < omega_m < omega_m_max:
@@ -148,10 +149,19 @@ def run(config_path='./config.yml'):
             return -np.inf
         return lp + ll(theta)
 
+
+    filename = 'sample_' + model + datasets + '_' + str(num_params) + 'params' + '_borrarr' 
+    output_directory = path_datos_global + output_dir + filename
+
+    if not os.path.exists(output_directory):
+        os.mkdir(output_directory)
+
     filename_mv = 'valores_medios_' + model + datasets + '_' + str(num_params) + 'params' + '_borrarr'
 
+    
     # If exist, import mean values of the free parameters. If not, calculate, save and load calculation.
-    os.chdir(path_git+'/Software/Resultados_simulaciones/')
+    #os.chdir(path_git+ '/Software' + '/Resultados_simulaciones/')
+    os.chdir(output_directory)
     if (os.path.exists(filename_mv + '.npz') == True):
         with np.load(filename_mv + '.npz') as data:
             sol = data['sol']
@@ -160,7 +170,7 @@ def run(config_path='./config.yml'):
         initial = np.array(config['GUEST'])
         soln = minimize(nll, initial, options = {'eps': 0.01}, bounds = bnds)
 
-        os.chdir(path_git + '/Software/Resultados_simulaciones')
+        os.chdir(path_git + '/Software' + output_dir)
         np.savez(filename_mv, sol=soln.x)
         with np.load(filename_mv + '.npz') as data:
             sol = data['sol']
@@ -170,21 +180,21 @@ def run(config_path='./config.yml'):
     #%% Define initial values of each chain using the minimun 
     # values of the chisquare.
     pos = sol * (1 +  0.01 * np.random.randn(config['NUM_WALKERS'], num_params))
+
     
-    filename = 'sample_' + model + datasets + '_' + str(num_params) + 'params' + '_borrarr' 
     filename_h5 = filename + '.h5'
-    
-    MCMC_sampler(log_probability,pos,
+
+    MCMC_sampler(log_probability,pos, 
                 filename = filename_h5,
                 witness_file = 'witness_' + str(config['WITNESS_NUM']) + '.txt',
                 witness_freq = config['WITNESS_FREQ'],
-                max_samples = config['MAX_SAMPLES'])
+                max_samples = config['MAX_SAMPLES'],
+                save_path = output_directory)
 
     #%% If it corresponds, derive physical parameters
     #Fill in here:
     if model != 'LCDM':
-        root_directory=path_datos_global+'/Resultados_cadenas/'
-        os.chdir(root_directory)
+        os.chdir(output_directory)
         reader = emcee.backends.HDFBackend(filename_h5)
         nwalkers, ndim = reader.shape #Number of walkers and parameters
 
@@ -202,6 +212,9 @@ def run(config_path='./config.yml'):
         #%% Print the output
         with np.load(filename+'_deriv.npz') as data:
             ns = data['new_samples']
+
+    # Plot data
+    analysis.run(filename)
 
 
 if __name__ == "__main__":
