@@ -25,7 +25,7 @@ from config import cfg as config
 os.chdir(path_git); os.sys.path.append('./Software/plotting/')
 import analysis
 
-os.chdir(path_git + '/Software/model/')
+os.chdir(path_git + '/Software/mcmc/')
 def run():
     output_dir = config['OUTPUT_DIR']
     model = config['MODEL']
