@@ -2,7 +2,7 @@ import numpy as np
 from numpy.linalg import inv
 import numpy.ma as ma
 
-def leer_data_pantheon(archivo_pantheon,masked=False,min_z = 0,max_z = 30):
+def leer_data_pantheon(archivo_pantheon, masked = False, min_z = 0, max_z = 30):
 
     '''Toma la data de Pantheon y extrae la data de los redshifts zcmb y zhel
     su error dz, además de los datos de la magnitud aparente con su error:
