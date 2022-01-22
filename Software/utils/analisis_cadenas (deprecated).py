@@ -1,7 +1,6 @@
 """
-Created on Sun Feb  2 13:28:48 2020
-
-@author: matias
+(DEPRECATED)
+Funciones que grafican y realizan otras operaciones sobre las cadenas.
 """
 
 import numpy as np
