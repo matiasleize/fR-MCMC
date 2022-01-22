@@ -56,7 +56,7 @@ def run(filename):
     if not os.path.exists(output_path + results_dir):
             os.mkdir(output_path + results_dir)
  
-    analisis.graficar_contornos(discard=burnin, thin=thin, poster=False, color='r')
+    analisis.graficar_contornos(discard=burnin, thin=thin)
     plt.savefig(output_path + results_dir + '/cornerplot.png')
     plt.close()
 
