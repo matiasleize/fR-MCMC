@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from getdist import plots, MCSamples
 import time
 import emcee
 import corner
@@ -72,58 +73,33 @@ class Graficador:
 			fig.suptitle(self.title);
 
 
-	def graficar_contornos(self, discard,
-							thin, poster=False,
-							color='b', nuisance_only=False):
+	def graficar_contornos(self, discard=0, thin=1, color='b'):
 		'''
 		Grafica los cornerplots para los parámetros a partir de las cadenas
 		de Markov. En la diagonal aparecen las  distribuciones de probabilidad
 		 proyectadas para cada parámetro, y fuera de la diagonal los contornos
 		 de confianza 2D.
 
-		 Poster: If True, hace los graficos sin relleno y solo plotea los
-		 		contornos a 98% CL.
-				If False, Realiza los contornos de confianza utilizando la
-				libreria corner, que es mas rapido pero es más feo.
-
+		 FALTA: poder cambiar color del plot y darle un label a los plots
 		 '''
 		if isinstance(self.sampler, np.ndarray)==True: #Es una cadenas procesada
 			flat_samples = self.sampler
 		else:
 			flat_samples = self.sampler.get_chain(discard=discard, flat=True, thin=thin)
+		
+		names = [i.replace('$','') for i in self.labels]; 
+		ndim = len(self.labels)
+		samples1 = MCSamples(samples=flat_samples, names=names, labels=names)
+		samples1 = samples1.copy(label=r'Lowest-order with $0.3\sigma$ smoothing',
+					settings={'mult_bias_correction_order':0,'smooth_scale_2D':0.3,
+					'smooth_scale_1D':0.3})
 
-		params_truths = np.zeros(len(flat_samples[0,:]))
-		for i in range(len(params_truths)):
-			params_truths[i] = np.mean(flat_samples[:,i])
-
-		if nuisance_only==True:
-			flat_samples=flat_samples[:,3:] #Solo para el grafico de nuisance only!
-
-		if poster==True:
-			viz_dict = {
-	    	#'axes.titlesize':5,
-			#'font.size':36,
-	    	'axes.labelsize':26,
-			'xtick.labelsize':15,
-			'ytick.labelsize':15,
-			}
-			df = pd.DataFrame(flat_samples,columns=self.labels)
-			sns.set(style='darkgrid', palette="muted", color_codes=True)
-			sns.set_context("paper", font_scale=3, rc=viz_dict)#{"font.size":15,"axes.labelsize":17})
-
-			g = sns.PairGrid(df, diag_sharey=False, corner=True)
-			g.map_diag(sns.kdeplot, lw=2, fill=False,color=color)#,bw=b_w)
-			g.map_lower(sns.kdeplot,levels=[1-0.95,1-0.68,1],fill=True,color=color)
-			g.fig.set_size_inches(8,8)
-			if not self.title==None:
-				# Access the Figure
-				g.fig.suptitle(self.title, fontsize=20)
-		else:
-			#print(flat_samples.shape)
-			fig = corner.corner(flat_samples, labels=self.labels, truths=params_truths,
-				 plot_datapoints=False,quantiles=(0.16, 0.84));
-			if not self.title==None:
-				fig.suptitle(self.title);
+		g = plots.get_subplot_plotter()
+		g.triangle_plot(samples1,
+						filled=True, params=names,
+						#contour_colors=color,
+						contour_lws=1,
+						legend_labels='')
 
 
 	def reportar_intervalos(self, discard, thin, save_path, hdi=True):
