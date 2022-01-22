@@ -2,12 +2,10 @@
 Basado en la entrada: https://medium.com/bcggamma/data-science-python-best-practices-fdb16fdedf82
 
 ## Ideas del backend
-Aca si vamos a trabajar en un futuro con clases y esas cosas. En esta parte solo nos enfocamos en la experiencia del usuario. Mismo podemos hacer varias versiones del model.py si precisamos alguna modificacion temporal, ademas de tener varios config.yml. Quiza en el futuro moverlos a la carpeta configs del repositorio. 
+Aca si vamos a trabajar en un futuro con clases y esas cosas. En esta parte solo nos enfocamos en la experiencia del usuario. Mismo podemos hacer varias versiones del model.py si precisamos alguna modificacion temporal, ademas de tener varios config.yml.
 
 ### Distribucion de directorios
 tesis_licenciatura/Software --> supermodel/supermodel
-tesis_licenciatura/Software/model/model --> supermodel/supermodel/mcmc/mcmc
-
 
 supermodel/supermodel/tests/: aca poner todo lo que esta en la seccion "Unit test a lot" 
 (El resto de los directorios que aparecen en la página no creo que sean necesarios)
@@ -19,4 +17,9 @@ Volver a poner el archivo de texto que cambia directamente el environment, quiza
 
 Agregar al environment.yml PythonBox, seaborn, getdist (y quiza alguna cosa mas)
 
-Poner la opcion seaborn o getdist en la parte de graficar datos. Cambiar mv (mean_values) a lm (likelihood maximun)
+Hacer una carpeta con el posprocesado?  Seria raro xq en el main la llamarias solo si hay LCDM. Quiza en
+el modulo posprocesado poner un if que si es LCDM hacer "pass".
+
+Quiza pasar todos los datos a formato df de pandas.
+
+Preguntar que es ancillary_g10.txt
