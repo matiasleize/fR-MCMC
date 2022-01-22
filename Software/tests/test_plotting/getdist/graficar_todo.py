@@ -77,3 +77,34 @@ g.triangle_plot([samples1, samples2, samples3, samples4],
                 legend_labels = ['CC+SN', 'CC+SN+AGN', 'CC+SN+BAO','CC+SN+BAO+AGN'])
 
 plt.savefig('/home/matias/Desktop/contornos_LCDM.png')
+
+
+#%% Importo las cadenas
+def graficar_contornos(self, discard=0, thin=1, color='b'):
+    
+    if model == LCDM:
+        filename_1 = "sample_LCDM_CC+SN_4params.h5"
+        reader_1 = emcee.backends.HDFBackend(filename_1)
+        samples_1 = reader_1.get_chain()
+        samples = reader_1.get_chain(flat=True, discard=discard, thin=thin)
+
+    else:
+        with np.load('sample_HS_CC+SN_4params_deriv.npz') as data:
+            samples = data['new_samples']
+
+    #ndim = 3
+    #names = ['M_{abs}','\Omega_{m}', 'H_{0}']
+    #labels = names
+    ndim = len(self.labels)
+    samples1 = MCSamples(samples=self.samples, names=self.labels, labels=self.labels)
+    samples1 = samples1.copy(label=r'Lowest-order with $0.3\sigma$ smoothing',
+                settings={'mult_bias_correction_order':0,'smooth_scale_2D':0.3,
+                'smooth_scale_1D':0.3})
+
+    g = plots.get_subplot_plotter()
+    g.triangle_plot(samples1,
+                    filled=True, params=self.labels,
+                    contour_colors=color,
+                    contour_lws=1,
+                    legend_labels='CC+SN+AGN')
+
