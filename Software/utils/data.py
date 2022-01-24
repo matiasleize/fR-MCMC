@@ -25,7 +25,7 @@ def leer_data_pantheon(archivo_pantheon, masked = False, min_z = 0, max_z = 30):
     Ccov=Csys+Dstat
 
 
-    if masked == True: #OJO ESTABA MAL: SE TIENE QUE RESHAPEAR CCOV Y LUEGO INVERTIR.
+    if masked == True:
         mask = ma.masked_where((zcmb <= max_z) & ((zcmb >= min_z)) , zcmb).mask
         mask_1 = mask[np.newaxis, :] & mask[:, np.newaxis]
 
