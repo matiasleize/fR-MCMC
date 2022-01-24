@@ -1,3 +1,8 @@
+'''
+Otra forma de hacer la integracion numerica. Parametrizacion dada por Augusto. Hay definiciones
+como las de alfa y Rhs que no me cierran, consultarlo.
+'''
+
 import time
 import numpy as np
 from scipy.integrate import solve_ivp
