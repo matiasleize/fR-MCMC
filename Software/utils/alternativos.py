@@ -13,10 +13,7 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 
 os.chdir(path_git); os.sys.path.append('./Software/utils/')
-from LambdaCDM import H_LCDM
-from int import Hubble_teorico
 from int_sist_1 import Hubble_teorico_1
-from int_sist_2 import Hubble_teorico_2
 from supernovas import magn_aparente_teorica, chi2_supernovas
 from BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
 from AGN import zs_2_logDlH0
@@ -86,7 +83,7 @@ def params_to_chi2(theta, params_fijos, index=0,
                     dataset_BAO=None, dataset_AGN=None, H0_Riess=False,
                     cantidad_zs=int(10**5), model='HS',n=1,
                     nuisance_2 = False, errores_agrandados=False,
-                    integrador=1, all_analytic=False):
+                    all_analytic=False):
     '''
     Given the free parameters of the model, return chi square for the data.
     
@@ -105,10 +102,7 @@ def params_to_chi2(theta, params_fijos, index=0,
     n (int): (1, 2)
     nuisance_2 (bool):
     errores_agrandados (bool):
-    integrador (bool):
     all_analytic (bool):
-    
-    
     '''
 
     chi2_SN = 0
@@ -120,21 +114,9 @@ def params_to_chi2(theta, params_fijos, index=0,
     [Mabs, omega_m, b, H_0] = all_parameters(theta, params_fijos, index)
 
     params_fisicos = [omega_m,b,H_0]
-    if integrador==0:
-        zs_modelo, Hs_modelo = Hubble_teorico(params_fisicos, n=n, model=model,
-                                    z_min=0, z_max=10, cantidad_zs=cantidad_zs,
-                                    all_analytic=all_analytic)
-
-    elif integrador==1:
-        zs_modelo, Hs_modelo = Hubble_teorico_1(params_fisicos, n=n, model=model,
-                                    z_min=0, z_max=10, cantidad_zs=cantidad_zs,
-                                    all_analytic=all_analytic)
-
-    elif integrador==2:
-        zs_modelo, Hs_modelo = Hubble_teorico_2(params_fisicos, n=n, model=model,
-                                    z_min=0, z_max=10, cantidad_zs=cantidad_zs,
-                                    all_analytic=all_analytic)
-
+    zs_modelo, Hs_modelo = Hubble_teorico_1(params_fisicos, n=n, model=model,
+                                z_min=0, z_max=10, cantidad_zs=cantidad_zs,
+                                all_analytic=all_analytic)
 
     if (dataset_CC != None or dataset_BAO != None or dataset_AGN != None):
         Hs_interpolado = interp1d(zs_modelo, Hs_modelo)
@@ -143,9 +125,7 @@ def params_to_chi2(theta, params_fijos, index=0,
         int_inv_Hs = cumtrapz(Hs_modelo**(-1), zs_modelo, initial=0)
         int_inv_Hs_interpolado = interp1d(zs_modelo, int_inv_Hs)
 
-
     if dataset_SN != None:
-
         zcmb, zhel, Cinv, mb = dataset_SN #Import the data
         muth = magn_aparente_teorica(int_inv_Hs_interpolado, zcmb, zhel)
         muobs =  mb - Mabs
@@ -218,6 +198,7 @@ def log_likelihood(*args, **kargs):
     '''
     Return the log likelihood in terms of the chi square.
     '''
+
     return -0.5 * params_to_chi2(*args, **kargs)
 
 #%%
@@ -229,15 +210,15 @@ if __name__ == '__main__':
     from data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
 
     # Supernovas
-    os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
+    os.chdir(path_git+'/Software/source/Pantheon/')
     ds_SN = leer_data_pantheon('lcparam_full_long_zhel.txt')
 
     # Cronómetros
-    os.chdir(path_git+'/Software/Estadística/Datos/')
+    os.chdir(path_git+'/Software/source/CC/')
     ds_CC = leer_data_cronometros('datos_cronometros.txt')
 
     # BAO
-    os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
+    os.chdir(path_git+'/Software/source/BAO/')
     ds_BAO = []
     archivos_BAO = ['datos_BAO_da.txt','datos_BAO_dh.txt','datos_BAO_dm.txt',
                     'datos_BAO_dv.txt','datos_BAO_H.txt']
@@ -246,7 +227,7 @@ if __name__ == '__main__':
         ds_BAO.append(aux)
 
     # AGN
-    os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
+    os.chdir(path_git+'/Software/source/AGN')
     ds_AGN = leer_data_AGN('table3.dat')
 
 
@@ -292,11 +273,7 @@ if __name__ == '__main__':
                         model = 'HS'
                         )
         print(i)
-    #b = 5 #1296.0757648437618
-    #b = 2 #1655.1381848068963
-    #b = 1 #1086.2319745225054
-    #b = 0.5 #1128.9476844983917
-    #b = 0.1 #1133.0048315820693
+
         plt.figure()
         plt.title('CC+H0')
         plt.ylabel(r'$\chi^2$')
@@ -317,7 +294,7 @@ if __name__ == '__main__':
     chis_6 = np.zeros(len(bs))
     for (i,b) in enumerate(bs):
         #print(i,b)
-        chis_1[i] = params_to_chi2([-19.41, 0.352, b, 62], _, index=4,
+        chis_1[i] = params_to_chi2([-19.41, 0.352, b, 62], 0, index=4,
                     dataset_SN = ds_SN,
                     dataset_CC = ds_CC,
                     dataset_BAO = ds_BAO,
@@ -325,7 +302,7 @@ if __name__ == '__main__':
                     #H0_Riess = True,
                     model = 'EXP'
                     )
-        chis_2[i] = params_to_chi2([-19.41, 0.352, b, 63], _, index=4,
+        chis_2[i] = params_to_chi2([-19.41, 0.352, b, 63], 0, index=4,
                     dataset_SN = ds_SN,
                     dataset_CC = ds_CC,
                     dataset_BAO = ds_BAO,
@@ -334,7 +311,7 @@ if __name__ == '__main__':
                     model = 'EXP'
                     )
 
-        chis_3[i] = params_to_chi2([-19.41, 0.352, b, 64], _, index=4,
+        chis_3[i] = params_to_chi2([-19.41, 0.352, b, 64], 0, index=4,
                     dataset_SN = ds_SN,
                     dataset_CC = ds_CC,
                     dataset_BAO = ds_BAO,
@@ -342,7 +319,7 @@ if __name__ == '__main__':
                     #H0_Riess = True,
                     model = 'EXP'
                     )
-        chis_4[i] = params_to_chi2([-19.41, 0.352, b, 65], _, index=4,
+        chis_4[i] = params_to_chi2([-19.41, 0.352, b, 65], 0, index=4,
                     dataset_SN = ds_SN,
                     dataset_CC = ds_CC,
                     dataset_BAO = ds_BAO,
@@ -350,7 +327,7 @@ if __name__ == '__main__':
                     #H0_Riess = True,
                     model = 'EXP'
                     )
-        chis_5[i] = params_to_chi2([-19.41, 0.352, b, 66], _, index=4,
+        chis_5[i] = params_to_chi2([-19.41, 0.352, b, 66], 0, index=4,
                     dataset_SN = ds_SN,
                     dataset_CC = ds_CC,
                     dataset_BAO = ds_BAO,
@@ -358,7 +335,7 @@ if __name__ == '__main__':
                     #H0_Riess = True,
                     model = 'EXP'
                     )
-        chis_6[i] = params_to_chi2([-19.41, 0.352, b, 67], _, index=4,
+        chis_6[i] = params_to_chi2([-19.41, 0.352, b, 67], 0, index=4,
                     dataset_SN = ds_SN,
                     dataset_CC = ds_CC,
                     dataset_BAO = ds_BAO,
