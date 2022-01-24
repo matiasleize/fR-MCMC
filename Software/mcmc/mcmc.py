@@ -27,28 +27,28 @@ import analysis
 
 os.chdir(path_git + '/Software/mcmc/')
 def run():
-    output_dir = config['OUTPUT_DIR']
-    model = config['MODEL']
-    params_fijos = config['FIXED_PARAMS'] # Fixed parameters
-    index = config['LOG_LIKELIHOOD_INDEX']
+    output_dir = config.OUTPUT_DIR
+    model = config.MODEL
+    params_fijos = config.FIXED_PARAMS # Fixed parameters
+    index = config.LOG_LIKELIHOOD_INDEX
     num_params = int(str(index)[0])
-    all_analytic = config['ALL_ANALYTIC']
+    all_analytic = config.ALL_ANALYTIC
 
-    witness_file = 'witness_' + str(config['WITNESS_NUM']) + '.txt'
+    witness_file = 'witness_' + str(config.WITNESS_NUM) + '.txt'
     
-    bnds = config['BOUNDS']
-    [M_min, M_max] = config['M_PRIOR']
-    [omega_m_min, omega_m_max] = config['OMEGA_M_PRIOR']
+    bnds = config.BOUNDS
+    [M_min, M_max] = config.M_PRIOR
+    [omega_m_min, omega_m_max] = config.OMEGA_M_PRIOR
     if model != 'LCDM':
-        [b_min, b_max] = config['B_PRIOR']
-    [H0_min, H0_max] = config['H0_PRIOR']
+        [b_min, b_max] = config.B_PRIOR
+    [H0_min, H0_max] = config.H0_PRIOR
 
     #%% Import cosmological data
     path_data = path_git + '/Software/source/'
     datasets = []
 
     # Supernovae type IA
-    if config['USE_SN'] == True:
+    if config.USE_SN == True:
         os.chdir(path_data + 'Pantheon/')
         ds_SN = leer_data_pantheon('lcparam_full_long_zhel.txt')
         datasets.append('_SN')
@@ -56,7 +56,7 @@ def run():
         ds_SN = None
 
     # Cosmic Chronometers
-    if config['USE_CC'] == True:
+    if config.USE_CC == True:
         os.chdir(path_data + 'CC/')
         ds_CC = leer_data_cronometros('datos_cronometros.txt')
         datasets.append('_CC')
@@ -64,7 +64,7 @@ def run():
         ds_CC = None
 
     # BAO
-    if config['USE_BAO'] == True:    
+    if config.USE_BAO == True:    
         os.chdir(path_data + 'BAO/')
         ds_BAO = []
         archivos_BAO = ['datos_BAO_da.txt','datos_BAO_dh.txt','datos_BAO_dm.txt',
@@ -78,7 +78,7 @@ def run():
 
 
     # AGN
-    if config['USE_AGN'] == True:
+    if config.USE_AGN == True:
         os.chdir(path_data + 'AGN/')
         ds_AGN = leer_data_AGN('table3.dat')
         datasets.append('_AGN')
@@ -86,8 +86,8 @@ def run():
         ds_AGN = None
 
     # Riess H0
-    if config['USE_H0'] == True:
-        H0_Riess = config['USE_H0']
+    if config.USE_H0 == True:
+        H0_Riess = config.USE_H0
         datasets.append('_H0')
     else:
         H0_Riess = False
@@ -169,18 +169,18 @@ def run():
             sol = data['sol']
     else:
         print('Calculating maximum likelihood parameters ..')
-        initial = np.array(config['GUEST'])
+        initial = np.array(config.GUEST)
         soln = minimize(nll, initial, options = {'eps': 0.01}, bounds = bnds)
 
         np.savez(filename_ml, sol=soln.x)
         with np.load(filename_ml + '.npz') as data:
             sol = data['sol']
-    print(sol)
+    print('Maximun likelihood corresponds to the parameters: {}'.format(sol))
 
 
     # Define initial values of each chain using the minimun 
     # values of the chisquare.
-    pos = sol * (1 +  0.01 * np.random.randn(config['NUM_WALKERS'], num_params))
+    pos = sol * (1 +  0.01 * np.random.randn(config.NUM_WALKERS, num_params))
 
     
     filename_h5 = filename + '.h5'
@@ -188,8 +188,8 @@ def run():
     MCMC_sampler(log_probability,pos, 
                 filename = filename_h5,
                 witness_file = witness_file,
-                witness_freq = config['WITNESS_FREQ'],
-                max_samples = config['MAX_SAMPLES'],
+                witness_freq = config.WITNESS_FREQ,
+                max_samples = config.MAX_SAMPLES,
                 save_path = output_directory)
 
     # If it corresponds, derive physical parameters
