@@ -7,33 +7,17 @@ c_luz_km = c_luz/1000
 
 # Parameters order: omega_m, b, H_0, n
 
-def params_fisicos_to_modelo_HS(omega_m, b, n=1):
+def params_fisicos_to_modelo_HS(omega_m, b):
     '''
     Convert physical parameters (omega_m, b)
     into Hu-Sawicki model parameters c1 y c2. This transformation doesn't depend on H0!
     '''
 
     aux = c_luz_km**2 * omega_m / (7800 * (8315)**2 * (1-omega_m)) #B en la tesis
-    if n==1:
-        c_1 =  2/b
-        c_2 = 2*aux/b
+    c_1 =  2/b
+    c_2 = 2*aux/b
 
-    else:
-        c_2 =  (2*aux/b) ** n
-        c_1 =  c_2/aux
     return c_1, c_2
-
-def params_fisicos_to_modelo_ST(omega_m, b, H0):
-    '''
-    Convert physical parameters (omega_m, b, H0)
-    into Starobinsky model parameters (Lambda, Rs). This transformation doesn't depend on n!
-    '''
-
-    Lambda = 3 * (H0/c_luz_km)**2 * (1-omega_m) #Cosmological constant
-    lamb = 2/b
-    Rs = Lambda * b
-    return lamb, Rs
-
 
 #%%
 if __name__ == '__main__':
@@ -52,7 +36,3 @@ if __name__ == '__main__':
     #%% aux es B en la tesis
     aux = c_luz_km**2 * omega_m_true / (7800 * (8315)**2 * (1-omega_m_true)) 
     print(aux)
-
-    ## Starobinsky
-    lamb,Rs = params_fisicos_to_modelo_ST(omega_m_true, b_true, H_0)
-    print(lamb,Rs)
