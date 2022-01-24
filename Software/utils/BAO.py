@@ -20,8 +20,6 @@ path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git)
 os.sys.path.append('./Software/utils/')
-
-from int import Hubble_teorico
 from LambdaCDM import H_LCDM_rad
 
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,n

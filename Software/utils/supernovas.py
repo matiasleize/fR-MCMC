@@ -14,7 +14,6 @@ path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git)
 os.sys.path.append('./Software/utils/')
 
-from int import Hubble_teorico
 from LambdaCDM import H_LCDM
 
 from scipy.integrate import cumtrapz as cumtrapz
