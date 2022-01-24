@@ -33,12 +33,12 @@ def parameters_labels(index):
         return ['$\Omega_{m}$'] #list or str?
 
 def run(filename):
-    model = config['MODEL']
-    output_dir = config['OUTPUT_DIR']
+    model = config.MODEL
+    output_dir = config.OUTPUT_DIR
     output_path = path_datos_global + output_dir + filename
     os.chdir(output_path)
 
-    parameters_label = parameters_labels(config['LOG_LIKELIHOOD_INDEX'])
+    parameters_label = parameters_labels(config.LOG_LIKELIHOOD_INDEX)
     if model == 'LCDM':
         reader = emcee.backends.HDFBackend(filename + '.h5')
         samples = reader.get_chain()
