@@ -1,3 +1,8 @@
+'''
+Funtions that are used to plot Markov chains, corner plots and the report of intervals.
+'''
+
+
 import numpy as np; #np.random.seed(42)
 import emcee
 from matplotlib import pyplot as plt

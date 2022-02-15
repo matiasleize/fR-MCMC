@@ -1,8 +1,7 @@
 '''
-Run the MCMC analyses and the calculation of the physical parameters \Omega_{m} and H_{0}.
-For now it only runs for 4 parameters on HS and EXP models and for 3 parameters on the LCDM model.
+Run MCMC analyses and calculations of the physical parameters \Omega_{m} and H_{0}.
 
-Parameters order on this file: Mabs,omega_m,b,H_0,n
+Parameter order in this file: Mabs,omega_m,b,H_0,n
 '''
 
 import numpy as np; #np.random.seed(42)

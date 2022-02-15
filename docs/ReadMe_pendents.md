@@ -17,8 +17,7 @@ Volver a poner el archivo de texto que cambia directamente el environment, quiza
 
 Agregar al environment.yml PythonBox, seaborn, getdist (y quiza alguna cosa mas)
 
-Hacer una carpeta con el posprocesado?  Seria raro xq en el main la llamarias solo si hay LCDM. Quiza en
-el modulo posprocesado poner un if que si es LCDM hacer "pass".
+Hacer una carpeta con el posprocesado?  Seria raro xq en el main la llamarias solo si hay LCDM. Quiza en el modulo posprocesado poner un if que si es LCDM hacer "pass".
 
 Quiza pasar todos los datos a formato df de pandas.
 

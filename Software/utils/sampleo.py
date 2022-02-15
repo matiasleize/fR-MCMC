@@ -1,3 +1,7 @@
+'''
+Define the function related with the Markov Chain Monter Carlo (MCMC) process.
+'''
+
 import numpy as np
 import emcee
 import time
@@ -14,7 +18,25 @@ def MCMC_sampler(log_probability, initial_values,
                 witness_freq = 100,
                 tolerance = 0.01,
                 save_path = path_datos_global+'/Resultados_cadenas/'):
-
+	'''
+	log_probability: logarithm of the posterior distribution that will be sampled.
+	
+	initial_values: object that contains the initial value of the parameters to sample
+	
+	filename: name of the h5 file that contains the chains information.
+	
+	witness_file: name of the witness file.
+	
+	max_samples: maximun number of sample, if the chains not converge.
+	
+	witness_freq: frequency use to print the state of the calculation in the witness file.
+	
+	tolerance: tolerance parameter on the convergence method.
+	
+	save_path: directory in which the outputs are stored. Change this atribute on the
+	
+	configuration file is recommended .
+	'''
     nwalkers, ndim = initial_values.shape
 
     # Set up the backend

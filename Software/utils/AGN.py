@@ -1,7 +1,5 @@
 """
-Created on Sun Feb  2 13:28:48 2020
-
-@author: matias
+Functiones related to AGN data.
 """
 import numpy as np
 from scipy.interpolate import interp1d

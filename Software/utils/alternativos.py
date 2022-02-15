@@ -1,5 +1,5 @@
 """
-Define the log likelihood distribution in termos of the parameters of the model and the datasets on use. 
+Definition of the log likelihood distribution in terms of the parameters of the model and the datasets which are use. 
 """
 
 import numpy as np
