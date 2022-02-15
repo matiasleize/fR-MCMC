@@ -17,7 +17,7 @@ def inte(z,omega_m):
 z = np.linspace(0,1000)
 Integrando = inte(z,omega_m)
 
-zcmb,zhel,dz,mb,dmb=np.loadtxt('/home/matias/Documents/Tesis/tesis_licenciatura/Software/Estadística/Cosas viejas/Datos_pantheon/lcparam_full_long_zhel.txt', usecols=(1,2,3,4,5),unpack=True)
+zcmb,zhel,dz,mb,dmb=np.loadtxt('/home/matias/Documents/Tesis/fR-MCMC/Software/Estadística/Cosas viejas/Datos_pantheon/lcparam_full_long_zhel.txt', usecols=(1,2,3,4,5),unpack=True)
 sn=len(zcmb)
 #longitud de la tabla de sn:
 d_l=np.zeros(sn)

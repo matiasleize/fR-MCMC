@@ -9,4 +9,4 @@ Para ejecutar correctamente un archivo de este repositorio, se debe editar el ar
 Para crear un enteorno virtual con las librerías necesarias para correr los códigos de este repositorio, seguir los siguientes pasos:
 (1) Clonar este repositorio
 (2) Correr el comando: $ conda env create 
-(3) Correr el comando: $ source activate tesis_licenciatura
+(3) Correr el comando: $ source activate fR-MCMC
