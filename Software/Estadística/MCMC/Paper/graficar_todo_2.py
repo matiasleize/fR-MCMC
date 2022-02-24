@@ -28,7 +28,7 @@ with np.load('sample_HS_CC+SN+BAO+AGN_4params_deriv.npz') as data:
 
 
 #%%
-%matplotlib qt5
+#%matplotlib qt5
 ndim = 4
 names = ['M_{abs}','\Omega_{m}', 'b','H_{0}']
 labels=names
