@@ -13,7 +13,7 @@ sys.path.append('./Software/Funcionales/Clases')
 from funciones_graficador import Graficador
 
 #%% Importo las cadenas
-os.chdir(path_datos_global+'/Resultados_cadenas/Paper/HS')
+os.chdir(path_datos_global+'/Resultados_cadenas/Paper_v1/HS')
 with np.load('sample_HS_CC+SN_4params_deriv.npz') as data:
     samples_0 = data['new_samples']
 
@@ -57,16 +57,20 @@ g.triangle_plot([samples0, samples1, samples2, samples3],
                 filled=True, params = names ,
                 contour_lws=1.5,
 #                param_limits = dict
-                legend_labels = ['CC+SN', 'CC+SN+AGN', 'CC+SN+BAO','CC+SN+BAO+AGN'])
+                legend_labels = ['CC+SnIA', 'CC+SnIA+AGN', 'CC+SnIA+BAO','CC+SnIA+BAO+AGN'])
+plt.savefig('/home/matias/Desktop/contornos_HS_all.png')
+
 #%%
 
 g = plots.get_subplot_plotter()
-g.triangle_plot(samples0,
-                contour_colors='grey',
+g.triangle_plot(samples1,
+                #contour_colors='grey',
                 filled=True, params = names ,
                 contour_lws=1.5,
 #                param_limits = dict
-                legend_labels = 'CC+SN')
+                legend_labels = ['CC+SN+AGN'])
 
 
-plt.savefig('/home/matias/Desktop/contornos_HS_CC+SN.png')
+plt.savefig('/home/matias/Desktop/contornos_HS_CC+SN+AGN.png')
+
+# %%

@@ -57,7 +57,7 @@ g.triangle_plot([samples0, samples1, samples2, samples3],
                 filled=True, params = names ,
                 contour_lws=1.5,
 #                param_limits = dict
-                legend_labels = ['CC+SN', 'CC+SN+AGN', 'CC+SN+BAO','CC+SN+BAO+AGN'])
+                legend_labels = ['CC+SnIA', 'CC+SnIA+AGN', 'CC+SnIA+BAO','CC+SnIA+BAO+AGN'])
 
 #g = plots.get_subplot_plotter()
 #g.triangle_plot([samples1, samples2, samples3],
