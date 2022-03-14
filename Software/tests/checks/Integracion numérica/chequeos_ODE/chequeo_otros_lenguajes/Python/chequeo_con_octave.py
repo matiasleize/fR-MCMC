@@ -33,7 +33,7 @@ from cambio_parametros import params_fisicos_to_modelo
 
 # Importo los datos de Octave H(z) y d_L
 df = pd.read_csv(
-        '/home/matias/Documents/Tesis/tesis_licenciatura/Software/Integracion numérica/Python/analisis_int_solve_ivp/datos_octave.txt'
+        '/home/matias/Documents/Tesis/fR-MCMC/Software/Integracion numérica/Python/analisis_int_solve_ivp/datos_octave.txt'
                  , header = None, delim_whitespace=True)
 
 

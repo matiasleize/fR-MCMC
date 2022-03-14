@@ -37,8 +37,8 @@ B(:,1)=z;
 B(:,2)=E;
 %B(:,3)=d_L;
 
-#dlmwrite('/home/matias/Documents/Tesis/tesis_licenciatura/Software/Integracion numérica/Python/analisis_int_solve_ivp/datos_octave.txt',B,'delimiter', '\t');
-dlmwrite('/home/matias/Documents/Tesis/tesis_licenciatura/Software/Integracion numérica/Octave/datos_octave.txt',B,'delimiter', '\t');
+#dlmwrite('/home/matias/Documents/Tesis/fR-MCMC/Software/Integracion numérica/Python/analisis_int_solve_ivp/datos_octave.txt',B,'delimiter', '\t');
+dlmwrite('/home/matias/Documents/Tesis/fR-MCMC/Software/Integracion numérica/Octave/datos_octave.txt',B,'delimiter', '\t');
 
 #%% Ploteo de la constante
 

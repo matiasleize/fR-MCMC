@@ -92,14 +92,14 @@ z_python = sol.t
 #%%
 # Importo los datos de Octave H(z) (Poner la carpeta donde están los datos)
 df = pd.read_csv(
-        '/home/matias/Documents/Tesis/tesis_licenciatura/Software/Integracion numérica/Octave/datos_octave.txt'
+        '/home/matias/Documents/Tesis/fR-MCMC/Software/Integracion numérica/Octave/datos_octave.txt'
                  , header = None, delim_whitespace=True)
 z_octave = np.array(df[0])
 E_octave = np.array(df[1])
 
 #%%
 # Importo los datos de Mathematica (Poner la carpeta donde están los datos)
-archivo_math = '/home/matias/Documents/Tesis/tesis_licenciatura/Software/Integracion numérica/Mathematica/datos_mathematica.csv'
+archivo_math = '/home/matias/Documents/Tesis/fR-MCMC/Software/Integracion numérica/Mathematica/datos_mathematica.csv'
 z_math,v_math = np.loadtxt(archivo_math,unpack=True,delimiter = ',')
 int_v_math =  cumtrapz(v_math/(1+z_math),z_math,initial=0)
 E_math =  np.exp(-int_v_math) * (1+z_math)**2
