@@ -1,4 +1,4 @@
-#f(R) models statistical analysis
+# f(R) models statistical analysis
 Faculty of Exact and Natural Sciences, Buenos Aires University.
 
 ## Create a virtual environment
