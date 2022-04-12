@@ -1,5 +1,5 @@
-# Tesis de Licenciatura
-Tesis de la Licenciatura en Ciencias Físicas. Facultad de Ciencias Exactas y Naturales de la Universidad de Buenos Aires.
+# f(R) models statistical analysis
+Faculty of Exact and Natural Sciences, Buenos Aires University.
 
 ## Create a virtual environment
 In order to create a virtual environment with the libraries that are needed to run this module, follow the next steps:
