@@ -286,3 +286,4 @@ if __name__ == '__main__':
     plt.plot(zs_ode,H_LCDM(zs_ode,0.3,73),'.',label='LCDM') #H_LCDM(zs_ode,omega_m,H0)
     plt.legend(loc = 'best')
     plt.grid(True)
+    plt.show()
