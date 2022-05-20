@@ -13,7 +13,7 @@ Output files can be particarly heavy stuff. For instance, the markov chains are 
 ```
 root_directory/                    Root directory
 ├── fR-MCMC/            Root project directory
-├── output/                        Output directory
+├── results/                        Results/Output directory
 ```
 
 Having said that, the user can change the location of the ouput directory on the configuration file.
