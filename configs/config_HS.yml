@@ -25,7 +25,7 @@ BOUNDS: [[-25, -18], [0.1, 0.5],[0, 0.5],[60, 80]]
 
 ALL_ANALYTIC: False
 
-OUTPUT_DIR: '/results/'
+OUTPUT_DIR: '/fR-output/'
 
 #Other things that are not in use:
 #DATA_PATH: './data'
