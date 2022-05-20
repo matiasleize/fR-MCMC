@@ -1,4 +1,4 @@
-name: tesis_licenciatura
+name: fR-MCMC
 channels:
   - anaconda
   - defaults
