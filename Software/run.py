@@ -1,5 +1,7 @@
 '''
-Run the modules. Module analysis doesn't work from here yet.
+Run the modules. 
+
+TODO: Module analysis doesn't work from here yet.
 '''
 import click
 import logging
