@@ -1,6 +1,6 @@
 '''
 In this file we make the plots of the Markov chains, the corner plots of the free parameters of the model and report the confidence intervals.
-All this information will be stored at the output directory (called '/results/')
+All this information will be stored at the output directory (called '/results/').
 '''
 
 
