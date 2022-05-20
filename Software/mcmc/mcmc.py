@@ -1,5 +1,5 @@
 '''
-Run MCMC analyses and calculations of the physical parameters \Omega_{m} and H_{0}.
+Run MCMC analyses and calculations of the physical parameters of the models.
 
 Parameter order in this file: Mabs,omega_m,b,H_0,n
 '''
