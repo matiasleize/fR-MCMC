@@ -1,5 +1,5 @@
 '''
-In this file it is requiered to specify the config '''.yml''' file that will be used.
+Here it is required to specify the config yml file that will be used.
 
 TODO: see section "Ensure portability by using environment variables".
 '''
