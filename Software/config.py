@@ -9,8 +9,9 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 os.chdir(path_git + '/configs/')
 
-yml_file = 'config.yml'
-yml_file = 'config_HS.yml' #cambiar esto
+#Here you have to specify the the name of your .yml file
+#yml_file = 'config.yml'
+yml_file = 'config_HS.yml' 
 
 with open(yml_file, "r") as ymlfile:
     full_cfg = yaml.safe_load(ymlfile)
