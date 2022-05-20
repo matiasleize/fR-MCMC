@@ -1,5 +1,7 @@
 '''
-Esto actualizarlo con nuestra info. Ver sección "Ensure portability by using environment variables".
+In this file it is requiered to specify the config '''.yml''' file that will be used.
+
+TODO: see section "Ensure portability by using environment variables".
 '''
 
 from box import Box
