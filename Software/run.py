@@ -39,5 +39,5 @@ def main(task, outputfile):
 
 
 
-def main_cli(task,outputfile=''):
-    main(task,outputfile)
+def main_cli(task, outputfile=''):
+    main(task, outputfile)
