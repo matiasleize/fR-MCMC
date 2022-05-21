@@ -1,5 +1,6 @@
-"""
+Here is the protocol of the free and fixed parameters:
 
+```
 index     free parameters             fixed parameters     
 
 4         Mabs, omega_m, b, H_0       _
@@ -13,5 +14,4 @@ index     free parameters             fixed parameters
 23        Mabs, omega_m               b, H_0
 
 1         omega_m                     Mabs, b, H_0
-
-"""
+```
