@@ -5,8 +5,8 @@ Faculty of Exact and Natural Sciences, Buenos Aires University.
 In order to create a virtual environment with the libraries that are needed to run this module, follow the next steps:
 * Clone the repository: ``` git clone``` 
 * Enter the directory: ```cd fR-MCMC```
-* Run: ```conda env create``` 
-* Run: ```source activate fR-MCMC```
+* Create the virtual environment: ```conda env create``` 
+* Activate the virtual environment: ```source activate fR-MCMC```
 
 ## Create an output directory:
 Output files can be particarly heavy stuff. For instance, the markov chains are saved in h5 format of several MegaBites. To avoid the unnecessary use of memory on the main repository, output files are stored on an independent directory on the computer's user. For default, this file must be created on the same directory that the Git's repository was cloned:
