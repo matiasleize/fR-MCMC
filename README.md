@@ -28,3 +28,11 @@ To run the code for a particular configuration file, edit config.py (which is lo
 ```
 python3 -m Software --task mcmc
 ```
+
+If it is desired to run only the analyses part of the code over an already Markov Chain result, run:
+
+```
+python3 -m Software --task analysis --outputfile 'filename'
+```
+
+where 'filename' is the name of the directory where the runs are stored (as an example: 'filename' =  'sample_HS_SN_CC_4params').
