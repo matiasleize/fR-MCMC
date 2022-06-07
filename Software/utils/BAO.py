@@ -1,11 +1,8 @@
 """
-Created on Sun Feb  2 13:28:48 2020
-
-@author: matias
+Functions related to BAO data.
 """
 import numpy as np
 from numba import jit
-#import camb #Para que ande en el DF
 from scipy.interpolate import interp1d
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.integrate import simps as simps
@@ -44,7 +41,7 @@ def r_drag_viejo(omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de 
     #R_bar = 31500 * wb * (2.726/2.7)**(-4)
     R_bar = wb * 10**5 / 2.473
 
-    #Integral logaritmica
+    #Logarithmic integration
     zs_int_log = np.logspace(np.log10(zd),13,int(10**5))
     H_int_log = H_LCDM_rad(zs_int_log,omega_m,H_0)
 

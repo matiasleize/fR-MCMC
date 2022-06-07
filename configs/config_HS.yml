@@ -1,3 +1,5 @@
+#Example of a configuration file for the Hu-Sawicki model.
+
 USE_SN: True
 USE_CC: True
 USE_BAO: False

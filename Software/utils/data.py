@@ -1,3 +1,7 @@
+"""
+Functions related to data management
+"""
+
 import numpy as np
 from numpy.linalg import inv
 import numpy.ma as ma

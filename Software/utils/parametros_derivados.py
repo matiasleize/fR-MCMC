@@ -1,6 +1,7 @@
 """
-Calculate the derivate parameters. IMPROTANT: It Doesn't work for all the indeces yet.
+Calculate the derivate parameters. IMPORTANT: It Doesn't work for all the indeces yet.
 """
+
 from numba import jit
 import numpy as np
 

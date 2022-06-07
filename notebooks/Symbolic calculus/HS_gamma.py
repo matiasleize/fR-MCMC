@@ -5,8 +5,8 @@ import math
 
 #%%
 n = sym.Symbol('n')
-#n=1 #Descomentar para obtener el caso n=1
-n=2 #Descomentar para obtener el caso n=2
+#n=1 #Uncomment to obtain the case n=1
+n=2 #Uncomment to obtain the case n=2
 
 c1 = sym.Symbol('c1')
 c2 = sym.Symbol('c2')
@@ -16,7 +16,8 @@ R0 = sym.Symbol('R0')
 R = R0*r
 
 F = R - ((c1*R0*r**n)/((c2*r**n)+1))
-#Calculo las derivadas
+
+#Calculate the derivatives
 F_R = sym.simplify(sym.diff(F,r))/R0
 F_2R = sym.simplify(sym.diff(F_R,r))/R0
 

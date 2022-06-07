@@ -1,7 +1,5 @@
 """
-Created on Sun Feb  2 13:28:48 2020
-
-@author: matias
+Functions related to SnIa data.
 """
 
 import numpy as np
@@ -18,9 +16,9 @@ from LambdaCDM import H_LCDM
 
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.interpolate import interp1d
-from scipy.constants import c as c_luz #metros/segundos
-c_luz_km = c_luz/1000; #km/seg
-#ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
+from scipy.constants import c as c_luz #meters/seconds
+c_luz_km = c_luz/1000; #kilometers/seconds
+#PARAMETERS ORDER: Mabs,omega_m,b,H_0,n
 
 def magn_aparente_teorica(int_inv_Hs_interpolado, zcmb, zhel):
     '''A partir de un array de redshift y un array de la magnitud E = H_0/H

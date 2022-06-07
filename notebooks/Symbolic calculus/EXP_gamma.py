@@ -13,7 +13,8 @@ R = Re*r
 
 #beta=1
 F = R - beta * Re * (1-e**(-R/Re))
-#Calculo las derivadas
+
+#Calculate the derivatives
 F_R = sym.diff(F,r)/Re
 F_2R = sym.diff(F_R,r)/Re
 

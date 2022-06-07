@@ -1,5 +1,5 @@
 """
-Functiones related to AGN data.
+Functions related to AGN data.
 """
 import numpy as np
 from scipy.interpolate import interp1d

@@ -5,7 +5,7 @@ import math
 
 #%%
 n = sym.Symbol('n')
-#n=1 #Descomentar para obtener el caso n=1
+#n=1 #Uncomment to obtain the case n=1
 
 lamb = sym.Symbol('lamb')
 
@@ -21,7 +21,7 @@ R = Rs*r
 F = (R - lamb * Rs * (1-(1+(R/Rs)**2)**(-n)))
 F = Rs*(r - lamb * (1-(1+r**2)**(-n)))
 
-#Calculo las derivadas
+#Calculate the derivatives
 F_R = sym.simplify(sym.diff(F,r))/Rs
 F_2R = sym.simplify(sym.diff(F_R,r))/Rs
 

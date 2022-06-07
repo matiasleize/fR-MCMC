@@ -1,3 +1,5 @@
+#Example of a configuration file for the LCDM model.
+
 USE_SN: True
 USE_CC: False
 USE_BAO: False

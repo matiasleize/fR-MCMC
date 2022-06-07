@@ -1,5 +1,5 @@
 """
-Functiones related to LCDM model
+Functions related to LCDM model
 """
 import numpy as np
 from numpy.linalg import inv

@@ -18,9 +18,6 @@ supermodel/supermodel/tests/: this have conatin all that appear in the section "
 ### Other stuff
 Move the old functions or the ones that are not periodically used to the test folder (for instance, the other integrators). Important: rename int_1 as int, not only in alternativos but also in parametros_derivados (grep if it is necessary to change this in other location).
 
-Volver a poner el archivo de texto que cambia directamente el environment, quiza eso arregla el error del ambiente virtual.
-Agregar al environment.yml PythonBox, seaborn, getdist (y quiza alguna cosa mas)
-
-Hacer una carpeta con el posprocesado?  Seria raro xq en el main la llamarias solo si hay LCDM. Quiza en el modulo posprocesado poner un if que si es LCDM hacer "pass".
+Add to environment.yml: PythonBox, seaborn, getdist (maybe something else)
 
 All data should be in Pandas df format (maybe).
