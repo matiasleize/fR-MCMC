@@ -13,7 +13,7 @@ os.chdir(path_git)
 sys.path.append('./Software/utils/')
 
 from condiciones_iniciales import condiciones_iniciales
-from cambio_parametros import params_fisicos_to_modelo_HS, params_fisicos_to_modelo_ST
+from change_of_parameters import params_fisicos_to_modelo_HS, params_fisicos_to_modelo_ST
 #%%
 
 def dX_dz(z, variables, params_modelo, model='HS'):

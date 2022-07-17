@@ -9,7 +9,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
 from condiciones_iniciales import condiciones_iniciales
-from cambio_parametros import params_fisicos_to_modelo
+from change_of_parameters import params_fisicos_to_modelo
 from int import integrador
 from taylor import Taylor_HS
 #%%

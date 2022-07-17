@@ -16,7 +16,7 @@ supermodel/supermodel/tests/: this have conatin all that appear in the section "
 '''
 
 ### Other stuff
-Move the old functions or the ones that are not periodically used to the test folder (for instance, the other integrators). Important: rename int_1 as int, not only in chi_square but also in derived_parameters (grep if it is necessary to change this in other location).
+Rename int_sist_1 as solve_sist (grep if it is necessary to change this in other location).
 
 Add to environment.yml: PythonBox, seaborn, getdist (maybe something else)
 
