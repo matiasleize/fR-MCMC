@@ -10,10 +10,6 @@ from IPython.display import display, Math
 import arviz as az
 from scipy.stats import scoreatpercentile
 
-#b_w=0.25 #CC+H0 Mejor sin smoothear!
-#b_w=0.005 #Nuisance Mejor sin smoothear!
-#b_w=0.12 #CC+SN
-#b_w=0.15 #CC+SN+BAO
 class Graficador:
 	'''
 	Esta clase genera un objeto "Graficador" que toma el objeto sampler

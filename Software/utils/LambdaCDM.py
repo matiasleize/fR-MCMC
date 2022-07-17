@@ -9,7 +9,7 @@ import time
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.integrate import simps as simps
 from scipy.interpolate import interp1d
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000
 #%%
 
@@ -45,12 +45,3 @@ def H_LCDM_rad(z, omega_m, H_0):
         H = H_0 * (omega_r * (1 + z)**4 + omega_m * (1 + z)**3 + omega_lambda)**(1/2)
 
     return H
-#%%
-
-if __name__ == '__main__':
-    from matplotlib import pyplot as plt
-
-    #Despues poner esto en un lugar pertinente.
-    #N = len(data_agn[0]) #Número de datos
-    #P = 1 #Número de parámetros
-    #np.sqrt(2*(N-P))/(N-P) #Fórmula del error en el chi2 reducido

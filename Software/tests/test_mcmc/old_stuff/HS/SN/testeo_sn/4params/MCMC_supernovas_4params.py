@@ -13,7 +13,7 @@ os.chdir(path_git)
 sys.path.append('./Software/utils/')
 from data import leer_data_pantheon_2
 from supernovas import testeo_supernovas
-#ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
+#Parameters order: Mabs,omega_m,b,H_0,n
 
 #%%
 #Datos de Supernovas

@@ -14,7 +14,7 @@ sys.path.append('./Software/utils/')
 from sampleo import MCMC_sampler
 from alternativos import params_to_chi2
 from data import leer_data_AGN
-#ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,n
+#Parameters order: omega_m,b,H_0,n
 
 #%%
 #Datos de AGN

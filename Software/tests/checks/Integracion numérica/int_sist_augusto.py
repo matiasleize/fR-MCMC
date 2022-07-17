@@ -6,7 +6,7 @@ como las de alfa y Rhs que no me cierran, consultarlo.
 import time
 import numpy as np
 from scipy.integrate import solve_ivp
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 from scipy.integrate import simps,trapz,cumtrapz
 c_luz_km = c_luz/1000
 
@@ -23,7 +23,7 @@ import sympy as sym
 from sympy.utilities.lambdify import lambdify
 import numpy as np
 import math
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000;
 
 import os

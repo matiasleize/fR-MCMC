@@ -15,7 +15,7 @@ from scipy.integrate import cumtrapz as cumtrapz
 from scipy.integrate import simps as simps
 from scipy.integrate import quad as quad
 from scipy.interpolate import interp1d
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000
 
 
@@ -40,7 +40,7 @@ def H_LCDM_rad(z, omega_m, H_0):
     return H
 
 def r_drag_viejo(omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de BBN.
-    #Calculo del rd:
+    #rd calculation:
     h = H_0/100
     zd = zdrag(omega_m,H_0)
     #R_bar = 31500 * wb * (2.726/2.7)**(-4)
@@ -65,14 +65,14 @@ def integrand(z, Om_m_0, H_0, wb):
     return c_luz_km/(H * (3*(1 + R_bar*(1+z)**(-1)))**(1/2))
 
 def r_drag(omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de BBN.
-    #Calculo del rd:
+    #rd calculation:
     h = H_0/100
     zd = zdrag(omega_m,H_0)
     #R_bar = 31500 * wb * (2.726/2.7)**(-4)
     R_bar = wb * 10**5 / 2.473
 
 
-   # Calculo del rd:
+   #zd calculation:
     zd = zdrag(omega_m, H_0)
     # zd = 1000
     R_bar = wb * 10**5 / 2.473

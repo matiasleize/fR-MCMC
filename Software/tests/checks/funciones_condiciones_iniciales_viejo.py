@@ -2,7 +2,7 @@ import sympy as sym
 from sympy.utilities.lambdify import lambdify
 import numpy as np
 import math
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_norm=c_luz/1000;
 
 import sys

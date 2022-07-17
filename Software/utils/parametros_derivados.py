@@ -14,13 +14,11 @@ from int_sist_1 import Hubble_th_1
 
 @jit
 def parametros_derivados(sampler,discard, thin,model='EXP'):
-	'''Esta función convierte las cadenas de omega_m y H0 de LCDM
-	en las cadenas de omega_m y H0 fisicas'''
+	'''Convert LCDM chains into physical chains (for Omega_m and H_0 parameters).'''
 	flat_samples = sampler.get_chain(discard=discard, flat=True, thin=thin)
 	len_chain=flat_samples.shape[0]
 	new_samples = np.full_like(flat_samples,1)
 	for i in range(len_chain):
-	#for i in range(1000,1100):
 		if len(flat_samples[0,:])==3:
 			omega_m_lcdm = flat_samples[i,0]
 			b = flat_samples[i,1]
@@ -45,5 +43,5 @@ def parametros_derivados(sampler,discard, thin,model='EXP'):
 			new_samples[i,2] = b
 			new_samples[i,3] = H0
 
-	#	print('Completado: {}/{}'.format(i,len_chain))
+		#print('Complete: {}/{}'.format(i,len_chain))
 	return new_samples

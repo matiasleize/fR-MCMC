@@ -17,7 +17,7 @@ os.chdir(path_git)
 sys.path.append('./Software/utils/')
 from data import leer_data_pantheon, leer_data_cronometros, leer_data_AGN
 from alternativos import params_to_chi2
-#ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
+#Parameters order: Mabs,omega_m,b,H_0,n
 
 #%% Predeterminados:
 M_true = -19.352

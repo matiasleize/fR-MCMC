@@ -13,7 +13,7 @@ from scipy.integrate import solve_ivp
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.integrate import simps as simps
 from scipy.interpolate import interp1d
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000
 #%%
 
@@ -48,7 +48,7 @@ def zdrag(omega_m,H_0,wb=0.0225):
 
 
 def r_drag(omega_m,H_0,int_z=True,z_crit=5000):
-    #Calculo del rd:
+    #rd calculation:
     h = H_0/100
     zd = zdrag(omega_m,H_0)
     wb=0.0225
@@ -155,7 +155,7 @@ from scipy.integrate import solve_ivp
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.integrate import simps as simps
 from scipy.interpolate import interp1d
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000
 
 
@@ -170,7 +170,7 @@ omega_m = 0.24
 import scipy.integrate as integrate
 
 def r_drag_ints(omega_m,H_0):
-    #Calculo del rd:
+    #rd calculation:
     h = H_0/100
     zd = zdrag(omega_m,H_0)
     wb=0.0225

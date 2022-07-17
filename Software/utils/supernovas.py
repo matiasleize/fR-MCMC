@@ -122,7 +122,7 @@ if __name__ == '__main__':
     sys.path.append('./Software/utils/')
     from data import leer_data_pantheon_2
     from data import leer_data_pantheon
-    #ORDEN DE PRESENTACION DE LOS PARAMETROS: Mabs,omega_m,b,H_0,n
+    #Parameters order: Mabs,omega_m,b,H_0,n
 
     #%% Predeterminados:
     M_true = -19.2

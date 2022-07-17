@@ -8,7 +8,7 @@ from scipy.integrate import cumtrapz as cumtrapz
 from scipy.integrate import simps as simps
 from scipy.integrate import quad as quad
 
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000
 
 import os
@@ -19,11 +19,10 @@ os.chdir(path_git)
 os.sys.path.append('./Software/utils/')
 from LambdaCDM import H_LCDM_rad
 
-#ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,n
+#Parameters order: omega_m,b,H_0,n
 
 def zdrag(omega_m,H_0,wb=0.0225):
     '''
-    omega_b = 0.05 #(o algo asi, no lo usamos directamente)
     wb = 0.0222383 #Planck
     wb = 0.0225 #BBN
     '''
@@ -35,7 +34,7 @@ def zdrag(omega_m,H_0,wb=0.0225):
     return zd
 
 def r_drag_viejo(omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de BBN.
-    #Calculo del rd:
+    #rd calculation:
     h = H_0/100
     zd = zdrag(omega_m,H_0)
     #R_bar = 31500 * wb * (2.726/2.7)**(-4)
@@ -60,15 +59,15 @@ def integrand(z, Om_m_0, H_0, wb):
     return c_luz_km/(H * (3*(1 + R_bar*(1+z)**(-1)))**(1/2))
 
 
-def r_drag(omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de BBN.
-    #Calculo del rd:
+def r_drag(omega_m,H_0,wb = 0.0225, int_z=True): #wb of BBN as default.
+    #rd calculation:
     h = H_0/100
     zd = zdrag(omega_m,H_0)
     #R_bar = 31500 * wb * (2.726/2.7)**(-4)
     R_bar = wb * 10**5 / 2.473
 
 
-   # Calculo del rd:
+    #zd calculation:
     zd = zdrag(omega_m, H_0)
     # zd = 1000
     R_bar = wb * 10**5 / 2.473
@@ -103,13 +102,13 @@ def Hs_to_Ds(Hs_interpolado, int_inv_Hs_interpolado, z_data, index):
 def Ds_to_obs_final(zs, Dist, rd, index):
     if index == 4: #H
         output = Dist*rd
-    else: #Todas las otras distancias
+    else: #Every distances
         output = Dist/rd
     return output
 
 #%%
 if __name__ == '__main__':
-    '''Actualizar el ejemplo con estas funciones!'''
+    '''TODO: update the example with these functions'''
     import os
     import git
     path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
@@ -126,13 +125,7 @@ if __name__ == '__main__':
         aux = leer_data_BAO(archivo_BAO[i])
         dataset_BAO.append(aux)
 
-    [omega_m,b,H_0] = [0.28,1,66.012] #Usando los datos nuevos
+    [omega_m,b,H_0] = [0.28,1,66.012]
     theta = [omega_m,b,H_0]
-    #params_to_chi2_BAO(theta,1, dataset_BAO,model='EXP')
-
-
-
-
-    omega_m = 0.3
-    H_0
+    params_to_chi2_BAO(theta,1, dataset_BAO,model='EXP')
     r_drag(omega_m,H_0,wb = 0.0225)

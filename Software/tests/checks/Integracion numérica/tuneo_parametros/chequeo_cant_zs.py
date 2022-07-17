@@ -3,7 +3,7 @@ import math
 from matplotlib import pyplot as plt
 from scipy.interpolate import interp1d
 from scipy.integrate import cumtrapz as cumtrapz
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000
 
 import sys

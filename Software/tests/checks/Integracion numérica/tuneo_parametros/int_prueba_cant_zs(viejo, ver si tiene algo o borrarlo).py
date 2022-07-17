@@ -7,7 +7,7 @@ Created on Sun Feb  2 13:28:48 2020
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.interpolate import interp1d
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_norm = c_luz/1000
 
 import sys

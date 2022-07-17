@@ -21,7 +21,7 @@ os.chdir(path_git)
 sys.path.append('./Software/utils/')
 from data import leer_data_AGN
 from alternativos import params_to_chi2
-#ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,l,n,beta,n_agn
+#Parameters order: omega_m,b,H_0,l,n,beta,n_agn
 
 #%% Predeterminados:
 omega_m_true = 0.3

@@ -14,7 +14,7 @@ import math
 from scipy.integrate import solve_ivp
 from scipy.integrate import simps as simps
 from scipy.integrate import cumtrapz as cumtrapz
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_norm = c_luz/1000
 import time
 #%%

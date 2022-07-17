@@ -3,7 +3,7 @@ Barrido del chi2 en el parametro b para el resto de los parametros fijos.
 """
 import numpy as np
 from scipy.interpolate import interp1d
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000
 
 import sys

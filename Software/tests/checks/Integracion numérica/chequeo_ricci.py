@@ -1,7 +1,7 @@
 import time
 import numpy as np
 from scipy.integrate import solve_ivp
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000
 
 import sys

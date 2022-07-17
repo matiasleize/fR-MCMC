@@ -5,7 +5,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 from scipy.integrate import cumtrapz as cumtrapz
 
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000;
 
 import os
@@ -17,11 +17,11 @@ os.chdir(path_git); os.sys.path.append('./Software/utils/')
 from int_sist_1 import Hubble_th_1
 from LambdaCDM import H_LCDM
 
-#ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,n
+#Parameters order: omega_m,b,H_0,n
 
 def zs_2_logDlH0(INT,z_data):
-    DlH0 = (c_luz_km * (1 + z_data)) * INT #km/seg
-    return np.log10(DlH0) #log(km/seg)
+    DlH0 = (c_luz_km * (1 + z_data)) * INT #km/sec
+    return np.log10(DlH0) #log(km/sec)
 
 ### Nuisance AGN
 def Hs_2_logDl(zs,Hs,z_data):
@@ -41,17 +41,17 @@ def Hs_2_logDlH0(zs,Hs,z_data):
 
 
 def chi2_AGN_nuisance(teo, data, errores_cuad):
-    chi2 = np.sum( ((data-teo)**2/errores_cuad) + np.log(2*np.pi*errores_cuad)) #o menos en el paper
+    chi2 = np.sum( ((data-teo)**2/errores_cuad) + np.log(2*np.pi*errores_cuad))
     return chi2
 
 def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
                                 cantidad_zs=int(10**6), model='HS'
                                 ,less_z=False,all_analytic=False):
     '''
-    Dados los parámetros del modelo devuelvo el estadítico chi2 para
-    los datos de AGN.
+    Given the model parameters, it returns the statistics chi squared
+    for the AGN data.
     '''
-    #Defino los parámetros que voy a utilizar
+    #Here we define the parameters
     if model == 'LCDM':
         if isinstance(theta,float):
             #print(theta)
@@ -63,7 +63,7 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
 
         else:
             if len(theta) == 4:
-                [omega_m, beta, gamma, delta] = theta #Este beta es distinto al otro!
+                [omega_m, beta, gamma, delta] = theta #This beta is different from the other
                 H_0 = params_fijos
                 zs_modelo = np.linspace(0,10,10**5)
                 Hs_modelo = H_LCDM(zs_modelo,omega_m,H_0)
@@ -71,11 +71,11 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
 
     else:
         if len(theta) == 5:
-            [omega_m, b, beta, gamma, delta] = theta #Este beta es distinto al otro!
+            [omega_m, b, beta, gamma, delta] = theta #This beta is different from the other
             H_0 = params_fijos
         elif len(theta) == 4:
-            [omega_m, b] = theta #Este beta es distinto al otro!
-            [beta, gamma, delta, H_0] = params_fijos
+            [omega_m, b] = theta
+            [beta, gamma, delta, H_0] = params_fijos #This beta is different from the other
 
         params_fisicos = [omega_m,b,H_0]
         zs_modelo, Hs_modelo = Hubble_th_1(params_fisicos, n=n, model=model,
@@ -83,7 +83,7 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
                                     all_analytic=all_analytic)
 
 
-    #Importo los datos
+    #Import data
     z_data_unmasked, logFuv_unmasked, eFuv_unmasked, logFx_unmasked, eFx_unmasked  = dataset_AGN
 
     if less_z == True:
@@ -105,7 +105,7 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
     Dl_teo_cm = Dl_teo - np.log10(3.24) + 25
     psi = beta + gamma * logFuv + 2 * (gamma-1) * (Dl_teo_cm + 0.5 * np.log10(4*np.pi))
 
-    si_2 = eFx**2 + gamma**2 * eFuv**2 + np.exp(2*np.log(delta)) #El cuadrado de los errores
+    si_2 = eFx**2 + gamma**2 * eFuv**2 + np.exp(2*np.log(delta)) #Squared errors
 
     chi2_AGN = chi2_AGN_nuisance(psi, logFx, si_2)
 
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     os.chdir(path_git+'/Software/source/AGN')
     data_agn = leer_data_AGN('table3.dat')
 
-    #beta_true =  6.8#7.735
+    beta_true =  6.8 #7.735
     gamma_true = 0.648
     delta_true = 0.235
     H0_true =  70
@@ -138,5 +138,4 @@ if __name__ == '__main__':
         plt.title(r'$\beta$ = {}'.format(beta_true))
         plt.ylabel('$\chi^{2}$')
         plt.xlabel('$\Omega_{m}$')
-        plt.savefig('/home/matias/Desktop/chi_2__beta={}.png'.format(beta_true))
         plt.close()

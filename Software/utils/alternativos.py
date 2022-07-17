@@ -156,7 +156,7 @@ def params_to_chi2(theta, params_fijos, index=0,
 
 
         if np.isnan(sum(chies_BAO))==True:
-            print('Hay errores!')
+            print('There are some errors!')
             print(omega_m,H_0,rd)
 
         chi2_BAO = np.sum(chies_BAO)
@@ -279,10 +279,9 @@ if __name__ == '__main__':
         plt.ylabel(r'$\chi^2$')
         plt.xlabel('b')
         plt.grid(True)
-        plt.plot(bs,chies_HS,label = 'Modelo Hu-Sawicki')
-        plt.plot(bs,chies_EXP,label = 'Modelo Exponencial')
+        plt.plot(bs,chies_HS,label = 'Hu-Sawicki model')
+        plt.plot(bs,chies_EXP,label = 'Exponencial model')
         plt.legend()
-        plt.savefig('/home/matias/EXP+HS_CC+H0.png')
 
     #%%
     bs = np.linspace(0.1,4,100)
@@ -356,4 +355,3 @@ if __name__ == '__main__':
     plt.ylabel(r'$\chi^2$')
     plt.xlabel('b')
     plt.legend()
-    plt.savefig('/home/matias/Barrido_en_b.png')

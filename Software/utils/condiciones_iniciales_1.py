@@ -6,7 +6,7 @@ import sympy as sym
 from sympy.utilities.lambdify import lambdify
 import numpy as np
 import math
-from scipy.constants import c as c_luz #metros/segundos
+from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000;
 
 import os
@@ -28,7 +28,7 @@ def z_condicion_inicial(params_fisicos, eps=10**(-10)):
     beta = 2/b
     omega_l = 1 - omega_m
     
-    #Defino el z inicial
+    #Define initial z
     zi = (2 * omega_l*(-np.log(eps)-2*beta)/(beta*omega_m))**(1/3) - 1
     return zi
 
