@@ -120,7 +120,7 @@ def integrador_r(params_fisicos, n=1, cantidad_zs=int(10**5), max_step=10**(-5),
     t2 = time.time()
 
     if verbose == True:
-        print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
+        print('Duration: {} minutes and {} seconds'.format(int((t2-t1)/60),
               int((t2-t1) - 60*int((t2-t1)/60))))
 
     return zs, r

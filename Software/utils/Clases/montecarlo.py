@@ -36,7 +36,7 @@ class Cadenas:
 		        continue
 		    os.chdir(path_datos_global+'/Resultados_cadenas/')
 		    textfile_witness = open(witness,'w')
-		    textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
+		    textfile_witness.write('Iteration number: {} \t'.format(sampler.iteration))
 		    textfile_witness.write('Tiempo: {}'.format(time.time()))
 		    textfile_witness.close()
 

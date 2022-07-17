@@ -59,7 +59,7 @@ t1 = time.time()
 sol = solve_ivp(sistema_ec, [z_inicial,z_final],
       cond_iniciales,t_eval=zs,args=params_modelo, max_step=max_step)
 t2 = time.time()
-print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
+print('Duration: {} minutes and {} seconds'.format(int((t2-t1)/60),
       int((t2-t1) - 60*int((t2-t1)/60))))
 
 plt.figure()

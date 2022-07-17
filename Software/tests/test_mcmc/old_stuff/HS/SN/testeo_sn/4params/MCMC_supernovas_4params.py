@@ -77,7 +77,7 @@ for sample in sampler.sample(pos, iterations=max_n, progress=True):
 
     os.chdir(path_datos_global+'/Resultados_cadenas/')
     textfile_witness = open('witness_2.txt','w')
-    textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
+    textfile_witness.write('Iteration number: {} \t'.format(sampler.iteration))
     textfile_witness.write('Tiempo: {}'.format(time.time()))
     textfile_witness.close()
 

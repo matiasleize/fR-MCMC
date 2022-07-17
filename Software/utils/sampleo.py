@@ -65,10 +65,10 @@ def MCMC_sampler(log_probability, initial_values,
 			
 		os.chdir(save_path)
 		textfile_witness = open(witness_file,'w')
-		textfile_witness.write('Número de iteración: {} \t'.format(sampler.iteration))
+		textfile_witness.write('Iteration number: {} \t'.format(sampler.iteration))
 
 		t2 = time.time()
-		textfile_witness.write('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
+		textfile_witness.write('Duration: {} minutes and {} seconds'.format(int((t2-t1)/60),
 			  int((t2-t1) - 60*int((t2-t1)/60))))
 		textfile_witness.close()
 

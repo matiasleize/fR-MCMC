@@ -63,7 +63,7 @@ for i, omega_m in enumerate(omegas):
             errores[i,j] = 1 #Esto es correcto :)
         #dos y tres son errores, uno es todo piola
 t2 = time.time()
-print('Duración {} minutos y {} segundos'.format(int((t2-t1)/60),
+print('Duration: {} minutes and {} seconds'.format(int((t2-t1)/60),
       int((t2-t1) - 60*int((t2-t1)/60))))
 
 om_malos = omegas[np.where(errores==3)[0]]
