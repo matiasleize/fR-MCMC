@@ -1,4 +1,4 @@
-z	Distancia	Error_estad	Error_sist	wb_fid	type
+z	Dist	Stat_error	Sist_error	wb_fid	type
 0.38	12044.07	251.226	133.002	0.022	H*rd
 0.51	13374.09	251.226	147.78	0.022	H*rd
 0.61	14378.994	266.004	162.558	0.022	H*rd

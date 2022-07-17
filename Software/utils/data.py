@@ -124,14 +124,14 @@ if __name__ == '__main__':
 
     #%% BAO
     os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
-    archivo_BAO='datos_BAO_da.txt'
+    archivo_BAO='BAO_data_da.txt'
 
     z, valores_data, errores_data_cuad = leer_data_BAO(archivo_BAO)
     #z, valores_data, errores_data_cuad
     
     #%%
     os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
-    archivo_BAO='datos_BAO.txt'
+    archivo_BAO='BAO_data.txt'
     df = pd.read_csv(archivo_BAO,sep='\t')
     z_data = df.to_numpy()[:,0]
     valores_data = df.to_numpy()[:,1]

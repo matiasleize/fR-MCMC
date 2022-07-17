@@ -38,7 +38,7 @@ ds_CC = leer_data_cronometros('chronometers_data.txt')
 
 # BAO de odintsov
 os.chdir(path_git+'/Software/Estadística/Datos/BAO/Datos_odintsov')
-ds_BAO = leer_data_BAO_odintsov('datos_BAO_odintsov.txt')
+ds_BAO = leer_data_BAO_odintsov('BAO_data_odintsov.txt')
 
 
 #%% Parametros a ajustar

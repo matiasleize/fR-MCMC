@@ -1,2 +1,0 @@
-z	Distancia	Error_estad	Error_sist	wb_fid	type
-0.81	10.75	0.43	0	0.02156	Da/rd

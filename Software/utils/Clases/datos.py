@@ -92,5 +92,5 @@ if __name__ == '__main__':
 	df_CC.crear_df()
 	#%% BAO
     os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
-	df_BAO = DataFrame('BAO','datos_BAO.txt')
+	df_BAO = DataFrame('BAO','BAO_data.txt')
 	df_BAO.crear_df()

@@ -39,8 +39,8 @@ ds_CC = leer_data_cronometros('chronometers_data.txt')
 # BAO
 os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
 ds_BAO = []
-archivos_BAO = ['datos_BAO_da.txt','datos_BAO_dh.txt','datos_BAO_dm.txt',
-                'datos_BAO_dv.txt','datos_BAO_H.txt']
+archivos_BAO = ['BAO_data_da.txt','BAO_data_dh.txt','BAO_data_dm.txt',
+                'BAO_data_dv.txt','BAO_data_H.txt']
 for i in range(5):
     aux = leer_data_BAO(archivos_BAO[i])
     ds_BAO.append(aux)

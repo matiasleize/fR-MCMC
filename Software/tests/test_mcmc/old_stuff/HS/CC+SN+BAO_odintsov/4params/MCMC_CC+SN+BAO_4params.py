@@ -30,7 +30,7 @@ ds_CC = leer_data_cronometros('chronometers_data.txt')
 
 # BAO de odintsov
 os.chdir(path_git+'/Software/Estadística/Datos/BAO/Datos_odintsov')
-ds_BAO = leer_data_BAO_odintsov('datos_BAO_odintsov.txt')
+ds_BAO = leer_data_BAO_odintsov('BAO_data_odintsov.txt')
 
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_HS_CC+SN+BAO_4params_odintsov.npz') as data:
