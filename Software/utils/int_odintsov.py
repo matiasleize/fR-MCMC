@@ -1,4 +1,5 @@
-''' (Spanish)
+'''
+(Spanish documentation)
 Integra el modelo de Hu-Sawicki y el modelo exponencial utilizando en ambos casos 
 el sistema de ecuaciones de Odintsov. Las CI en este caso se calculan de la misma manera
 para ambos modelos, que es la que corresponde con la opción (model='EXP') en 

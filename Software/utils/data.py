@@ -1,5 +1,5 @@
 """
-(Spanish)
+(Spanish documentation)
 Functions related to data management
 """
 
