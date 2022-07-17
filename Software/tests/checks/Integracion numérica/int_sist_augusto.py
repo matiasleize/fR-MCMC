@@ -261,7 +261,7 @@ def integrador(params_fisicos, n=1, cantidad_zs=int(10**5), max_step=10**(-5),
 #    return zs, Hs,zs2, Hs3
     return zs,Hs
 
-def Hubble_teorico_2(params_fisicos, b_crit=0.15, all_analytic=False,
+def Hubble_th_2(params_fisicos, b_crit=0.15, all_analytic=False,
                     eval_data=False, z_data=None, epsilon=10**(-10), n=1,
                     cantidad_zs=int(10**5), max_step=10**(-4),
                     z_min=0, z_max=10, sistema_ec=dX_dz,
@@ -327,7 +327,7 @@ if __name__ == '__main__':
     omega_m = 0.1
     H0 = 73.48
     params_fisicos = [omega_m,b,H0]
-    zs_ode, Hs_HS = Hubble_teorico(params_fisicos, verbose=True, model='HS')
+    zs_ode, Hs_HS = Hubble_th(params_fisicos, verbose=True, model='HS')
     zs_ode, Hs_HS
     #%%
     #%matplotlib qt5

@@ -13,8 +13,8 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git); os.sys.path.append('./Software/utils/')
-#from int import Hubble_teorico
-from int_sist_1 import Hubble_teorico_1
+#from int import Hubble_th
+from int_sist_1 import Hubble_th_1
 from LambdaCDM import H_LCDM
 
 #ORDEN DE PRESENTACION DE LOS PARAMETROS: omega_m,b,H_0,n
@@ -78,7 +78,7 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
             [beta, gamma, delta, H_0] = params_fijos
 
         params_fisicos = [omega_m,b,H_0]
-        zs_modelo, Hs_modelo = Hubble_teorico_1(params_fisicos, n=n, model=model,
+        zs_modelo, Hs_modelo = Hubble_th_1(params_fisicos, n=n, model=model,
                                     z_min=0, z_max=10, cantidad_zs=cantidad_zs,
                                     all_analytic=all_analytic)
 

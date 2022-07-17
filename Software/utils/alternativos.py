@@ -13,7 +13,7 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 
 os.chdir(path_git); os.sys.path.append('./Software/utils/')
-from int_sist_1 import Hubble_teorico_1
+from int_sist_1 import Hubble_th_1
 from supernovas import magn_aparente_teorica, chi2_supernovas
 from BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
 from AGN import zs_2_logDlH0
@@ -114,7 +114,7 @@ def params_to_chi2(theta, params_fijos, index=0,
     [Mabs, omega_m, b, H_0] = all_parameters(theta, params_fijos, index)
 
     params_fisicos = [omega_m,b,H_0]
-    zs_modelo, Hs_modelo = Hubble_teorico_1(params_fisicos, n=n, model=model,
+    zs_modelo, Hs_modelo = Hubble_th_1(params_fisicos, n=n, model=model,
                                 z_min=0, z_max=10, cantidad_zs=cantidad_zs,
                                 all_analytic=all_analytic)
 
@@ -144,15 +144,15 @@ def params_to_chi2(theta, params_fijos, index=0,
             if i==0: #Da entry
                 rd = r_drag(omega_m,H_0,wb_fid) # rd calculation
                 distancias_teoricas = Hs_to_Ds(Hs_interpolado, int_inv_Hs_interpolado, z_data_BAO, i)
-                output_teorico = Ds_to_obs_final(zs_modelo, distancias_teoricas, rd, i)
+                output_th = Ds_to_obs_final(zs_modelo, distancias_teoricas, rd, i)
             else: #If not..
                 distancias_teoricas = Hs_to_Ds(Hs_interpolado, int_inv_Hs_interpolado, z_data_BAO, i)
-                output_teorico = np.zeros(len(z_data_BAO))
+                output_th = np.zeros(len(z_data_BAO))
                 for j in range(len(z_data_BAO)): # For each datatype
                      rd = r_drag(omega_m,H_0,wb_fid[j]) #rd calculation
-                     output_teorico[j] = Ds_to_obs_final(zs_modelo,distancias_teoricas[j],rd,i)
+                     output_th[j] = Ds_to_obs_final(zs_modelo,distancias_teoricas[j],rd,i)
             #Chi square calculation for each datatype (i)
-            chies_BAO[i] = chi2_sin_cov(output_teorico,valores_data,errores_data_cuad)
+            chies_BAO[i] = chi2_sin_cov(output_th,valores_data,errores_data_cuad)
 
 
         if np.isnan(sum(chies_BAO))==True:

@@ -214,7 +214,7 @@ def integrador(params_fisicos, epsilon=10**(-10), cantidad_zs=int(10**5),
 
 
 
-def Hubble_teorico_1(params_fisicos, b_crit=0.15, all_analytic=False,
+def Hubble_th_1(params_fisicos, b_crit=0.15, all_analytic=False,
                     eval_data=False, z_data=None, epsilon=10**(-10), n=1,
                     cantidad_zs=int(10**5),
                     z_min=0, z_max=10, sistema_ec=dX_dz,
@@ -270,11 +270,11 @@ if __name__ == '__main__':
     #%% Hu-Sawicki (n=1)
     params_fisicos = [0.3, 0.1, 73] # [omega_m, b, H0]
     zs_ode, H_HS = integrador(params_fisicos, verbose=True, model='HS')
-    _, H_HS_1 = Hubble_teorico_1(params_fisicos, verbose=True, model='HS')
+    _, H_HS_1 = Hubble_th_1(params_fisicos, verbose=True, model='HS')
     #%% Exponencial
     params_fisicos = [0.3, 2, 73] # [omega_m, b, H0]
     zs_ode, H_EXP = integrador(params_fisicos, verbose=True, model='EXP')
-    _, H_EXP_1 = Hubble_teorico_1(params_fisicos, verbose=True, model='EXP')
+    _, H_EXP_1 = Hubble_th_1(params_fisicos, verbose=True, model='EXP')
     #%% Graficamos todos los datos juntos
     #%matplotlib qt5
     plt.figure()

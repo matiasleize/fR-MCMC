@@ -154,7 +154,7 @@ def integrador(params_fisicos,epsilon=10**(-10), cantidad_zs=int(10**5),
     return zs_final,Hs_final
 
 
-def Hubble_teorico(params_fisicos, b_crit=0.15, all_analytic=False,
+def Hubble_th(params_fisicos, b_crit=0.15, all_analytic=False,
                     eval_data=False, z_data=None, epsilon=10**(-10), n=1,
                     cantidad_zs=int(10**5),
                     z_min=0, z_max=10, sistema_ec=dX_dz,
