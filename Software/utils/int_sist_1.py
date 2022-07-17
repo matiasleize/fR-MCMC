@@ -25,7 +25,7 @@ path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git)
 os.sys.path.append('./Software/utils/')
 
-from condiciones_iniciales_1 import condiciones_iniciales, z_condicion_inicial
+from initial_conditions_1 import condiciones_iniciales, z_condicion_inicial
 from cambio_parametros import params_fisicos_to_modelo_HS
 from LambdaCDM import H_LCDM
 from taylor import Taylor_HS
