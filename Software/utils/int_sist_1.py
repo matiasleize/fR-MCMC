@@ -1,4 +1,4 @@
-'''
+''' (Spanish)
 Integra el modelo de Hu-Sawicki con el modelo de De la Cruz et al. y el modelo exponencial
 utilizando el sistema de ecuaciones de Odintsov. Las CI son distintas para ambos modelos
 (ver script int_sist_1.py). 

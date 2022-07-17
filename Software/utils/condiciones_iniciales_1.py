@@ -19,7 +19,7 @@ path_datos_global = os.path.dirname(path_git)
 
 def z_condicion_inicial(params_fisicos, eps=10**(-10)):
     '''
-    z_i para el sistema de ecuaciones de Odintsov
+    z_i for the Odintsov system of equations
     x0 = -(1/3) * np.log((-omega_l/omega_m)*((np.log(eps)/beta)+2))
     z0 = np.exp(-x0)-1    
     '''
@@ -28,18 +28,18 @@ def z_condicion_inicial(params_fisicos, eps=10**(-10)):
     beta = 2/b
     omega_l = 1 - omega_m
     
-    #Define initial z
+    #Initial z
     zi = (2 * omega_l*(-np.log(eps)-2*beta)/(beta*omega_m))**(1/3) - 1
     return zi
 
 def condiciones_iniciales(params_fisicos, zi = 30, model = 'HS', CI_aprox=True):
     '''
-    Calculo las condiciones iniciales para el sistema de ecuaciones diferenciales
-    para el modelo de Hu-Sawicki y el de Starobinsky n=1
-    OBSERVACION IMPORTANTE: Lamb, R_HS z=están reescalados por un factor H0**2 y
-    H reescalado por un facor H0. Esto es para librarnos de la dependencia de
-    las condiciones iniciales con H0. Además, como el output son adminensionales
-    podemos tomar c=1 (lo chequeamos en el papel).
+    Initial conditions for the differential equations
+    of the Hu-Sawicki and Starobinsky model (n=1).
+    Important: Lamb, R_HS z are rescaled by a factor H0**2 and
+    H is rescaled by a factor H0. In this way the initial conditions are 
+    independent from H0. Besides, since this functions return admientional values,
+    we can take c=1 (we checked this analitically).
     '''
 
     [omega_m, b, _] = params_fisicos
@@ -56,7 +56,7 @@ def condiciones_iniciales(params_fisicos, zi = 30, model = 'HS', CI_aprox=True):
         E_ci = sym.lambdify(z,E)
 
         tildeR_i = tildeR_ci(zi)
-        E0 = E_ci(zi) #Esta ya noramlizado por H0!
+        E0 = E_ci(zi) #Already normalized by H0!
 
         return[E0, tildeR_i]
 
@@ -68,23 +68,19 @@ def condiciones_iniciales(params_fisicos, zi = 30, model = 'HS', CI_aprox=True):
         #R_HS = 2 * Lamb * c2/c1
         R_HS = 6 * c_luz_km**2 * omega_m / (7800 * (8315)**2) 
 
-        #En el codigo de Augusto:
-        #R_0 = 3 * (1-omega_m) * b (No me cierra)
+        R_0 = R_HS #This is not the same of R_i, which is R on the IC!
 
-        R_0 = R_HS #No confundir con R_i que es R en la CI!
-
-        #Calculo F
+        #F calculation
         F = R - 2 * Lamb * (1 - 1/ (1 + (R/(b*Lamb))) )
    
-        #Calculo las derivadas de F
-        F_R = sym.diff(F,R) #saqué el sym.simplify para que ande el modelo exp en su momento,
-                            # pero ahora se podría agregar
+        #Derivatives of F
+        F_R = sym.diff(F,R)
         F_2R = sym.diff(F_R,R)
 
         E_z = sym.simplify(sym.diff(E,z))
 
-        #Como hay una independencia con H0 en los resultados finales, defino H=E para
-        # que en el resultado final den bien las unidades
+        #Since there is an independency of H0 in the final results, we define H=E in order
+        # to have the correct units on the final results.
         H = E
         H_z = E_z
 
@@ -100,8 +96,8 @@ def condiciones_iniciales(params_fisicos, zi = 30, model = 'HS', CI_aprox=True):
         F_2R_ci = sym.lambdify(R,F_2R)
 
         R_i = Ricci_ci(zi)
-        #H_ci(zi) #Chequie que de lo esperado x Basilakos
-        #H_z_ci(zi) #Chequie que de lo esperado x Basilakos
+        #H_ci(zi) #The same as Basilakos
+        #H_z_ci(zi) #The same as Basilakos
 
         if CI_aprox == True: #Hibrid initial conditions
             xi = Ricci_t_ci(zi) * F_2R_ci(R_i) / (H_ci(zi) * F_R_ci(R_i))

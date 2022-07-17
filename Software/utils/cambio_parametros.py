@@ -21,7 +21,7 @@ def params_fisicos_to_modelo_HS(omega_m, b):
 
 #%%
 if __name__ == '__main__':
-    ## Hu-Sawicki
+    # Hu-Sawicki
     omega_m_true = 0.24
     b_true = 2
     H_0=73.48
@@ -29,8 +29,8 @@ if __name__ == '__main__':
     c1,c2 = params_fisicos_to_modelo_HS(omega_m_true, b_true,n=1)
     print(c1,c2)
 
-    #c1_true = 1
-    #c2_true = 1/19
+    # c1_true = 1
+    # c2_true = 1/19
     print(1/19)
 
     #%%
