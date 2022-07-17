@@ -57,7 +57,7 @@ def run():
     # Cosmic Chronometers
     if config.USE_CC == True:
         os.chdir(path_data + 'CC/')
-        ds_CC = leer_data_cronometros('datos_cronometros.txt')
+        ds_CC = leer_data_cronometros('chronometers_data.txt')
         datasets.append('_CC')
     else:
         ds_CC = None

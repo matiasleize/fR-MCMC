@@ -26,7 +26,7 @@ ds_SN = leer_data_pantheon('lcparam_full_long_zhel.txt')
 
 # Cronómetros
 os.chdir(path_git+'/Software/Estadística/Datos/')
-ds_CC = leer_data_cronometros('datos_cronometros.txt')
+ds_CC = leer_data_cronometros('chronometers_data.txt')
 
 # AGN
 os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')

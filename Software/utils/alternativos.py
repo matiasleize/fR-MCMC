@@ -215,7 +215,7 @@ if __name__ == '__main__':
 
     # Cronómetros
     os.chdir(path_git+'/Software/source/CC/')
-    ds_CC = leer_data_cronometros('datos_cronometros.txt')
+    ds_CC = leer_data_cronometros('chronometers_data.txt')
 
     # BAO
     os.chdir(path_git+'/Software/source/BAO/')

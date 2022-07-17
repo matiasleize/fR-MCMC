@@ -30,7 +30,7 @@ zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
 
 #Datos de crnómetros
 os.chdir(path_git+'/Software/Estadística/Datos/')
-z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
+z_data, H_data, dH  = leer_data_cronometros('chronometers_data.txt')
 
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 with np.load('valores_medios_HS_CC+SN_4params.npz') as data:

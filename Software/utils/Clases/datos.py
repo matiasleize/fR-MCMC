@@ -88,7 +88,7 @@ if __name__ == '__main__':
 	df_SN_nuisence.crear_df() #OJO, habria que trasponerlo!
 	#%% Cronómetros Cósmicos
     os.chdir(path_git+'/Software/Estadística/Datos/')
-	df_CC = DataFrame('CC','datos_cronometros_nunes.txt')
+	df_CC = DataFrame('CC','chronometers_data_nunes.txt')
 	df_CC.crear_df()
 	#%% BAO
     os.chdir(path_git+'/Software/Estadística/Datos/BAO/')

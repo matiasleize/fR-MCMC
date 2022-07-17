@@ -118,8 +118,8 @@ if __name__ == '__main__':
 
     #%% Cronómetros
     os.chdir(path_git+'/Software/Estadística/Datos/')
-#    z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
-    z_data, H_data, dH  = leer_data_cronometros('datos_cronometros_nunes.txt')
+#    z_data, H_data, dH  = leer_data_cronometros('chronometers_data.txt')
+    z_data, H_data, dH  = leer_data_cronometros('chronometers_data_nunes.txt')
     #z_data, H_data, dH
 
     #%% BAO

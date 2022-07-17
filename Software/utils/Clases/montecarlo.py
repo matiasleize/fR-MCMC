@@ -81,7 +81,7 @@ if __name__ == '__main__':
 	#%%
 
 	os.chdir(path_git+'/Software/Estadística/Datos/')
-	z_data, H_data, dH  = leer_data_cronometros('datos_cronometros.txt')
+	z_data, H_data, dH  = leer_data_cronometros('chronometers_data.txt')
 	log_likelihood = lambda theta: -0.5 * params_to_chi2(theta,n,z_data,H_data,dH)
 	os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
 	with np.load('valores_medios_HS_CC+H0_3params.npz') as data:
