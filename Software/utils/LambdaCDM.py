@@ -5,7 +5,7 @@ import numpy as np
 from numpy.linalg import inv
 from matplotlib import pyplot as plt
 import time
-#import camb #No lo reconoce la compu del df
+#import camb #Make sure it has been already installed!
 from scipy.integrate import cumtrapz as cumtrapz
 from scipy.integrate import simps as simps
 from scipy.interpolate import interp1d

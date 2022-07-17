@@ -21,3 +21,5 @@ Move the old functions or the ones that are not periodically used to the test fo
 Add to environment.yml: PythonBox, seaborn, getdist (maybe something else)
 
 All data should be in Pandas df format (maybe).
+
+Make classes for sampler and data manager (see utils/datos.py).
