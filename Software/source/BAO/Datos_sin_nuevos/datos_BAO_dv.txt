@@ -1,6 +1,0 @@
-z	Distancia	Error_estad	Error_sist	type
-0.15	4.473	0.159	0	Dv/rd
-0.44	11.548	0.559	0	Dv/rd
-0.6	14.946	0.68	0	Dv/rd
-0.73	16.931	0.579	0	Dv/rd
-1.52	26.005	0.995	0	Dv/rd

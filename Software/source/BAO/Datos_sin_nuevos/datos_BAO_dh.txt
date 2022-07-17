@@ -1,3 +1,0 @@
-z	Distancia	Error_estad	Error_sist	type
-2.33	9.07	0.31	0	Dh/rd
-2.4	8.94	0.22	0	Dh/rd

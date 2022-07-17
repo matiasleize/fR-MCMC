@@ -37,7 +37,7 @@ os.chdir(path_git+'/Software/Estadística/Datos/')
 ds_CC = leer_data_cronometros('chronometers_data.txt')
 
 # BAO de odintsov
-os.chdir(path_git+'/Software/Estadística/Datos/BAO/Datos_odintsov')
+os.chdir(path_git+'/Software/Estadística/Datos/BAO/Odintsov_data')
 ds_BAO = leer_data_BAO_odintsov('BAO_data_odintsov.txt')
 
 
