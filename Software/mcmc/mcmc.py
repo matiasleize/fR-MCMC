@@ -19,7 +19,7 @@ os.chdir(path_git); os.sys.path.append('./Software/')
 from utils.sampleo import MCMC_sampler
 from utils.data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
 from utils.chi_square import log_likelihood
-from utils.parametros_derivados import parametros_derivados
+from utils.derived_parameters import derived_parameters
 from config import cfg as config
 os.chdir(path_git); os.sys.path.append('./Software/plotting/')
 import analysis
@@ -214,7 +214,7 @@ def run():
         textfile_witness.write(('\n Estimated time: {} min'.format(len(samples)/60)))
         textfile_witness.close()
 
-        new_samples = parametros_derivados(reader,discard=burnin,thin=thin,model=model)
+        new_samples = derived_parameters(reader,discard=burnin,thin=thin,model=model)
         np.savez(filename+'_deriv', new_samples=new_samples)
 
         textfile_witness = open(witness_file,'a')

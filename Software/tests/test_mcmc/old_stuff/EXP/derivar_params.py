@@ -5,7 +5,7 @@ import os
 from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git+'/Software/utils')
-from parametros_derivados import parametros_derivados
+from derived_parameters import derived_parameters
 
 #Rellenar acá:
 model='EXP'
@@ -30,7 +30,7 @@ thin = int(0.5 * np.min(tau))
 samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
 print(len(samples)) #numero de pasos efectivos
 print('Tiempo estimado:{} min'.format(len(samples)/60))
-new_samples = parametros_derivados(reader,discard=burnin,thin=thin,model=model)
+new_samples = derived_parameters(reader,discard=burnin,thin=thin,model=model)
 
 #%%
 np.savez(filename+'_deriv', new_samples=new_samples)

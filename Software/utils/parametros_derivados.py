@@ -13,7 +13,7 @@ from int_sist_1 import Hubble_th_1
 
 
 @jit
-def parametros_derivados(sampler,discard, thin,model='EXP'):
+def derived_parameters(sampler,discard, thin,model='EXP'):
 	'''Convert LCDM chains into physical chains (for Omega_m and H_0 parameters).'''
 	flat_samples = sampler.get_chain(discard=discard, flat=True, thin=thin)
 	len_chain=flat_samples.shape[0]
