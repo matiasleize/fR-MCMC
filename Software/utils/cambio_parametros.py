@@ -33,6 +33,6 @@ if __name__ == '__main__':
     #c2_true = 1/19
     print(1/19)
 
-    #%% aux es B en la tesis
+    #%%
     aux = c_luz_km**2 * omega_m_true / (7800 * (8315)**2 * (1-omega_m_true)) 
     print(aux)

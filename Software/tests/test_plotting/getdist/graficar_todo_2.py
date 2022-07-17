@@ -68,5 +68,3 @@ g.triangle_plot(samples0,
 #                param_limits = dict
                 legend_labels = 'CC+SN')
 
-
-plt.savefig('/home/matias/Desktop/contornos_HS_CC+SN.png')

@@ -17,7 +17,7 @@ def MCMC_sampler(log_probability, initial_values,
                 max_samples = 10000,
                 witness_freq = 100,
                 tolerance = 0.01,
-                save_path = path_datos_global+'/Resultados_cadenas/'):
+                save_path = None):
 	'''
 	log_probability: logarithm of the posterior distribution that will be sampled.
 

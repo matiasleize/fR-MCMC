@@ -12,13 +12,7 @@ from scipy.stats import scoreatpercentile
 
 class Graficador:
 	'''
-	Esta clase genera un objeto "Graficador" que toma el objeto sampler
-	de las cadenas generadas por el método MonteCarlo, las etiquetas
-	de cada cadena y el título del análisis.
-
-	Falta: poder agregar $$ al principio y al final
-	de cada item de la lista de labels (son necesarios
-	para los graficos pero no para reportar_intervalos)
+	Takes the sampler object, the labels of each chain and title of the analysis.
 	'''
 
 	def __init__(self,sampler,labels,title):
@@ -27,8 +21,7 @@ class Graficador:
 		self.title=title
 
 	def graficar_cadenas(self, num_chains = None):
-		'''Esta función grafica las cadenas en función del largo
-		de las mismas para cada parámetro.'''
+		'''Plot the chains for each parameter.'''
 		samples = self.sampler.get_chain()
 		len_chain,nwalkers,ndim=self.sampler.get_chain().shape
 		sns.set(style='darkgrid', palette="muted", color_codes=True)
@@ -39,19 +32,18 @@ class Graficador:
 			ax = axes[i]
 			if num_chains != None:
 				ax.plot(samples[:, 0:num_chains, i], alpha=0.3)
-			else: #Grafico todas las cadenas
+			else: #Plot all the chains
 				ax.plot(samples[:, :, i], alpha=0.3)
 			ax.set_xlim(0, len(samples))
 			ax.set_ylabel(self.labels[i])
 		ax.yaxis.set_label_coords(-0.1, 0.5)
-		axes[-1].set_xlabel("Número de pasos N");
+		axes[-1].set_xlabel("Number of steps");
 		if not self.title==None:
 			fig.suptitle(self.title);
 
 	def graficar_cadenas_derivs(self):
-		'''Esta función grafica las cadenas en función del largo
-		de las mismas para cada parámetro.'''
-		if isinstance(self.sampler, np.ndarray)==True: #Es una cadenas procesada
+		'''Plot the posprocessed chains for each parameter.'''
+		if isinstance(self.sampler, np.ndarray)==True: #Posprocessed chains
 			samples = self.sampler
 			len_chain,ndim=samples.shape
 		sns.set(style='darkgrid', palette="muted", color_codes=True)
@@ -64,7 +56,7 @@ class Graficador:
 		    ax.set_xlim(0, len(samples))
 		    ax.set_ylabel(self.labels[i])
 		ax.yaxis.set_label_coords(-0.1, 0.5)
-		axes[-1].set_xlabel("Número de pasos N");
+		axes[-1].set_xlabel("Number of steps");
 		if not self.title==None:
 			fig.suptitle(self.title);
 
@@ -73,12 +65,12 @@ class Graficador:
 		'''
 		Grafica los cornerplots para los parámetros a partir de las cadenas
 		de Markov. En la diagonal aparecen las  distribuciones de probabilidad
-		 proyectadas para cada parámetro, y fuera de la diagonal los contornos
-		 de confianza 2D.
+		proyectadas para cada parámetro, y fuera de la diagonal los contornos
+		de confianza 2D.
 
-		 FALTA: poder cambiar color del plot y darle un label a los plots
-		 '''
-		if isinstance(self.sampler, np.ndarray)==True: #Es una cadenas procesada
+		FALTA: poder cambiar color del plot y darle un label a los plots
+		'''
+		if isinstance(self.sampler, np.ndarray)==True: #Posprocessed chains
 			flat_samples = self.sampler
 		else:
 			flat_samples = self.sampler.get_chain(discard=discard, flat=True, thin=thin)
@@ -100,14 +92,14 @@ class Graficador:
 
 	def reportar_intervalos(self, discard, thin, save_path, hdi=True):
 		'''
-		Imprimer los valores de los parámetros, tanto los valores más
-		probables, como las incertezas a uno y dos sigmas.
+		Print parameters values, not only the mode values but also their values
+		at one and two sigmas.
 		'''
 		sns.set(style='darkgrid', palette="muted", color_codes=True)
 		sns.set_context("paper", font_scale=1.2, rc={"font.size":10,"axes.labelsize":12})
 
 
-		if isinstance(self.sampler, np.ndarray)==True: #Es una cadenas procesada
+		if isinstance(self.sampler, np.ndarray)==True: #Posprocessed chains
 			samples = self.sampler
 			len_chain,ndim=samples.shape
 		else:
@@ -131,7 +123,7 @@ class Graficador:
 			q1 = np.diff([one_sigma[0],mean,one_sigma[1]])
 			q2 = np.diff([two_sigma[0],mean,two_sigma[1]])
 			#print(one_sigma,two_sigma)
-			if np.abs(one_sigma[0]) < 10**(-2): #Reporto intervalo inferior
+			if np.abs(one_sigma[0]) < 10**(-2): #Upper limit interval
 				txt = "\mathrm{{{0}}} < {1:.3f}({2:.3f})"
 				txt = txt.format(labels[i], mean + q1[1], mean + q2[1])
 
@@ -144,10 +136,9 @@ class Graficador:
 
 	def graficar_taus_vs_n(self, num_param=None,threshold=100.0):
 		'''
-		Esta función grafica el tiempo de autocorrelación integrado
-		en función del largo de la cadena.
-		OBS: threshold no debería nunca ser menor que 50, según la
-		documentación de la librería emcee.
+		Plot the integrated autocorrelation time with respect to the chain length.
+		Obs: Threshold shouldn't be llower than 50, according to Emcee library.
+		For more info: https://emcee.readthedocs.io/en/stable/tutorials/autocorr/
 		 '''
 		labels = self.labels
 		sns.set(style='darkgrid', palette="muted", color_codes=True)
