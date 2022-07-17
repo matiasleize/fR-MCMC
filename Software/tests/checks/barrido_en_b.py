@@ -17,7 +17,7 @@ from int import Hubble_th
 from supernovas import magn_aparente_teorica, chi2_supernovas
 from BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
 from AGN import zs_2_logDlH0
-from alternativos import params_to_chi2
+from chi_square import params_to_chi2
 from matplotlib import pyplot as plt
 
 os.chdir(path_git)

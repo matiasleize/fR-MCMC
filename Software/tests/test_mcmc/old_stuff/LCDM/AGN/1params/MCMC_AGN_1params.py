@@ -12,7 +12,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
 from sampleo import MCMC_sampler
-from alternativos import params_to_chi2
+from chi_square import params_to_chi2
 from data import leer_data_AGN
 #Parameters order: omega_m,b,H_0,n
 

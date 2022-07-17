@@ -20,7 +20,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
 from data import leer_data_AGN
-from alternativos import params_to_chi2
+from chi_square import params_to_chi2
 #Parameters order: omega_m,b,H_0,l,n,beta,n_agn
 
 #%% Predeterminados:

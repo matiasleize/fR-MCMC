@@ -1,5 +1,5 @@
 """
-Definition of the log likelihood distribution in terms of the parameters of the model and the datasets which are use. 
+Definition of the log likelihood distribution and the chi_square in terms of the parameters of the model and the datasets which are use. 
 """
 
 import numpy as np

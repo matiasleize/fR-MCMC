@@ -18,7 +18,7 @@ path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git); os.sys.path.append('./Software/')
 from utils.sampleo import MCMC_sampler
 from utils.data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
-from utils.alternativos import log_likelihood
+from utils.chi_square import log_likelihood
 from utils.parametros_derivados import parametros_derivados
 from config import cfg as config
 os.chdir(path_git); os.sys.path.append('./Software/plotting/')

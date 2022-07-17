@@ -16,7 +16,7 @@ os.chdir(path_git)
 sys.path.append('./Software/utils/')
 from sampleo import MCMC_sampler
 from data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
-from alternativos import params_to_chi2
+from chi_square import params_to_chi2
 #Parameters order: Mabs,omega_m,b,H_0,n
 
 #%%
