@@ -108,29 +108,29 @@ if __name__ == '__main__':
     os.chdir(path_git)
 
     #%% AGN
-    os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
+    os.chdir(path_git+'/Software/source/AGN')
     aux = leer_data_AGN('table3.dat')
 
     #%% Supernovas
-    os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
+    os.chdir(path_git+'/Software/source/Pantheon')
     zcmb, zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
     #zcmb, zhel, Cinv, mb
 
     #%% Cronómetros
-    os.chdir(path_git+'/Software/Estadística/Datos/')
+    os.chdir(path_git+'/Software/source/CC')
 #    z_data, H_data, dH  = leer_data_cronometros('chronometers_data.txt')
     z_data, H_data, dH  = leer_data_cronometros('chronometers_data_nunes.txt')
     #z_data, H_data, dH
 
     #%% BAO
-    os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
+    os.chdir(path_git+'/Software/source/BAO')
     archivo_BAO='BAO_data_da.txt'
 
     z, valores_data, errores_data_cuad = leer_data_BAO(archivo_BAO)
     #z, valores_data, errores_data_cuad
     
     #%%
-    os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
+    os.chdir(path_git+'/Software/source/BAO')
     archivo_BAO='BAO_data.txt'
     df = pd.read_csv(archivo_BAO,sep='\t')
     z_data = df.to_numpy()[:,0]

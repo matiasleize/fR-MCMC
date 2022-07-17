@@ -139,7 +139,7 @@ if __name__ == '__main__':
 
     #%%
     #Datos de SN
-    os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
+    os.chdir(path_git+'/Software/source/Pantheon')
 
     _, zcmb, zhel, Cinv, mb0, x1, cor, hmass = leer_data_pantheon_2(
                 'lcparam_full_long_zhel.txt','ancillary_g10.txt')

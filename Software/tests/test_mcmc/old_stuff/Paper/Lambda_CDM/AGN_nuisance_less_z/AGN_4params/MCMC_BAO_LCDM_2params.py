@@ -24,7 +24,7 @@ from AGN import params_to_chi2_AGN_nuisance
 from data import leer_data_AGN
 
 #%%
-os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN/')
+os.chdir(path_git+'/Software/source/AGN')
 data_agn = leer_data_AGN('table3.dat')
 
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones')

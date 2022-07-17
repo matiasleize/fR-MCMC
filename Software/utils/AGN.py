@@ -116,7 +116,7 @@ if __name__ == '__main__':
     #Data AGN
     from data import leer_data_AGN
     from matplotlib import pyplot as plt
-    os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN')
+    os.chdir(path_git+'/Software/source/AGN')
     data_agn = leer_data_AGN('table3.dat')
 
     #beta_true =  6.8#7.735

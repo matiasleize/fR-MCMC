@@ -20,7 +20,7 @@ from AGN import params_to_chi2_AGN_nuisance
 
 np.random.seed(1)
 #%%
-os.chdir(path_git+'/Software/Estadística/Datos/Datos_AGN/')
+os.chdir(path_git+'/Software/source/AGN')
 data_agn = leer_data_AGN('table3.dat')
 #%% Predeterminados:
 omega_m_true = 0.9

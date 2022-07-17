@@ -118,8 +118,7 @@ if __name__ == '__main__':
     sys.path.append('./Software/utils/')
     from data import leer_data_BAO
     #%% BAO
-    os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
-#    os.chdir(path_git+'/Software/Estadística/Datos/BAO/Datos_sin_nuevos')
+    os.chdir(path_git+'/Software/source/BAO')
     dataset_BAO = []
     archivo_BAO = ['BAO_data_da.txt','BAO_data_dh.txt','BAO_data_dm.txt',
                     'BAO_data_dv.txt','BAO_data_H.txt']

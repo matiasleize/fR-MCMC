@@ -83,14 +83,14 @@ if __name__ == '__main__':
 	path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 
 	#%% Supernovas Nuisence
-	os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
+	os.chdir(path_git+'/Software/source/Pantheon')
 	df_SN_nuisence = DataFrame('SN',['lcparam_full_long_zhel.txt','lcparam_full_long_sys.txt'])
 	df_SN_nuisence.crear_df() #OJO, habria que trasponerlo!
 	#%% Cronómetros Cósmicos
-    os.chdir(path_git+'/Software/Estadística/Datos/')
+    os.chdir(path_git+'/Software/source/CC')
 	df_CC = DataFrame('CC','chronometers_data_nunes.txt')
 	df_CC.crear_df()
 	#%% BAO
-    os.chdir(path_git+'/Software/Estadística/Datos/BAO/')
+    os.chdir(path_git+'/Software/source/BAO')
 	df_BAO = DataFrame('BAO','BAO_data.txt')
 	df_BAO.crear_df()
