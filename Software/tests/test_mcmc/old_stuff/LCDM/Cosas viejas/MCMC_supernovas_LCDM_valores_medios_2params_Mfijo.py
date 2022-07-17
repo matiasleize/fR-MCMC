@@ -40,4 +40,4 @@ omega_m_ml,H0_ml = soln.x
 print(omega_m_ml,H0_ml)
 
 os.chdir(path_git + '/Software/Estadística/Resultados_simulaciones')
-np.savez('valores_medios_supernovas_LCDM_M_fijo', sol=soln.x)
+np.savez('valores_medios_supernovae_LCDM_M_fijo', sol=soln.x)

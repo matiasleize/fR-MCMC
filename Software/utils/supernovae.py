@@ -33,7 +33,7 @@ def magn_aparente_teorica(int_inv_Hs_interpolado, zcmb, zhel):
     muth = 25.0 + 5.0 * np.log10(d_L)
     return muth
 
-def chi2_supernovas(muth, muobs, C_invertida):
+def chi2_supernovae(muth, muobs, C_invertida):
     '''This function estimates the value of the statistic chi squared
     for the Supernovae data.'''
     deltamu = muth - muobs #row vector

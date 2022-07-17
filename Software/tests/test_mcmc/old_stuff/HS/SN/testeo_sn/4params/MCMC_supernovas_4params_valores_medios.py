@@ -21,7 +21,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
 from data import leer_data_pantheon_2
-from supernovas import testeo_supernovas
+from supernovae import testeo_supernovae
 #Parameters order: Mabs,omega_m,b,H_0,n
 
 #%% Predeterminados:
@@ -43,7 +43,7 @@ _, zcmb, zhel, Cinv, mb0, x1, cor, hmass = leer_data_pantheon_2(
 
 #%%
 #Parametros a ajustar
-nll = lambda theta: testeo_supernovas(theta, params_fijos, zcmb, zhel, Cinv,
+nll = lambda theta: testeo_supernovae(theta, params_fijos, zcmb, zhel, Cinv,
                     mb0,x1,cor,hmass)
 
 initial = np.array([M_true,alpha_true,beta_true,gamma_true])

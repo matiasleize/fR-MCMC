@@ -12,7 +12,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
 from data import leer_data_pantheon_2
-from supernovas import testeo_supernovas
+from supernovae import testeo_supernovae
 #Parameters order: Mabs,omega_m,b,H_0,n
 
 #%%
@@ -33,7 +33,7 @@ H_0 = 73.48
 n = 1
 params_fijos = [omega_m,b,H_0,n]
 
-log_likelihood = lambda theta: -0.5 * testeo_supernovas(theta, params_fijos,
+log_likelihood = lambda theta: -0.5 * testeo_supernovae(theta, params_fijos,
                 zcmb, zhel, Cinv, mb0, x1, cor, hmass)
 
 #%% Definimos las gunciones de prior y el posterior

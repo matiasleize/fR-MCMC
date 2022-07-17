@@ -17,13 +17,13 @@ from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000; #kilometers/seconds
 #Parameters order: Mabs,omega_m,b,H_0,n
 
-def testeo_supernovas(theta, params_fijos, zcmb, zhel, Cinv,
+def testeo_supernovae(theta, params_fijos, zcmb, zhel, Cinv,
                       mb0, x1, color, hmass, cantidad_zs=int(10**5),
                       model='HS',lcdm=False):
     '''
     DEPRECATED
     Dados los parámetros del modelo devuelve un chi2 para los datos
-    de supernovas. 1 parámetro fijo y 4 variables.
+    de supernovae. 1 parámetro fijo y 4 variables.
     '''
 
     if lcdm == True:

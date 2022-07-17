@@ -26,7 +26,7 @@ os.chdir(path_git+'/Software/Estadística/Datos/Datos_pantheon/')
 zcmb,zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt'
                         ,min_z=min_z,max_z=max_z)
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
-with np.load('valores_medios_supernovas_LCDM_M_fijo.npz') as data:
+with np.load('valores_medios_supernovae_LCDM_M_fijo.npz') as data:
     sol = data['sol']
 #%%
 #Parametros a ajustar
@@ -66,7 +66,7 @@ nwalkers, ndim = pos.shape
 #%%
 # Set up the backend
 os.chdir(path_datos_global+'/Resultados_cadenas/LDCM')
-filename = "sample_supernovas_LCDM_omega_H0.h5"
+filename = "sample_supernovae_LCDM_omega_H0.h5"
 backend = emcee.backends.HDFBackend(filename)
 backend.reset(nwalkers, ndim) # Don't forget to clear it in case the file already exists
 #%%
