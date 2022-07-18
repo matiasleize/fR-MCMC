@@ -1,3 +1,4 @@
+'''(Spanish documentation)'''
 import numpy as np
 import numpy.ma as ma
 from numpy.linalg import inv

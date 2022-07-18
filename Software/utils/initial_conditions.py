@@ -1,5 +1,5 @@
 '''
-Initial conditions for the sctipt "int_sis_1.py"
+Initial conditions for the sctipt "solve_sys.py"
 '''
 
 import sympy as sym
