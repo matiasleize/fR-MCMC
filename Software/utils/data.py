@@ -1,5 +1,4 @@
 """
-(Spanish documentation)
 Functions related to data management
 """
 
@@ -9,24 +8,26 @@ import numpy.ma as ma
 
 def leer_data_pantheon(archivo_pantheon, masked = False, min_z = 0, max_z = 30):
 
-    '''Toma la data de Pantheon y extrae la data de los redshifts zcmb y zhel
-    su error dz, además de los datos de la magnitud aparente con su error:
-    mb y dm. Con los errores de la magnitud aparente construye la
-    matriz de correlación asociada. La función devuelve la información
-    de los redshifts, la magnitud aparente y la matriz de correlación
-    inversa.'''
+    '''
+    Takes Pantheon data and extracts the data from the zcmb and zhel 
+    redshifts, its error dz, in addition to the data of the apparent magnitude
+    with its error: mb and dm. With the errors of the apparent magnitude 
+    builds the associated correlation matrix. The function returns the
+    information of the redshifts, the apparent magnitude 
+    and the correlation matrix inverse.
+    '''
 
-    # leo la tabla de datos:
+    # Read text with data
     zcmb,zhel,dz,mb,dmb=np.loadtxt(archivo_pantheon
                                    , usecols=(1,2,3,4,5),unpack=True)
-    #creamos la matriz diagonal con los errores de mB. ojo! esto depende de alfa y beta:
+    #Create the diagonal matrx with m_B uncertainties (it depends on alpha and beta).
     Dstat=np.diag(dmb**2.)
 
-    # hay que leer la matriz de los errores sistematicos que es de NxN
+    # Read data and create the matrix with sistematic errors of NxN
     sn=len(zcmb)
     Csys=np.loadtxt('lcparam_full_long_sys.txt',unpack=True)
     Csys=Csys.reshape(sn,sn)
-    #armamos la matriz de cov final y la invertimos:
+    #We made the final covariance matrix..
     Ccov=Csys+Dstat
 
 
@@ -40,24 +41,25 @@ def leer_data_pantheon(archivo_pantheon, masked = False, min_z = 0, max_z = 30):
         Ccov = Ccov.reshape(len(zhel),len(zhel))
         zcmb = zcmb[mask]
 
+    #.. and finally we invert it
     Cinv=inv(Ccov)
     return zcmb, zhel, Cinv, mb
 
 def leer_data_pantheon_2(archivo_pantheon,archivo_pantheon_2):
-    '''Idem leer_data_pantheon, además de importar los parámetros nuisance.'''
-    # leo la tabla de datos:
+    '''Idem leer_data_pantheon, apart from importing nuisance parameters.'''
+    # Read text with data
     zcmb0,zhel0,dz0,mb0,dmb0=np.loadtxt(archivo_pantheon
                     , usecols=(1,2,3,4,5),unpack=True)
     zcmb_1,hmass,x1,cor=np.loadtxt(archivo_pantheon_2,usecols=(7,13,20,22),
                         unpack=True)
-    #creamos la matriz diagonal con los errores de mB. ojo! esto depende de alfa y beta:
+    #Create the diagonal matrx with m_B uncertainties (it depends on alpha and beta).
     Dstat=np.diag(dmb0**2.)
 
-    # hay que leer la matriz de los errores sistematicos que es de NxN
+    # Read data and create the matrix with sistematic errors of NxN
     sn=len(zcmb0)
     Csys=np.loadtxt('lcparam_full_long_sys.txt',unpack=True)
     Csys=Csys.reshape(sn,sn)
-    #armamos la matriz de cov final y la invertimos:
+    #We made the final covariance matrix and then we invert it.
     Ccov=Csys+Dstat
     Cinv=inv(Ccov)
 
@@ -66,15 +68,7 @@ def leer_data_pantheon_2(archivo_pantheon,archivo_pantheon_2):
 
 
 def leer_data_cronometros(archivo_cronometros):
-
-    '''Toma la data de Pantheon y extrae la data de los redshifts zcmb y zhel
-    su error dz, además de los datos de la magnitud aparente con su error:
-    mb y dm. Con los errores de la magnitud aparente construye la
-    matriz de correlación asociada. La función devuelve la información
-    de los redshifts, la magnitud aparente y la matriz de correlación
-    inversa.'''
-
-    # leo la tabla de datos:
+    # Read text with data
     z, h, dh = np.loadtxt(archivo_cronometros, usecols=(0,1,2), unpack=True)
     return z, h, dh
 
@@ -97,7 +91,7 @@ def leer_data_AGN(archivo_AGN):
     return sorted_z, sorted_Fuv, sorted_eFuv, sorted_Fx, sorted_eFx
 
 def leer_data_BAO_odintsov(archivo_BAO_odintsov):
-    # leo la tabla de datos:
+    # Read text with data
     z, h, dh, rd_fid = np.loadtxt(archivo_BAO_odintsov, usecols=(0,1,2,3), unpack=True)
     return z, h, dh, rd_fid
 #%%
@@ -112,12 +106,12 @@ if __name__ == '__main__':
     os.chdir(path_git+'/Software/source/AGN')
     aux = leer_data_AGN('table3.dat')
 
-    #%% Supernovas
+    #%% Supernovae
     os.chdir(path_git+'/Software/source/Pantheon')
     zcmb, zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
     #zcmb, zhel, Cinv, mb
 
-    #%% Cronómetros
+    #%% Cosmic chronometers
     os.chdir(path_git+'/Software/source/CC')
 #    z_data, H_data, dH  = leer_data_cronometros('chronometers_data.txt')
     z_data, H_data, dH  = leer_data_cronometros('chronometers_data_nunes.txt')
