@@ -76,7 +76,7 @@ def dX_dz(z, variables, params_modelo, model='HS'):
     return [s0,s1,s2,s3,s4]
 
 
-def integrador_r(params_fisicos, n=1, cantidad_zs=int(10**5), max_step=10**(-5),
+def integrator_r(params_fisicos, n=1, cantidad_zs=int(10**5), max_step=10**(-5),
                 z_inicial=30, z_final=0, sistema_ec=dX_dz, verbose=False,
                 model='HS'):
     #Para HS n=1 con max_step 0.003 alcanza.
@@ -141,7 +141,7 @@ if __name__ == '__main__':
     omega_m = 0.262
     params_fisicos = [omega_m,b,H0]
 
-    zs, r = integrador_r(params_fisicos, n=1, cantidad_zs=cantidad_zs,
+    zs, r = integrator_r(params_fisicos, n=1, cantidad_zs=cantidad_zs,
                 max_step=max_step, z_inicial=z_inicial, z_final=0, sistema_ec=dX_dz,
                 verbose=True,model='HS')
 

@@ -64,7 +64,7 @@ for (i,b) in enumerate(bs):
                     dataset_AGN = ds_AGN,
                     #H0_Riess = True,
                     model = 'EXP',
-                    integrador=int
+                    integrator=int
                     )
 
 #1077.8293845284927/(1048+20+len(ds_CC[0])-4)
@@ -103,7 +103,7 @@ for (i,b) in enumerate(bs):
                     dataset_AGN = ds_AGN,
                     #H0_Riess = True,
                     model = 'EXP',
-                    integrador=int
+                    integrator=int
                     )
 
 #%%
@@ -150,7 +150,7 @@ for j in range(3):
                     #dataset_AGN = ds_AGN,
                     #H0_Riess = True,
                     model = 'HS',
-                    integrador=j
+                    integrator=j
                     )
 #%%
 metodo_0=chies[:,0]
@@ -168,4 +168,4 @@ plt.plot(bs,error_01,label='Error_01')
 plt.ylabel('Error porcentual')
 plt.xlabel('b')
 plt.legend()
-plt.savefig('/home/matias/integrador/Error_en_b.png')
+plt.savefig('/home/matias/integrator/Error_en_b.png')

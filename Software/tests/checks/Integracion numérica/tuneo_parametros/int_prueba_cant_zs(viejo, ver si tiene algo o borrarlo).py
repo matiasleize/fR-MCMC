@@ -17,7 +17,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from int import integrador
+from int import integrator
 
 
 #%%
@@ -40,7 +40,7 @@ Hs = []
 
 for i,cant in enumerate(cant_zs):
 
-    zs, H_ode = integrador(params_fisicos, n=1, cantidad_zs=cant,
+    zs, H_ode = integrator(params_fisicos, n=1, cantidad_zs=cant,
     max_step=0.003)
 
     f = interp1d(zs,H_ode)

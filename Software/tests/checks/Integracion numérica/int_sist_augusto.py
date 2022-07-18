@@ -120,7 +120,7 @@ def integrals(ys, xs):
 
 def dX_dz(z, variables, params_modelo, model='HS'):
     '''
-    Sistema de ecuaciones a resolver por la funcion integrador
+    Sistema de ecuaciones a resolver por la funcion integrator
     Parameters:
         params_modelo: list
             lista de n parametros, donde los primeros n-1 elementos son los
@@ -178,7 +178,7 @@ def dX_dz(z, variables, params_modelo, model='HS'):
     return [s0,s1,s2,s3,s4]
 
 
-def integrador(params_fisicos, n=1, cantidad_zs=int(10**5), max_step=10**(-5),
+def integrator(params_fisicos, n=1, cantidad_zs=int(10**5), max_step=10**(-5),
                 z_inicial=30, z_final=0, sistema_ec=dX_dz, verbose=False,
                 model='HS'):
     #Para HS n=1 con max_step 0.003 alcanza.
@@ -295,12 +295,12 @@ def Hubble_th_2(params_fisicos, b_crit=0.15, all_analytic=False,
 
     else: #Integro
         if eval_data == False:
-            zs_modelo, Hs_modelo = integrador(params_fisicos,
+            zs_modelo, Hs_modelo = integrator(params_fisicos,
                                     cantidad_zs=cantidad_zs, max_step=max_step,
                                     z_inicial=z_max, z_final=z_min, sistema_ec=sistema_ec,
                                     verbose=verbose, model=model)
         else:
-            zs_modelo, Hs_modelo = integrador(params_fisicos,
+            zs_modelo, Hs_modelo = integrator(params_fisicos,
                                     cantidad_zs=cantidad_zs, max_step=max_step,
                                     z_inicial=z_max, z_final=z_min, sistema_ec=sistema_ec,
                                     verbose=verbose, eval_data=True, z_data = z_data,
@@ -317,8 +317,8 @@ if __name__ == '__main__':
     H0 = 73.48
 
     params_fisicos = [omega_m,b,H0]
-    zs_ode, Hs_HS = integrador(params_fisicos, verbose=True, model='HS',z_inicial=10)
-    #_, Hs_EXP = integrador(params_fisicos, epsilon=10**(-10),
+    zs_ode, Hs_HS = integrator(params_fisicos, verbose=True, model='HS',z_inicial=10)
+    #_, Hs_EXP = integrator(params_fisicos, epsilon=10**(-10),
     #            verbose=True, model='EXP',z_inicial=10)
 
 

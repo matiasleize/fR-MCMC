@@ -13,7 +13,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from int import integrador
+from int import integrator
 
 #%%
 omega_m = 0.24
@@ -28,7 +28,7 @@ ds = []
 z_ref = np.linspace(0,3,50) #Evaluoy analizo de 0 a 3 (la zona de interes!)
 
 for cant in cantidad_zs:
-    zs, H_ode = integrador(params_fisicos, n=1, cantidad_zs=cant,
+    zs, H_ode = integrator(params_fisicos, n=1, cantidad_zs=cant,
                 max_step=0.003)
     d_c =  c_luz_km * cumtrapz(H_ode**(-1), zs, initial=0)
     g=interp1d(zs,H_ode)

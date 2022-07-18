@@ -20,7 +20,7 @@ os.chdir(path_git)
 sys.path.append('./Software/utils/')
 from condiciones_iniciales import condiciones_iniciales
 from change_of_parameters import params_fisicos_to_modelo
-from int import dX_dz, integrador
+from int import dX_dz, integrator
 #%%
 def plot_sol(solucion):
     '''Grafica la solución de la ODE de 5x5, por separado

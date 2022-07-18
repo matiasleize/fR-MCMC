@@ -10,7 +10,7 @@ os.chdir(path_git)
 sys.path.append('./Software/utils/')
 from condiciones_iniciales import condiciones_iniciales
 from change_of_parameters import params_fisicos_to_modelo
-from int import integrador
+from int import integrator
 from taylor import Taylor_HS
 #%%
 
@@ -19,7 +19,7 @@ omega_m = 0.24
 H0 = 73.48
 params_fisicos = [omega_m,b,H0]
 
-zs, H_ode = integrador(params_fisicos)
+zs, H_ode = integrator(params_fisicos)
 H_taylor = Taylor_HS(zs,omega_m,b,H0)
 
 #%%

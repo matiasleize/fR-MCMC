@@ -48,7 +48,7 @@ log_likelihood = lambda theta: -0.5 * params_to_chi2(theta, params_fijos, index=
                                                         #dataset_AGN = ds_AGN,
                                                         #H0_Riess = True,
                                                         model = 'HS',
-                                                        integrador = 1
+                                                        integrator = 1
                                                         )
 #%%
 # Definimos la distribucion del prior

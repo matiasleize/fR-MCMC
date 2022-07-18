@@ -1,15 +1,14 @@
 '''
-(Spanish documentation)
-Integra el modelo de Hu-Sawicki con el modelo de De la Cruz et al. y el modelo exponencial
-utilizando el sistema de ecuaciones de Odintsov. Las CI son distintas para ambos modelos
-(ver script solve_sys.py). 
+Integration of the ODE for the different cosmological models. For the Hu-Sawicki model
+we use De la Cruz et al. ODE. Besides, for the Exponential model we use the Odintsov ODE.
+Note that the IC are different for the two models. 
 
-Tarea: Ver cuanto tarda integrar HS con este sistema en comparacion con Odintsov y cuanta
-diferencia hay.
+int_2 (located at test folder) only changes how is the calculation of eta (alfa on the code).
 
-El int_2 (que esta en la carpeta test) solo cambia en como se calcula eta (alfa en el codigo).
+TODO: Check if it is faster to use eta_1 or eta_2.
 
-Tarea: Probar si es mas rapido eta_1 o eta_2.
+TODO: Check the times of integrations in comparison of HS in comparison with the one of Odintsov
+and evaluate this difference.
 '''
 import time
 import numpy as np
@@ -33,21 +32,21 @@ from taylor import Taylor_HS
 
 def dX_dz(z, variables, params_fisicos, model='HS'):
     '''
-    Sistema de ecuaciones a resolver pot la función Integrador.
+    System of equations to solve.
     Parameters:
         params_fisicos: list
-            #lista de n parámetros, donde los primeros n-1 elementos son los
-            #parametros del sistema, mientras que el útimo argumento especifica el modelo
-            #en cuestión, matemáticamente dado por la función \Gamma.
+            # list of  n parameters, where the first n-1 elements are the model parameters,
+            # while the last one specify the cosmological model. 
+            # Mathematically, this information is contained in the function Gamma.
         model: string
-            Modelo que estamos integrando.
+            Cosmological model that is integrated.
     Returns: list
-        Set de ecuaciones diferenciales para las variables dinámicas.
+        Set of ODE for the dynamical variables.
     '''
     
     [omega_m, b, _] = params_fisicos
 
-    if model == 'EXP':
+    if model == 'EXP': #For the Exponential model
         E = variables[0]
         tildeR = variables[1]
 
@@ -59,18 +58,18 @@ def dX_dz(z, variables, params_fisicos, model='HS'):
 
         return [s0,s1]
 
-    elif model == 'HS': #Para el modelo de Hu-Sawicki
+    elif model == 'HS': #For the Hu-Sawicki model
         x = variables[0]
         y = variables[1]
         v = variables[2]
         w = variables[3]
         r = variables[4]
 
-        #Calculamos los parámetros del modelo
+        #Calculate the model parameters
         B, D = params_fisicos_to_modelo_HS(omega_m, b) # (c1,c2) = (B,D) from De la Cruz et al.
 
         gamma = lambda r,c1,c2: -(c1 - (c2*r + 1)**2)*(c2*r + 1)/(2*c1*c2*r)
-        G = gamma(r,B,D) #Va como r^3/r = r^2
+        G = gamma(r,B,D) #Goes like r^3/r = r^2
 
         s0 = (-w + x**2 + (1+v)*x - 2*v + 4*y) / (z+1)
         s1 = (- (v*x*G - x*y + 4*y - 2*y*v)) / (z+1)
@@ -84,26 +83,21 @@ def dX_dz(z, variables, params_fisicos, model='HS'):
         print('Choose a valid model!')
         pass
 
-def integrador(params_fisicos, epsilon=10**(-10), cantidad_zs=int(10**5),
+def integrator(params_fisicos, epsilon=10**(-10), cantidad_zs=int(10**5),
                 z_inicial=10, z_final=0,
                 sistema_ec=dX_dz, verbose=False, eval_data=False, z_data = None,
                 model='HS',method='RK45', rtol=1e-11, atol=1e-16):
     '''
-    Integración numérica del sistema de ecuaciones diferenciales entre
-    z_inicial y z_final, dadas las condiciones iniciales de las variables
-    (x,y,v,w,r) y los parámetros 'con sentido físico' del modelo f(R).
-    Parameters:
+    Numerical integration of the system of differential equations between
+    z_inicial and z_final, given the initial conditions of the variables
+    (x,y,v,w,r) and the 'physically meaningful' parameters of the f(R) model.
+    Parameters: 
         cantidad_zs: int
-            cantidad de puntos (redshifts) en los que se evalúa la
-            integración nummérica. Es necesario que la cantidad de puntos en el
-            área de interés $(z \in [0,3])$.
-        max_step: float
-            paso de la integración numérica. Cuando los parámetros que aparecen
-            en el sistema de ecuaciones se vuelven muy grandes (creo que esto implica
-            que el sistema a resolver se vuelva más inestable) es necesario que el paso
-            de integración sea pequeño.
+            number of points (in redshift) in which the numerical integration
+            is evaluated.
         verbose: Bool
-            if True, imprime el tiempo que tarda el proceso de integración.
+            if True, prints the time of integration.
+        TODO: complete the list of input parameters
     Output: list
         Un array de Numpy de redshifts z y un array de H(z).
     '''
@@ -116,7 +110,7 @@ def integrador(params_fisicos, epsilon=10**(-10), cantidad_zs=int(10**5),
         beta = 2/b
         cond_iniciales = condiciones_iniciales(params_fisicos, zi=z_ci, model='EXP')
 
-        #Integramos el sistema
+        #Integrate the system
         zs_int = np.linspace(z_ci,z_final,cantidad_zs)
 
         x_ci = -np.log(1 + z_ci)
@@ -131,7 +125,7 @@ def integrador(params_fisicos, epsilon=10**(-10), cantidad_zs=int(10**5),
         zs_ode = np.exp(-xs_ode)-1
         Hs_ode = H0 * sol.y[0][::-1]
 
-        ## La parte LCDM
+        # LCDM part
         zs_LCDM = np.linspace(z_ci,z_inicial,cantidad_zs)
         Hs_LCDM = H0 * np.sqrt(omega_m * (1+zs_LCDM)**3 + (1-omega_m))
 
@@ -149,8 +143,8 @@ def integrador(params_fisicos, epsilon=10**(-10), cantidad_zs=int(10**5),
             Hs_final = f(zs_final)
 
     elif model=='HS':
-        #Calculo las condiciones cond_iniciales, eta
-        # y los parametros de la ecuación
+        # Calculate the IC, eta
+        # and the parameters of the ODE.
         cond_iniciales = condiciones_iniciales(params_fisicos, zi=z_inicial)
 
         h = H0/100
@@ -164,21 +158,18 @@ def integrador(params_fisicos, epsilon=10**(-10), cantidad_zs=int(10**5),
                 cond_iniciales, t_eval=zs_int, args=(params_fisicos, model),
                 rtol=rtol, atol=atol, method=method)
 
-            if (len(sol.t)!=cantidad_zs):
-                print('Está integrando mal!')
-            if np.all(zs_int==sol.t)==False:
-                print('Hay algo raro!')
+            assert len(sol.t)==cantidad_zs, 'Something is wrong with the integration!'
+            assert np.all(zs_int==sol.t), 'Not all the values of z coincide with the ones that were required!'
+
         else:
             sol = solve_ivp(sistema_ec, (z_inicial,z_final),
                 cond_iniciales, t_eval=z_data.reverse(), args=(params_fisicos,model),
                 rtol=rtol, atol=atol, method=method)
 
-            if (len(sol.t)!=len(z_data)):
-                print('Está integrando mal!')
-            if np.all(z_data==sol.t)==False:
-                print('Hay algo raro!')
+            assert len(sol.t)==cantidad_zs, 'Something is wrong with the integration!'
+            assert np.all(zs_int==sol.t), 'Not all the values of z coincide with the ones that were required!'
 
-        #Calculamos el Hubble
+        # Calculate the Hubble parameter
         zs_final = sol.t[::-1]
 
         v=sol.y[2][::-1]
@@ -194,24 +185,22 @@ def integrador(params_fisicos, epsilon=10**(-10), cantidad_zs=int(10**5),
     return zs_final, Hs_final
     if model=='HS':
         [omega_m, b, H0] = params_fisicos
-        #Calculo las condiciones cond_iniciales, eta
-        # y los parametros de la ecuacion
+        # Calculate the IC, eta
+        # and the parameters of the ODE.
         cond_iniciales = condiciones_iniciales(omega_m, b, z0=z_inicial, n=n)
         alfa = H0*np.sqrt((1-omega_m)*b/2)
         c1, c2 = params_fisicos_to_modelo_HS(omega_m, b, n=n)
 
         params_modelo = [c1,c2,n]
 
-    #Integramos el sistema
+    # Integrate the system
     zs_int = np.linspace(z_inicial,z_final,cantidad_zs)
     sol = solve_ivp(sistema_ec, (z_inicial,z_final),
         cond_iniciales, t_eval=zs_int, args=(params_modelo,model),
         max_step=max_step)
-
-    if (len(sol.t)!=cantidad_zs):
-        print('Esta integrando mal!')
-    if np.all(zs_int==sol.t)==False:
-        print('Hay algo raro!')
+    
+    assert len(sol.t)==cantidad_zs, 'Something is wrong with the integration!'
+    assert np.all(zs_int==sol.t), 'Not all the values of z coincide with the ones that were required!'
 
 
 
@@ -228,13 +217,13 @@ def Hubble_th_1(params_fisicos, b_crit=0.15, all_analytic=False,
         Hs_modelo = H_LCDM(zs_modelo, omega_m, H0)
         return zs_modelo, Hs_modelo
 
-    elif model=='EXP': #b critico para el modelo exponencial
+    elif model=='EXP': #b critical for the Exponential model
         log_eps_inv = -np.log10(epsilon)
         b_crit = (4 + omega_m/(1-omega_m)) / log_eps_inv
     else:
         pass
 
-    if (b <= b_crit) or (all_analytic==True): #Aproximacion analitica
+    if (b <= b_crit) or (all_analytic==True): #Analytic approximation
         if eval_data == False:
             zs_modelo = np.linspace(z_min,z_max,cantidad_zs)
         else:
@@ -246,18 +235,18 @@ def Hubble_th_1(params_fisicos, b_crit=0.15, all_analytic=False,
             Hs_modelo = Taylor_ST(zs_modelo, omega_m, b, H0)
         #elif (model=='ST') and (n==1):
         #    Hs_modelo = Taylor_ST(zs_modelo, omega_m, b, H0)
-        elif model=='EXP': #Devuelvo LCDM
+        elif model=='EXP': #Return LCDM
             Hs_modelo = H_LCDM(zs_modelo, omega_m, H0)
 
-    else: #Integro
+    else: #Integrate
         if eval_data == False:
-            zs_modelo, Hs_modelo = integrador(params_fisicos, epsilon=epsilon,
+            zs_modelo, Hs_modelo = integrator(params_fisicos, epsilon=epsilon,
                                     cantidad_zs=cantidad_zs,
                                     z_inicial=z_max, z_final=z_min, sistema_ec=sistema_ec,
                                     verbose=verbose, model=model,
                                      method=method,rtol=rtol, atol=atol)
         else:
-            zs_modelo, Hs_modelo = integrador(params_fisicos, epsilon=epsilon,
+            zs_modelo, Hs_modelo = integrator(params_fisicos, epsilon=epsilon,
                                     cantidad_zs=cantidad_zs,
                                     z_inicial=z_max, z_final=z_min, sistema_ec=sistema_ec,
                                     verbose=verbose, eval_data=True, z_data = z_data,
@@ -270,16 +259,16 @@ if __name__ == '__main__':
 
     #%% Hu-Sawicki (n=1)
     params_fisicos = [0.3, 0.1, 73] # [omega_m, b, H0]
-    zs_ode, H_HS = integrador(params_fisicos, verbose=True, model='HS')
+    zs_ode, H_HS = integrator(params_fisicos, verbose=True, model='HS')
     _, H_HS_1 = Hubble_th_1(params_fisicos, verbose=True, model='HS')
-    #%% Exponencial
+    #%% Exponential
     params_fisicos = [0.3, 2, 73] # [omega_m, b, H0]
-    zs_ode, H_EXP = integrador(params_fisicos, verbose=True, model='EXP')
+    zs_ode, H_EXP = integrator(params_fisicos, verbose=True, model='EXP')
     _, H_EXP_1 = Hubble_th_1(params_fisicos, verbose=True, model='EXP')
-    #%% Graficamos todos los datos juntos
+    #%% Plot all models together
     #%matplotlib qt5
     plt.figure()
-    plt.title('Integrador $f(R)$')
+    plt.title('Integrator $f(R)$')
     plt.xlabel('z (redshift)')
     plt.ylabel('H(z) ((km/seg)/Mpc)')
     plt.plot(zs_ode,H_HS,'.',label='HS')

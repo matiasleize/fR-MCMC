@@ -9,7 +9,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from int import integrador
+from int import integrator
 
 #%%
 b = 0.1
@@ -22,7 +22,7 @@ archivo_math = '/Software/Sandbox/Integracion numérica/chequeos_ODE/chequeo_otr
 os.chdir(path_git+archivo_math)
 z_math,E_math=np.loadtxt('mfile_ODE_{}.csv'.format(b),unpack=True,delimiter = ',')
 
-zs, H_ode=integrador(params_fisicos,max_step=0.003,cantidad_zs=int(10**5))
+zs, H_ode=integrator(params_fisicos,max_step=0.003,cantidad_zs=int(10**5))
 f = interp1d(zs,H_ode)
 H_int = f(z_math)
 E_int = H_int/H0

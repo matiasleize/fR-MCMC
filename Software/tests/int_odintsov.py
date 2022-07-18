@@ -67,7 +67,7 @@ def dX_dz(x, variables, params_modelo, model='HS'):
     return [s0,s1]
 
 
-def integrador(params_fisicos,epsilon=10**(-10), cantidad_zs=int(10**5),
+def integrator(params_fisicos,epsilon=10**(-10), cantidad_zs=int(10**5),
                 z_inicial=10, z_final=0,
                 sistema_ec=dX_dz, verbose=False, eval_data=False, z_data = None,
                 model='HS',method='RK45', rtol=1e-11, atol=1e-16,):
@@ -192,13 +192,13 @@ def Hubble_th(params_fisicos, b_crit=0.15, all_analytic=False,
 
     else: #Integro
         if eval_data == False:
-            zs_modelo, Hs_modelo = integrador(params_fisicos, epsilon=epsilon,
+            zs_modelo, Hs_modelo = integrator(params_fisicos, epsilon=epsilon,
                                     cantidad_zs=cantidad_zs,
                                     z_inicial=z_max, z_final=z_min, sistema_ec=sistema_ec,
                                     verbose=verbose, model=model,
                                      method=method,rtol=rtol, atol=atol)
         else:
-            zs_modelo, Hs_modelo = integrador(params_fisicos, epsilon=epsilon,
+            zs_modelo, Hs_modelo = integrator(params_fisicos, epsilon=epsilon,
                                     cantidad_zs=cantidad_zs,
                                     z_inicial=z_max, z_final=z_min, sistema_ec=sistema_ec,
                                     verbose=verbose, eval_data=True, z_data = z_data,
@@ -216,8 +216,8 @@ if __name__ == '__main__':
     H0 = 73.48
 
     params_fisicos = [omega_m,b,H0]
-    zs_ode, Hs_HS = integrador(params_fisicos, verbose=True, model='HS',z_inicial=10)
-    _, Hs_EXP = integrador(params_fisicos, epsilon=10**(-10),
+    zs_ode, Hs_HS = integrator(params_fisicos, verbose=True, model='HS',z_inicial=10)
+    _, Hs_EXP = integrator(params_fisicos, epsilon=10**(-10),
                 verbose=True, model='EXP',z_inicial=10)
 
 

@@ -8,16 +8,16 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from int import integrador
+from int import integrator
 from taylor import Taylor_HS
 
 b = 0.15
 omega_m = 0.3
 H0 = 73.48
 params_fisicos=[omega_m,b,H0]
-zs, H_RK45 = integrador(params_fisicos, cantidad_zs=int(10**5),
+zs, H_RK45 = integrator(params_fisicos, cantidad_zs=int(10**5),
                         max_step=10**(-5), model='HS',method='RK45')
-_, H_LSODA = integrador(params_fisicos, cantidad_zs=int(10**5),
+_, H_LSODA = integrator(params_fisicos, cantidad_zs=int(10**5),
                         max_step=10**(-5), model='HS',method='LSODA')
 error = 100*np.abs(1-(H_LSODA/H_RK45))
 

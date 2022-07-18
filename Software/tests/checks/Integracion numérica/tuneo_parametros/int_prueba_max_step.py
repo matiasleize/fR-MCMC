@@ -17,7 +17,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from int import integrador
+from int import integrator
 
 #%%
 omega_m = 0.24
@@ -30,7 +30,7 @@ cantidad_zs = int(10**5)
 max_steps = np.linspace(0.01,0.001,100)
 Hs = []
 for maxs in max_steps:
-    zs, H_ode = integrador(params_fisicos, n=1, cantidad_zs=cantidad_zs,
+    zs, H_ode = integrator(params_fisicos, n=1, cantidad_zs=cantidad_zs,
                 max_step=maxs)
     #f=interp1d(zs,H_ode)
     #Hs.append(f(np.linspace(0,3,100000)))

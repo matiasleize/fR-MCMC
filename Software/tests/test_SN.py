@@ -57,7 +57,7 @@ def testeo_supernovae(theta, params_fijos, zcmb, zhel, Cinv,
 
         else:
             params_fisicos = [omega_m,b,H_0]
-            zs, H_modelo = integrador(params_fisicos, n, cantidad_zs=cantidad_zs, model=model)
+            zs, H_modelo = integrator(params_fisicos, n, cantidad_zs=cantidad_zs, model=model)
 
     alpha_0 = 0.154
     beta_0 = 3.02

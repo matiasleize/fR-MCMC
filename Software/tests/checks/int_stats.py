@@ -19,7 +19,7 @@ sys.path.append('./Software/utils/')
 
 from condiciones_iniciales import condiciones_iniciales, z_condicion_inicial
 from change_of_parameters import params_fisicos_to_modelo_HS, params_fisicos_to_modelo_ST
-from int import integrador
+from int import integrator
 
 #%%
 if __name__ == '__main__':
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     cantidad_zs = int(10**5)
     max_step = 10**(-4)
 
-    zs, H_ode = integrador(params_fisicos, n=1, cantidad_zs=cantidad_zs,
+    zs, H_ode = integrator(params_fisicos, n=1, cantidad_zs=cantidad_zs,
                 max_step=max_step, z_inicial=z_inicial, z_final=z_final,
                 verbose=True,
                 model='EXP')

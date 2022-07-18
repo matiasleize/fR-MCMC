@@ -15,7 +15,7 @@ path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
 
-from int import integrador
+from int import integrator
 from taylor import Taylor_HS, Taylor_ST
 
 from scipy.integrate import cumtrapz as cumtrapz
@@ -33,7 +33,7 @@ omega_m = 0.24
 H0 = 73.48
 params_fisicos = [omega_m,b,H0]
 
-zs_ref, H_ref = integrador(params_fisicos, n=2, cantidad_zs=cantidad_zs,
+zs_ref, H_ref = integrator(params_fisicos, n=2, cantidad_zs=cantidad_zs,
             max_step=max_step, z_inicial=z_final, z_final=0,
             model='HS')
 
@@ -44,7 +44,7 @@ z_inicial = np.linspace(3,z_final,5)
 error_porcentual = np.zeros(len(z_inicial))
 for i,z0 in enumerate(z_inicial):
 
-    zs, H_ode = integrador(params_fisicos, n=2, cantidad_zs=cantidad_zs,
+    zs, H_ode = integrator(params_fisicos, n=2, cantidad_zs=cantidad_zs,
                 max_step=max_step, z_inicial=z0, z_final=0,
                 model='HS')
     H_ref = f(zs)

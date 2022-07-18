@@ -8,7 +8,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from int import integrador
+from int import integrator
 from taylor import Taylor_HS,Taylor_ST
 
 #%%
@@ -25,7 +25,7 @@ for i, b in enumerate(bs):
     print(i)
     params_fisicos = [omega_m,b,H0]
 
-    zs, H_ode = integrador(params_fisicos, cantidad_zs=int(10**5), max_step=10**(-5), model='HS')
+    zs, H_ode = integrator(params_fisicos, cantidad_zs=int(10**5), max_step=10**(-5), model='HS')
     H_taylor = Taylor_HS(zs,omega_m,b,H0)
 
     error_b[i] = 100*np.abs(np.mean(1-(H_taylor/H_ode)))

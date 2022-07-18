@@ -15,7 +15,7 @@ sys.path.append('./Software/utils/')
 
 from condiciones_iniciales import condiciones_iniciales, z_condicion_inicial
 from change_of_parameters import params_fisicos_to_modelo_HS
-from int import integrador
+from int import integrator
 from matplotlib import pyplot as plt
 
 b = 0.1
@@ -26,14 +26,14 @@ mstep = 8*10**(-8)
 params_fisicos = [omega_m,b,H0]
 
 #Integramos con RK45
-#zs_ode, H_HS = integrador(params_fisicos, verbose=True, model='HS')
-#_, H_ST = integrador(params_fisicos, verbose=True, model='ST')
-#_, H_EXP = integrador(params_fisicos, epsilon=eps, verbose=True, model='EXP',max_step=10**(-6))
+#zs_ode, H_HS = integrator(params_fisicos, verbose=True, model='HS')
+#_, H_ST = integrator(params_fisicos, verbose=True, model='ST')
+#_, H_EXP = integrator(params_fisicos, epsilon=eps, verbose=True, model='EXP',max_step=10**(-6))
 
 #Integramos con LSODA
-#zs_ode, H_HS_1 = integrador(params_fisicos, verbose=True, model='HS',method='LSODA')
-#_, H_ST_1 = integrador(params_fisicos, verbose=True, model='ST',method='LSODA')
-zs_ode, H_EXP_1 = integrador(params_fisicos, epsilon=eps,
+#zs_ode, H_HS_1 = integrator(params_fisicos, verbose=True, model='HS',method='LSODA')
+#_, H_ST_1 = integrator(params_fisicos, verbose=True, model='ST',method='LSODA')
+zs_ode, H_EXP_1 = integrator(params_fisicos, epsilon=eps,
                 verbose=True, model='EXP',method='LSODA'
                 ,max_step=mstep)
 plt.plot(zs_ode,H_EXP_1)
