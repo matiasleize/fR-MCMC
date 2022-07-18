@@ -9,7 +9,7 @@ import os
 import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 os.chdir(path_git); os.sys.path.append('./Software/utils/')
-from solve_sys import Hubble_th_1
+from solve_sys import Hubble_th
 
 
 @jit
@@ -23,7 +23,7 @@ def derived_parameters(sampler,discard, thin,model='EXP'):
 			omega_m_lcdm = flat_samples[i,0]
 			b = flat_samples[i,1]
 			H0_lcdm = flat_samples[i,2]
-			_, Hubble = Hubble_th_1([omega_m_lcdm,b,H0_lcdm], verbose=False, model=model)
+			_, Hubble = Hubble_th([omega_m_lcdm,b,H0_lcdm], verbose=False, model=model)
 			H0 = Hubble[0]
 			omega_m  = omega_m_lcdm * (H0_lcdm/H0)**2
 
@@ -34,7 +34,7 @@ def derived_parameters(sampler,discard, thin,model='EXP'):
 			omega_m_lcdm = flat_samples[i,1]
 			b = flat_samples[i,2]
 			H0_lcdm = flat_samples[i,3]
-			_, Hubble = Hubble_th_1([omega_m_lcdm,b,H0_lcdm], verbose=False, model=model)
+			_, Hubble = Hubble_th([omega_m_lcdm,b,H0_lcdm], verbose=False, model=model)
 			H0 = Hubble[0]
 			omega_m  = omega_m_lcdm * (H0_lcdm/H0)**2
 

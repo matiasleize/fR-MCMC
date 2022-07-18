@@ -13,7 +13,7 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 
 os.chdir(path_git); os.sys.path.append('./Software/utils/')
-from solve_sys import Hubble_th_1
+from solve_sys import Hubble_th
 from supernovae import magn_aparente_teorica, chi2_supernovae
 from BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
 from AGN import zs_2_logDlH0
@@ -114,7 +114,7 @@ def params_to_chi2(theta, params_fijos, index=0,
     [Mabs, omega_m, b, H_0] = all_parameters(theta, params_fijos, index)
 
     params_fisicos = [omega_m,b,H_0]
-    zs_modelo, Hs_modelo = Hubble_th_1(params_fisicos, n=n, model=model,
+    zs_modelo, Hs_modelo = Hubble_th(params_fisicos, n=n, model=model,
                                 z_min=0, z_max=10, cantidad_zs=cantidad_zs,
                                 all_analytic=all_analytic)
 
