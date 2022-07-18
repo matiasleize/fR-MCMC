@@ -1,5 +1,9 @@
 # f(R) models statistical analysis
-Faculty of Exact and Natural Sciences, Buenos Aires University.
+Author: Matías Leizerovich. Faculty of Exact and Natural Sciences, Buenos Aires University.
+
+For download, see https://github.com/matiasleize/fR-MCMC
+
+This version of the code was developed to make the analysis of the paper 'Testing f(R) gravity models with quasar x-ray and UV fluxes', by M. Leizerovich, L. Kraiselburd, S. Landau and C. Scóccola, published in Phys. Rev. D 105, 103526 (2022). See https://journals.aps.org/prd/abstract/10.1103/PhysRevD.105.103526. You can use fR-MCMC freely, provided that in your publications you cite the paper mentioned.
 
 ## Create a virtual environment
 In order to create a virtual environment with the libraries that are needed to run this module, follow the next steps:
