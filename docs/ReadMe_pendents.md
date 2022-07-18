@@ -23,4 +23,4 @@ Add to environment.yml: PythonBox, seaborn, getdist (maybe something else)
 All data should be in Pandas df format (maybe).
 
 Make classes for sampler and data manager (see utils/datos.py).
-Rename files sampleo.py and graficador.py
+Rename files sampleo.py

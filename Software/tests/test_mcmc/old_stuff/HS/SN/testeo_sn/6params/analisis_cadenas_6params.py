@@ -9,7 +9,7 @@ path_git, path_datos_global = definir_path()
 
 os.chdir(path_git)
 sys.path.append('./Software/utils/Clases')
-from graficador import Graficador
+from plotter import Plotter
 
 #%% Importo los mínimos del chi2
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
@@ -29,7 +29,7 @@ thin=200
 #thin = int(0.5 * np.min(tau))
 #%%
 %matplotlib qt5
-analisis = Graficador(reader,
+analisis = Plotter(reader,
             ['$M_{abs}$','$\Omega_{m}$','b','$\\alpha$','$\\beta$','$\gamma$'],
             #['$\\alpha$','$\\beta$','$\gamma$'],
              '')

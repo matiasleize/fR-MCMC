@@ -9,7 +9,7 @@ path_git, path_datos_global = definir_path()
 
 os.chdir(path_git)
 sys.path.append('./Software/utils/Clases')
-from graficador import Graficador
+from plotter import Plotter
 
 #%% Importo los mínimos del chi2
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones')
@@ -27,7 +27,7 @@ burnin= int(0.2*len(samples[:,0])) #Burnin del 20%
 thin = 1
 #%%
 %matplotlib qt5
-analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','$H_{0}$'],
+analisis = Plotter(reader, ['$M_{abs}$','$\Omega_{m}$','$H_{0}$'],
                     'AGN')
 
 analisis.graficar_contornos(discard=burnin, thin=thin, poster=False,color='r')

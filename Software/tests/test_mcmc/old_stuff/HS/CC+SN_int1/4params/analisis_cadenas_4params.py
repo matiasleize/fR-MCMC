@@ -9,7 +9,7 @@ path_git, path_datos_global = definir_path()
 
 os.chdir(path_git)
 sys.path.append('./Software/utils/Clases')
-from graficador import Graficador
+from plotter import Plotter
 
 #%% Importo las cadenas
 os.chdir(path_datos_global+'/Resultados_cadenas/')
@@ -24,7 +24,7 @@ thin = int(0.5 * np.min(tau))
 %matplotlib qt5
 #burnin=100
 #thin=1
-analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}^{\Lambda CDM}$','b','$H_{0}^{\Lambda CDM}$'],'1 SNIA + CC (HS)')
+analisis = Plotter(reader, ['$M_{abs}$','$\Omega_{m}^{\Lambda CDM}$','b','$H_{0}^{\Lambda CDM}$'],'1 SNIA + CC (HS)')
 analisis.graficar_contornos(discard=burnin, thin=thin, poster=False,color='r')
 #%%
 analisis.graficar_cadenas()

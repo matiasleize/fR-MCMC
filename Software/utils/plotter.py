@@ -10,9 +10,10 @@ from IPython.display import display, Math
 import arviz as az
 from scipy.stats import scoreatpercentile
 
-class Graficador:
+class Plotter:
 	'''
 	Takes the sampler object, the labels of each chain and title of the analysis.
+	Returns a plotter object.
 	'''
 
 	def __init__(self,sampler,labels,title):

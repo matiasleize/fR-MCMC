@@ -15,7 +15,7 @@ path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 
 os.chdir(path_git); os.sys.path.append('./Software/')
-from utils.graficador import Graficador
+from utils.plotter import Plotter
 from config import cfg as config
 
 os.chdir(path_git + '/Software/plotting/')
@@ -49,12 +49,12 @@ def run(filename):
         reader = emcee.backends.HDFBackend(filename + '.h5')
         samples = reader.get_chain()
         burnin= burnin=int(0.2*len(samples[:,0])); thin=1
-        analisis = Graficador(reader, parameters_label, 'Titulo')
+        analisis = Plotter(reader, parameters_label, 'Titulo')
 
     else:    
         with np.load(filename + '_deriv.npz') as data:
             ns = data['new_samples']
-        analisis = Graficador(ns, parameters_label, '')
+        analisis = Plotter(ns, parameters_label, '')
         burnin = 0 # already has the burnin
         thin = 1
 

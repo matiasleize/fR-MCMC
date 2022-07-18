@@ -9,7 +9,7 @@ path_git, path_datos_global = definir_path()
 
 os.chdir(path_git)
 sys.path.append('./Software/utils/Clases')
-from graficador import Graficador
+from plotter import Plotter
 
 #%% Importo los mínimos del chi2
 os.chdir(path_git+'/Software/Estadística/Resultados_simulaciones/')
@@ -28,7 +28,7 @@ burnin = int(2 * np.max(tau))
 thin = int(0.5 * np.min(tau))
 #%%
 %matplotlib qt5
-analisis = Graficador(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'')
+analisis = Plotter(reader, ['$M_{abs}$','$\Omega_{m}$','b','$H_{0}$'],'')
                     #'Supernovas tipo IA + Cronómetros Cósmicos + BAO')
 analisis.graficar_contornos(sol, discard=burnin, thin=thin, poster=True,color='r')
  #%%

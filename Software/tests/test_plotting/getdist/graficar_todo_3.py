@@ -10,7 +10,7 @@ path_git, path_datos_global = definir_path()
 
 os.chdir(path_git)
 sys.path.append('./Software/utils/Clases')
-from graficador import Graficador
+from plotter import Plotter
 
 #%% Importo las cadenas
 os.chdir(path_datos_global+'/Resultados_cadenas/Paper/EXP')
