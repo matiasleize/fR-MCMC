@@ -6,9 +6,6 @@ Instead of inputs on the .yml files with names True or False, use any word that 
 # About backend modifications
 Based on: https://medium.com/bcggamma/data-science-python-best-practices-fdb16fdedf82
 
-## Some ideas
-Aca si vamos a trabajar en un futuro con clases y esas cosas. En esta parte solo nos enfocamos en la experiencia del usuario. Mismo podemos hacer varias versiones del model.py si precisamos alguna modificacion temporal, ademas de tener varios config.yml.
-
 ### Directories distribution
 '''
 tesis_licenciatura/Software --> supermodel/supermodel
@@ -23,4 +20,3 @@ Add to environment.yml: PythonBox, seaborn, getdist (maybe something else)
 All data should be in Pandas df format (maybe).
 
 Make classes for sampler and data manager (see utils/datos.py).
-Rename files sampling.py
