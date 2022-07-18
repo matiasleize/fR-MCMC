@@ -13,7 +13,7 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 
 os.chdir(path_git); os.sys.path.append('./Software/utils/')
-from int_sist_1 import Hubble_th_1
+from solve_sys import Hubble_th_1
 from supernovae import magn_aparente_teorica, chi2_supernovae
 from BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
 from AGN import zs_2_logDlH0

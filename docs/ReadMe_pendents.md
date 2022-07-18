@@ -16,7 +16,7 @@ supermodel/supermodel/tests/: this have conatin all that appear in the section "
 '''
 
 ### Other stuff
-Rename int_sist_1 as solve_sist (grep if it is necessary to change this in other location).
+Rename solve_sys as solve_sist (grep if it is necessary to change this in other location).
 
 Add to environment.yml: PythonBox, seaborn, getdist (maybe something else)
 

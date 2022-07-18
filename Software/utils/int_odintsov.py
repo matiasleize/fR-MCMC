@@ -3,7 +3,7 @@
 Integra el modelo de Hu-Sawicki y el modelo exponencial utilizando en ambos casos 
 el sistema de ecuaciones de Odintsov. Las CI en este caso se calculan de la misma manera
 para ambos modelos, que es la que corresponde con la opción (model='EXP') en 
-el script int_sist_1.py. Integra ST ademas de HS y EXP!
+el script solve_sys.py. Integra ST ademas de HS y EXP!
 
 Tarea: Ver cuanto tarda integrar HS con este sistema en comparacion con De la Cruz y cuanta
 diferencia hay.

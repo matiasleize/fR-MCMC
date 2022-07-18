@@ -2,7 +2,7 @@
 (Spanish documentation)
 Integra el modelo de Hu-Sawicki con el modelo de De la Cruz et al. y el modelo exponencial
 utilizando el sistema de ecuaciones de Odintsov. Las CI son distintas para ambos modelos
-(ver script int_sist_1.py). 
+(ver script solve_sys.py). 
 
 Tarea: Ver cuanto tarda integrar HS con este sistema en comparacion con Odintsov y cuanta
 diferencia hay.
