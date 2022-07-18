@@ -14,7 +14,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from sampleo import MCMC_sampler
+from sampling import MCMC_sampler
 from data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO_odintsov
 from chi_square_odintsov import params_to_chi2_odintsov
 #Parameters order: Mabs,omega_m,b,H_0,n

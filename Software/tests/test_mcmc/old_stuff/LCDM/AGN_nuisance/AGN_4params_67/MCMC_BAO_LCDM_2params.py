@@ -20,7 +20,7 @@ from pc_path import definir_path
 path_git, path_datos_global = definir_path()
 os.chdir(path_git)
 sys.path.append('./Software/utils/')
-from sampleo import MCMC_sampler
+from sampling import MCMC_sampler
 from data import leer_data_AGN
 from AGN import params_to_chi2_AGN_nuisance
 
