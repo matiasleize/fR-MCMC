@@ -1,4 +1,4 @@
-# f(R) models statistical analysis
+# $f(R)$ models statistical analysis
 Author: Matías Leizerovich. Faculty of Exact and Natural Sciences, Buenos Aires University.
 
 For download, see https://github.com/matiasleize/fR-MCMC
