@@ -8,7 +8,7 @@ import numpy as np
 import os
 import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
-os.chdir(path_git); os.sys.path.append('./Software/utils/')
+os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
 from solve_sys import Hubble_th
 
 

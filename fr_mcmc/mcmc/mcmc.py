@@ -15,16 +15,16 @@ path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 
 # Obs: To import packages this is the sintaxis to change paths:
-os.chdir(path_git); os.sys.path.append('./Software/')
+os.chdir(path_git); os.sys.path.append('./fr_mcmc/')
 from utils.sampling import MCMC_sampler
 from utils.data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
 from utils.chi_square import log_likelihood
 from utils.derived_parameters import derived_parameters
 from config import cfg as config
-os.chdir(path_git); os.sys.path.append('./Software/plotting/')
+os.chdir(path_git); os.sys.path.append('./fr_mcmc/plotting/')
 import analysis
 
-os.chdir(path_git + '/Software/mcmc/')
+os.chdir(path_git + '/fr_mcmc/mcmc/')
 def run():
     output_dir = config.OUTPUT_DIR
     model = config.MODEL
@@ -43,7 +43,7 @@ def run():
     [H0_min, H0_max] = config.H0_PRIOR
 
     #%% Import cosmological data
-    path_data = path_git + '/Software/source/'
+    path_data = path_git + '/fr_mcmc/source/'
     datasets = []
 
     # Supernovae type IA

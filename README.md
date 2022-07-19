@@ -27,16 +27,16 @@ Having said that, the user can change the location of the ouput directory on the
 The files (.yml) located on the directory fR-MCMC/configs shows all the configuration parameters. 
 
 ## Run the code:
-To run the code for a particular configuration file, edit config.py (which is located on the directory fR-MCMC/Software) and then run the following command while you are on the root project directory:  
+To run the code for a particular configuration file, edit config.py (which is located on the directory fR-MCMC/fr_mcmc) and then run the following command while you are on the root project directory:  
 
 ```
-python3 -m Software --task mcmc
+python3 -m fr_mcmc --task mcmc
 ```
 
 If it is desired to run only the analyses part of the code over an existing Markov Chain result, run:
 
 ```
-python3 -m Software --task analysis --outputfile 'filename'
+python3 -m fr_mcmc --task analysis --outputfile 'filename'
 ```
 
 where 'filename' is the name of the directory where the runs are stored (as an example: 'filename' =  'sample_HS_SN_CC_4params').

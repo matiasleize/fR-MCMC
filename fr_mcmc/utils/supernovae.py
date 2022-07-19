@@ -10,7 +10,7 @@ path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 
 os.chdir(path_git)
-os.sys.path.append('./Software/utils/')
+os.sys.path.append('./fr_mcmc/utils/')
 
 from LambdaCDM import H_LCDM
 
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
     path_datos_global = os.path.dirname(path_git)
     os.chdir(path_git)
-    sys.path.append('./Software/utils/')
+    sys.path.append('./fr_mcmc/utils/')
     from data import leer_data_pantheon_2
     from data import leer_data_pantheon
     #Parameters order: Mabs,omega_m,b,H_0,n
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     theta = [M_true,omega_m_true,b_true]
 
     #%% SN data
-    os.chdir(path_git+'/Software/source/Pantheon')
+    os.chdir(path_git+'/fr_mcmc/source/Pantheon')
 
     _, zcmb, zhel, Cinv, mb0, x1, cor, hmass = leer_data_pantheon_2(
                 'lcparam_full_long_zhel.txt','ancillary_g10.txt')

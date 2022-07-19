@@ -13,7 +13,7 @@ import os
 import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 
-os.chdir(path_git); os.sys.path.append('./Software/utils/')
+os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
 from solve_sys import Hubble_th
 from supernovae import magn_aparente_teorica, chi2_supernovae
 from BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
@@ -207,19 +207,19 @@ if __name__ == '__main__':
     from matplotlib import pyplot as plt
 
     path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
-    os.chdir(path_git); os.sys.path.append('./Software/utils/')
+    os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
     from data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
 
     # Supernovas
-    os.chdir(path_git+'/Software/source/Pantheon/')
+    os.chdir(path_git+'/fr_mcmc/source/Pantheon/')
     ds_SN = leer_data_pantheon('lcparam_full_long_zhel.txt')
 
     # Cronómetros
-    os.chdir(path_git+'/Software/source/CC/')
+    os.chdir(path_git+'/fr_mcmc/source/CC/')
     ds_CC = leer_data_cronometros('chronometers_data.txt')
 
     # BAO
-    os.chdir(path_git+'/Software/source/BAO/')
+    os.chdir(path_git+'/fr_mcmc/source/BAO/')
     ds_BAO = []
     archivos_BAO = ['BAO_data_da.txt','BAO_data_dh.txt','BAO_data_dm.txt',
                     'BAO_data_dv.txt','BAO_data_H.txt']
@@ -228,7 +228,7 @@ if __name__ == '__main__':
         ds_BAO.append(aux)
 
     # AGN
-    os.chdir(path_git+'/Software/source/AGN')
+    os.chdir(path_git+'/fr_mcmc/source/AGN')
     ds_AGN = leer_data_AGN('table3.dat')
 
 

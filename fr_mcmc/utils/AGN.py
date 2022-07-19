@@ -12,7 +12,7 @@ import os
 import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
-os.chdir(path_git); os.sys.path.append('./Software/utils/')
+os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
 #from int import Hubble_th
 from solve_sys import Hubble_th
 from LambdaCDM import H_LCDM
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     #Data AGN
     from data import leer_data_AGN
     from matplotlib import pyplot as plt
-    os.chdir(path_git+'/Software/source/AGN')
+    os.chdir(path_git+'/fr_mcmc/source/AGN')
     data_agn = leer_data_AGN('table3.dat')
 
     beta_true =  6.8 #7.735

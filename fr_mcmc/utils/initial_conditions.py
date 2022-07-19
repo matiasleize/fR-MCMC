@@ -14,7 +14,7 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 #os.chdir(path_git)
-#os.sys.path.append('./Software/utils/')
+#os.sys.path.append('./fr_mcmc/utils/')
 #from change_of_parameters import params_fisicos_to_modelo_HS
 
 def z_condicion_inicial(params_fisicos, eps=10**(-10)):

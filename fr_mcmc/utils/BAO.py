@@ -16,7 +16,7 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git)
-os.sys.path.append('./Software/utils/')
+os.sys.path.append('./fr_mcmc/utils/')
 from LambdaCDM import H_LCDM_rad
 
 #Parameters order: omega_m,b,H_0,n
@@ -114,10 +114,10 @@ if __name__ == '__main__':
     path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
     path_datos_global = os.path.dirname(path_git)
     os.chdir(path_git)
-    sys.path.append('./Software/utils/')
+    sys.path.append('./fr_mcmc/utils/')
     from data import leer_data_BAO
     #%% BAO
-    os.chdir(path_git+'/Software/source/BAO')
+    os.chdir(path_git+'/fr_mcmc/source/BAO')
     dataset_BAO = []
     archivo_BAO = ['BAO_data_da.txt','BAO_data_dh.txt','BAO_data_dm.txt',
                     'BAO_data_dv.txt','BAO_data_H.txt']

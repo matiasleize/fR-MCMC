@@ -8,7 +8,7 @@ Based on: https://medium.com/bcggamma/data-science-python-best-practices-fdb16fd
 
 ### Directories distribution
 '''
-tesis_licenciatura/Software --> supermodel/supermodel
+tesis_licenciatura/fr_mcmc --> supermodel/supermodel
 supermodel/supermodel/tests/: this have conatin all that appear in the section "Unit test a lot" 
 '''
 

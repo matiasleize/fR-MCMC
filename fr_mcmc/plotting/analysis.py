@@ -14,11 +14,11 @@ import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 
-os.chdir(path_git); os.sys.path.append('./Software/')
+os.chdir(path_git); os.sys.path.append('./fr_mcmc/')
 from utils.plotter import Plotter
 from config import cfg as config
 
-os.chdir(path_git + '/Software/plotting/')
+os.chdir(path_git + '/fr_mcmc/plotting/')
 
 def parameters_labels(index):
     if index == 4:

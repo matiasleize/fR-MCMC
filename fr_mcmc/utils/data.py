@@ -103,29 +103,29 @@ if __name__ == '__main__':
     os.chdir(path_git)
 
     #%% AGN
-    os.chdir(path_git+'/Software/source/AGN')
+    os.chdir(path_git+'/fr_mcmc/source/AGN')
     aux = leer_data_AGN('table3.dat')
 
     #%% Supernovae
-    os.chdir(path_git+'/Software/source/Pantheon')
+    os.chdir(path_git+'/fr_mcmc/source/Pantheon')
     zcmb, zhel, Cinv, mb = leer_data_pantheon('lcparam_full_long_zhel.txt')
     #zcmb, zhel, Cinv, mb
 
     #%% Cosmic chronometers
-    os.chdir(path_git+'/Software/source/CC')
+    os.chdir(path_git+'/fr_mcmc/source/CC')
 #    z_data, H_data, dH  = leer_data_cronometros('chronometers_data.txt')
     z_data, H_data, dH  = leer_data_cronometros('chronometers_data_nunes.txt')
     #z_data, H_data, dH
 
     #%% BAO
-    os.chdir(path_git+'/Software/source/BAO')
+    os.chdir(path_git+'/fr_mcmc/source/BAO')
     archivo_BAO='BAO_data_da.txt'
 
     z, valores_data, errores_data_cuad = leer_data_BAO(archivo_BAO)
     #z, valores_data, errores_data_cuad
     
     #%%
-    os.chdir(path_git+'/Software/source/BAO')
+    os.chdir(path_git+'/fr_mcmc/source/BAO')
     archivo_BAO='BAO_data.txt'
     df = pd.read_csv(archivo_BAO,sep='\t')
     z_data = df.to_numpy()[:,0]

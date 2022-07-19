@@ -4,8 +4,8 @@ Run the modules.
 
 import click
 import logging
-from Software.mcmc.mcmc import run as mcmc_main
-from Software.plotting.analysis import run as analysis_main
+from fr_mcmc.mcmc.mcmc import run as mcmc_main
+from fr_mcmc.plotting.analysis import run as analysis_main
 
 
 tasks = {
