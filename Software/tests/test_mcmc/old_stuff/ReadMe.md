@@ -1,1 +1,0 @@
-Aca voy a poner todo lo que no está contemplado en la función model.py. Pendiente en la proxima reestructuración del código.
