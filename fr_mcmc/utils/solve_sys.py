@@ -250,16 +250,16 @@ def Hubble_th(physical_params, *args, b_crit=0.15, all_analytic=False,
 if __name__ == '__main__':
     from matplotlib import pyplot as plt
 
-    def plot_hubble_diagram(model_name, physical_params,hubble_th=False):
+    def plot_hubble_diagram(model_name, physical_params,hubble_th=True):
         
-        if hubble_th == False:
-            # Integrate Hubble function
-            redshifts, hubble_values = integrator(physical_params, verbose=True, model=model_name)
+        if hubble_th == True:
+            # Integrate (or evaluate) Hubble function
+            redshifts, hubble_values = Hubble_th(physical_params, verbose=True, model=model_name)
             # Plot Hubble function
             plt.plot(redshifts, hubble_values, '.', label=model_name)            
         else:
-            # Integrate (or evaluate) Hubble function
-            redshifts, hubble_values = Hubble_th(physical_params, verbose=True, model=model_name)
+            # Integrate Hubble function
+            redshifts, hubble_values = integrator(physical_params, verbose=True, model=model_name)
             # Plot Hubble function
             plt.plot(redshifts, hubble_values, '.', label=model_name)
 
