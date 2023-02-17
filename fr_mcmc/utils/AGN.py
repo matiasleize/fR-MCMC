@@ -45,7 +45,7 @@ def chi2_AGN_nuisance(teo, data, errores_cuad):
     return chi2
 
 def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
-                                cantidad_zs=int(10**6), model='HS'
+                                num_z_points=int(10**6), model='HS'
                                 ,less_z=False,all_analytic=False):
     '''
     Given the model parameters, it returns the statistics chi squared
@@ -77,9 +77,9 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
             [omega_m, b] = theta
             [beta, gamma, delta, H_0] = params_fijos #This beta is different from the other
 
-        params_fisicos = [omega_m,b,H_0]
-        zs_modelo, Hs_modelo = Hubble_th(params_fisicos, n=n, model=model,
-                                    z_min=0, z_max=10, cantidad_zs=cantidad_zs,
+        physical_params = [omega_m,b,H_0]
+        zs_modelo, Hs_modelo = Hubble_th(physical_params, n=n, model=model,
+                                    z_min=0, z_max=10, num_z_points=num_z_points,
                                     all_analytic=all_analytic)
 
 

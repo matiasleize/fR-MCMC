@@ -7,7 +7,7 @@ c_luz_km = c_luz/1000
 
 # Parameters order: omega_m, b, H_0, n
 
-def params_fisicos_to_modelo_HS(omega_m, b):
+def physical_to_model_params_HS(omega_m, b):
     '''
     Convert physical parameters (omega_m, b)
     into Hu-Sawicki model parameters c1 y c2. This transformation doesn't depend on H0!
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     b_true = 2
     H_0=73.48
 
-    c1,c2 = params_fisicos_to_modelo_HS(omega_m_true, b_true,n=1)
+    c1,c2 = physical_to_model_params_HS(omega_m_true, b_true,n=1)
     print(c1,c2)
 
     # c1_true = 1

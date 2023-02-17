@@ -15,16 +15,16 @@ path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 #os.chdir(path_git)
 #os.sys.path.append('./fr_mcmc/utils/')
-#from change_of_parameters import params_fisicos_to_modelo_HS
+#from change_of_parameters import physical_to_model_params_HS
 
-def z_condicion_inicial(params_fisicos, eps=10**(-10)):
+def redshift_initial_condition(physical_params, eps=10**(-10)):
     '''
     z_i for the Odintsov system of equations
     x0 = -(1/3) * np.log((-omega_l/omega_m)*((np.log(eps)/beta)+2))
     z0 = np.exp(-x0)-1    
     '''
  
-    [omega_m, b, _] = params_fisicos
+    [omega_m, b, _] = physical_params
     beta = 2/b
     omega_l = 1 - omega_m
     
@@ -32,7 +32,7 @@ def z_condicion_inicial(params_fisicos, eps=10**(-10)):
     zi = (2 * omega_l*(-np.log(eps)-2*beta)/(beta*omega_m))**(1/3) - 1
     return zi
 
-def condiciones_iniciales(params_fisicos, zi = 30, model = 'HS', CI_aprox=True):
+def calculate_initial_conditions(physical_params, zi = 30, model = 'HS', CI_aprox=True):
     '''
     Initial conditions for the differential equations
     of the Hu-Sawicki and Starobinsky model (n=1).
@@ -42,7 +42,7 @@ def condiciones_iniciales(params_fisicos, zi = 30, model = 'HS', CI_aprox=True):
     we can take c=1 (we checked this analitically).
     '''
 
-    [omega_m, b, _] = params_fisicos
+    [omega_m, b, _] = physical_params
 
     z = sym.Symbol('z')
     E = (omega_m*(1+z)**3 + (1-omega_m))**(0.5)
@@ -64,7 +64,7 @@ def condiciones_iniciales(params_fisicos, zi = 30, model = 'HS', CI_aprox=True):
         R = sym.Symbol('R')
         Lamb = 3 * (1-omega_m)
 
-        #c1,c2 = params_fisicos_to_modelo_HS(omega_m,b)
+        #c1,c2 = physical_to_model_params_HS(omega_m,b)
         #R_HS = 2 * Lamb * c2/c1
         R_HS = 6 * c_luz_km**2 * omega_m / (7800 * (8315)**2) 
 
@@ -119,27 +119,27 @@ def condiciones_iniciales(params_fisicos, zi = 30, model = 'HS', CI_aprox=True):
 if __name__ == '__main__':
     omega_m = 0.2
     b = 0.6
-    params_fisicos = [omega_m, b, 0]
-    print(z_condicion_inicial(params_fisicos, eps=10**(-10)))
+    physical_params = [omega_m, b, 0]
+    print(redshift_initial_condition(physical_params, eps=10**(-10)))
     #%%
     H0 = 73.48
     zi = 30
-    cond_iniciales = condiciones_iniciales(params_fisicos, zi=zi, model='HS')
-    print(cond_iniciales)
+    initial_cond = calculate_initial_conditions(physical_params, zi=zi, model='HS')
+    print(initial_cond)
     #%%
     bs = np.arange(0.2,1.1,0.1)
     omegas = np.arange(0.2,0.51,0.01)
     output = np.zeros((len(bs),len(omegas)))
     for i, b in enumerate(bs):
         for j, omega in enumerate(omegas):
-            params_fisicos = [omega_m,b,0]
-            cond_iniciales=condiciones_iniciales(params_fisicos,zi=3,
+            physical_params = [omega_m,b,0]
+            initial_cond=calculate_initial_conditions(physical_params,zi=3,
                             model='EXP')
-            output[i,j] = 2 * cond_iniciales[1]/b #lo convierto en r para comparar
+            output[i,j] = 2 * initial_cond[1]/b #lo convierto en r para comparar
     #np.savetxt('2darray.csv', output, delimiter=',', fmt='%1.2f')
     output
     #%%
-    cond_iniciales_hibrid = condiciones_iniciales(params_fisicos, zi=zi, model='HS', CI_aprox=True)
-    cond_iniciales_LCDM = condiciones_iniciales(params_fisicos, zi=zi, model='HS', CI_aprox=False)
+    cond_iniciales_hibrid = calculate_initial_conditions(physical_params, zi=zi, model='HS', CI_aprox=True)
+    cond_iniciales_LCDM = calculate_initial_conditions(physical_params, zi=zi, model='HS', CI_aprox=False)
     print(cond_iniciales_hibrid)
     print(cond_iniciales_LCDM)

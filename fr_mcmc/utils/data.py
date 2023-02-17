@@ -115,7 +115,6 @@ if __name__ == '__main__':
     os.chdir(path_git+'/fr_mcmc/source/CC')
 #    z_data, H_data, dH  = leer_data_cronometros('chronometers_data.txt')
     z_data, H_data, dH  = leer_data_cronometros('chronometers_data_nunes.txt')
-    #z_data, H_data, dH
 
     #%% BAO
     os.chdir(path_git+'/fr_mcmc/source/BAO')

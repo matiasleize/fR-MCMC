@@ -82,7 +82,7 @@ def all_parameters(theta, params_fijos, index):
 def params_to_chi2(theta, params_fijos, index=0,
                     dataset_SN=None, dataset_CC=None,
                     dataset_BAO=None, dataset_AGN=None, H0_Riess=False,
-                    cantidad_zs=int(10**5), model='HS',n=1,
+                    num_z_points=int(10**5), model='HS',n=1,
                     nuisance_2 = False, errores_agrandados=False,
                     all_analytic=False):
     '''
@@ -98,7 +98,7 @@ def params_to_chi2(theta, params_fijos, index=0,
     dataset_AGN:
     H0_Riess:
 
-    cantidad_zs:
+    num_z_points:
     model (str): cosmological model ('LCDM', 'HS', 'EXP').
     n (int): (1, 2)
     nuisance_2 (bool):
@@ -114,9 +114,9 @@ def params_to_chi2(theta, params_fijos, index=0,
 
     [Mabs, omega_m, b, H_0] = all_parameters(theta, params_fijos, index)
 
-    params_fisicos = [omega_m,b,H_0]
-    zs_modelo, Hs_modelo = Hubble_th(params_fisicos, n=n, model=model,
-                                z_min=0, z_max=10, cantidad_zs=cantidad_zs,
+    physical_params = [omega_m,b,H_0]
+    zs_modelo, Hs_modelo = Hubble_th(physical_params, n=n, model=model,
+                                z_min=0, z_max=10, num_z_points=num_z_points,
                                 all_analytic=all_analytic)
 
     if (dataset_CC != None or dataset_BAO != None or dataset_AGN != None):
