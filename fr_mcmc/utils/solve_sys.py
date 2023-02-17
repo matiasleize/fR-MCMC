@@ -1,12 +1,10 @@
 '''
 Integration of the ODE for the different cosmological models. For the Hu-Sawicki model
 we use De la Cruz et al. ODE. Besides, for the Exponential model we use the Odintsov ODE.
-Note that the IC are different for the two models. 
+Note that the initial conditions are different for the two models. 
 
-int_2 (located at test folder) only changes how is the calculation of eta (alfa on the code).
-
-TODO: Check the times of integrations in comparison of HS in comparison with the one of Odintsov
-and evaluate this difference.
+TODO: Check the times of integrations of HS using De la Cruz ODE in comparison with the one of Odintsov
+and evaluate the difference.
 '''
 import os
 import time
@@ -173,8 +171,8 @@ def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
         zs_LCDM = np.linspace(z_ci,initial_z,num_z_points)
         Hs_LCDM = H0 * np.sqrt(omega_m * (1+zs_LCDM)**3 + (1-omega_m))
 
-        zs_aux = np.concatenate((zs_ode,zs_LCDM),axis = None)
-        Hs_aux = np.concatenate((Hs_ode,Hs_LCDM),axis = None)
+        zs_aux = np.hstack(zs_ode,zs_LCDM)
+        Hs_aux = np.hstack(Hs_ode,Hs_LCDM)
 
         f = interp1d(zs_aux,Hs_aux)
 
@@ -216,13 +214,33 @@ def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
 
 
 def Hubble_th(physical_params, *args, b_crit=0.15, all_analytic=False,
-                    epsilon=10**(-10), n=1,
-                    num_z_points=int(10**5),
-                    z_min=0, z_max=10, system_equations=get_odes,
-                    verbose=False, model='HS', method='RK45',
-                    rtol=1e-11, atol=1e-16, **kwargs):
+                epsilon=10**(-10), n=1, num_z_points=int(10**5),
+                z_min=0, z_max=10, model='HS', **kwargs):
 
-    [omega_m,b,H0] = physical_params
+    '''
+    Calculates the Hubble parameter as a function of redshift for different cosmological models,
+    given physical parameters such as the matter density, curvature, and Hubble constant.
+
+    Args:
+        physical_params: A tuple of three physical parameters in the order (matter density, curvature, Hubble constant).
+        model: A string that specifies the cosmological model to use. Valid options are 'LCDM' (Lambda-CDM),
+            'EXP' (exponential model), 'HS' (Hu-Sawicki model), and 'ST' (Starobinsky model).
+        b_crit: A critical value for the distortion parameter use in HS and ST models.
+        all_analytic: A boolean flag that specifies whether to use an analytic approximation for the Hubble parameter
+            or numerical integration.
+        epsilon: A tune parameter that is used to calculate b_crit in the exponential model.
+        n: An integer that specifies which of the two possible Taylor series approximations to use for the Hubble
+            parameter in the power-law growth models (HS or ST).
+        num_z_points: An integer that specifies the number of redshifts at which to compute the Hubble parameter.
+        z_min: The minimum redshift value to consider.
+        z_max: The maximum redshift value to consider.
+
+    Returns:
+        A tuple of two NumPy arrays containing the redshifts and the corresponding Hubble parameters.
+    '''
+    
+    omega_m, b, H0 = physical_params
+    
     if model == 'LCDM':
         zs = np.linspace(z_min, z_max, num_z_points)
         Hs = H_LCDM(zs, omega_m, H0)
@@ -268,7 +286,7 @@ if __name__ == '__main__':
     b = 0.1
     H_0 = 73
     physical_params_hs = np.array([omega_m, b, H_0])
-    physical_params_exp = np.array([omega_m, 2, H_0])
+    physical_params_exp = np.array([omega_m, 10, H_0])
 
     # Plot Hubble diagrams for different models
     plt.figure()
