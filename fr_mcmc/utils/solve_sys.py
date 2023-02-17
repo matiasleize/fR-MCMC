@@ -295,7 +295,7 @@ if __name__ == '__main__':
     
     #Plot LCDM Hubble parameter
     redshift_LCDM = np.linspace(0,10,int(10**5))
-    plt.plot(redshift_LCDM, H_LCDM(redshift_LCDM,omega_m,H_0),'.',label='LCDM') 
+    plt.plot(redshift_LCDM, H_LCDM(redshift_LCDM,omega_m,H_0),'k--',label=r'$\rm \Lambda CDM$') 
     
     # Format plot
     plt.title('Hubble parameter for $f(R)$ models')
