@@ -5,20 +5,22 @@ Note that the initial conditions are different for the two models.
 
 TODO: Check the times of integrations of HS using De la Cruz ODE in comparison with the one of Odintsov
 and evaluate the difference.
+
+TODO: Implement Starobinsky model integration.
 '''
 import os
 import time
 
 import git
 import numpy as np
-from scipy.constants import c as c_light  # meters/seconds
+from scipy.constants import c as c_light  # units of m/s
 from scipy.integrate import solve_ivp
 from scipy.interpolate import interp1d
 
 from change_of_parameters import physical_to_model_params_HS
 from initial_conditions import calculate_initial_conditions, redshift_initial_condition
 
-c_light_km = c_light / 1000
+c_light_km = c_light / 1000 # units of km/s
 path_git = git.Repo(".", search_parent_directories=True).working_tree_dir
 path_datos_global = os.path.dirname(path_git)
 os.chdir(path_git)
@@ -180,13 +182,12 @@ def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
         Hs_final = f(zs_final)
 
     elif model=='HS':
-        # Calculate the IC, eta
-        # and the parameters of the ODE.
+        # Calculate the IC, eta and the parameters of the ODE.
         initial_cond = calculate_initial_conditions(physical_params, zi=initial_z)
 
         h = H0/100
-        R_HS = (omega_m * h**2)/(0.13*8315**2) #Mpc**(-2)
-        eta = c_light_km * np.sqrt(R_HS/6) #(km/seg)/Mpc
+        R_HS = (omega_m * h**2)/(0.13*8315**2) # units of Mpc**(-2)
+        eta = c_light_km * np.sqrt(R_HS/6) # units of (km/seg)/Mpc
 
         zs_int = np.linspace(initial_z, final_z, num_z_points)
 
@@ -248,14 +249,14 @@ def Hubble_th(physical_params, *args, b_crit=0.15, all_analytic=False,
     elif model == 'EXP':
         log_eps_inv = -np.log10(epsilon)
         b_crit = (4 + omega_m/(1-omega_m)) / log_eps_inv
-        if (b <= b_crit) or (all_analytic==True): #Analytic approximation
+        if (b <= b_crit) or (all_analytic==True): # Analytic approximation
             zs = np.linspace(z_min, z_max, num_z_points)
             Hs = H_LCDM(zs, omega_m, H0)
         else:
             zs, Hs = integrator([omega_m, b, H0], *args, initial_z=z_max, final_z=z_min, **kwargs)
 
-    else: #HS or ST
-        if (b <= b_crit) or (all_analytic==True): #Analytic approximation
+    else: # HS or ST
+        if (b <= b_crit) or (all_analytic==True): # Analytic approximation
             zs = np.linspace(z_min, z_max, num_z_points)
             Hs = Taylor_HS(zs, omega_m, b, H0) if n == 1 else Taylor_ST(zs, omega_m, b, H0)
         else:
@@ -263,23 +264,30 @@ def Hubble_th(physical_params, *args, b_crit=0.15, all_analytic=False,
     
     return zs, Hs   
 
-#%%
-    
+#%%   
 if __name__ == '__main__':
     from matplotlib import pyplot as plt
 
     def plot_hubble_diagram(model_name, physical_params,hubble_th=True):
-        
-        if hubble_th == True:
-            # Integrate (or evaluate) Hubble function
-            redshifts, hubble_values = Hubble_th(physical_params, verbose=True, model=model_name)
-            # Plot Hubble function
-            plt.plot(redshifts, hubble_values, '.', label=model_name)            
-        else:
-            # Integrate Hubble function
-            redshifts, hubble_values = integrator(physical_params, verbose=True, model=model_name)
-            # Plot Hubble function
-            plt.plot(redshifts, hubble_values, '.', label=model_name)
+        """
+        Plots the Hubble diagram for a given cosmological model and physical parameters.
+
+        Args:
+            model_name (str): Name of the cosmological model to use.
+            physical_params (tuple): A tuple of three physical parameters in the order (matter density, curvature, Hubble constant).
+            hubble_th (bool, optional): Whether to use the Hubble function obtained from theory or numerical integration. Default is True.
+
+        Returns:
+            None. The plot is displayed in the console.
+
+        """
+
+        # Integrate (or evaluate) Hubble function        
+        redshifts, hubble_values = Hubble_th(physical_params, model=model_name) if hubble_th else \
+                                   integrator(physical_params, model=model_name)
+        # Plot Hubble function
+        plt.plot(redshifts, hubble_values, '.', label=model_name)
+
 
     # Set physical parameters
     omega_m = 0.3
