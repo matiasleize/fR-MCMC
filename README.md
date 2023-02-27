@@ -7,7 +7,7 @@ This version of the code was developed to make the analysis of the paper 'Testin
 
 ## Create a virtual environment
 In order to create a virtual environment with the libraries that are needed to run this module, follow the next steps:
-* Clone the repository: ``` git clone https://github.com/matiasleize/fR-MCMC``` 
+* Clone the repository: ```git clone https://github.com/matiasleize/fR-MCMC``` 
 * Enter the directory: ```cd fR-MCMC```
 * Create the virtual environment: ```conda env create``` 
 * Activate the virtual environment: ```source activate fR-MCMC```
