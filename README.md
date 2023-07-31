@@ -7,13 +7,13 @@ This version of the code was developed to make the analysis of the paper 'Testin
 
 ## Create a virtual environment
 In order to create a virtual environment with the libraries that are needed to run this module, follow the next steps:
-* Clone the repository: ``` git clone``` 
+* Clone the repository: ```git clone https://github.com/matiasleize/fR-MCMC``` 
 * Enter the directory: ```cd fR-MCMC```
 * Create the virtual environment: ```conda env create``` 
 * Activate the virtual environment: ```source activate fR-MCMC```
 
 ## Create an output directory:
-Output files can be particarly heavy stuff. For instance, the markov chains are saved in h5 format of several MegaBites. To avoid the unnecessary use of memory on the main repository, output files are stored on an independent directory on the computer's user. For default, this file must be created on the same directory that the Git's repository was cloned:
+Output files can be particarly heavy stuff. For instance, the markov chains are saved in h5 format of several MegaBites. To avoid the unnecessary use of memory in the main repository, output files are stored in an independent directory in the computer's user. For default, this file must be created in the same directory that the Git's repository was cloned:
 
 ```
 root_directory/              Root directory
@@ -24,10 +24,10 @@ root_directory/              Root directory
 Having said that, the user can change the location of the ouput directory on the configuration file.
 
 ## Configuration file:
-The files (.yml) located on the directory fR-MCMC/configs shows all the configuration parameters. 
+The files (.yml) located in the directory fR-MCMC/configs shows all the configuration parameters. 
 
 ## Run the code:
-To run the code for a particular configuration file, edit config.py (which is located on the directory fR-MCMC/fr_mcmc) and then run the following command while you are on the root project directory:  
+To run the code for a particular configuration file, edit config.py (which is located in the directory fR-MCMC/fr_mcmc) and then run the following command while you are on the root project directory:  
 
 ```
 python3 -m fr_mcmc --task mcmc
