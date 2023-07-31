@@ -57,8 +57,8 @@ if __name__ == '__main__':
     path_global = os.path.dirname(path_git)
     os.chdir(path_git)
     sys.path.append('./fr_mcmc/utils/')
-    from data import leer_data_pantheon_2
-    from data import leer_data_pantheon
+    from data import read_data_pantheon_2
+    from data import read_data_pantheon
     #Parameters order: Mabs,omega_m,b,H_0,n
 
     #Fixed parameters for testing:
@@ -77,9 +77,9 @@ if __name__ == '__main__':
     #%% SN data
     os.chdir(path_git+'/fr_mcmc/source/Pantheon')
 
-    _, zcmb, zhel, Cinv, mb0, x1, cor, hmass = leer_data_pantheon_2(
+    _, zcmb, zhel, Cinv, mb0, x1, cor, hmass = read_data_pantheon_2(
                 'lcparam_full_long_zhel.txt','ancillary_g10.txt')
-    zcmb_1,zhel_1, Cinv_1, mb_1 = leer_data_pantheon('lcparam_full_long_zhel.txt')
+    zcmb_1,zhel_1, Cinv_1, mb_1 = read_data_pantheon('lcparam_full_long_zhel.txt')
 
     params_to_chi2(theta, fixed_params, zcmb, zhel, Cinv,mb_1)
     #%%

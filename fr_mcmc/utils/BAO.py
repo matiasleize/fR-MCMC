@@ -115,14 +115,14 @@ if __name__ == '__main__':
     path_global = os.path.dirname(path_git)
     os.chdir(path_git)
     sys.path.append('./fr_mcmc/utils/')
-    from data import leer_data_BAO
+    from data import read_data_BAO
     #%% BAO
     os.chdir(path_git+'/fr_mcmc/source/BAO')
     dataset_BAO = []
-    archivo_BAO = ['BAO_data_da.txt','BAO_data_dh.txt','BAO_data_dm.txt',
+    file_BAO = ['BAO_data_da.txt','BAO_data_dh.txt','BAO_data_dm.txt',
                     'BAO_data_dv.txt','BAO_data_H.txt']
     for i in range(5):
-        aux = leer_data_BAO(archivo_BAO[i])
+        aux = read_data_BAO(file_BAO[i])
         dataset_BAO.append(aux)
 
     [omega_m,b,H_0] = [0.28,1,66.012]

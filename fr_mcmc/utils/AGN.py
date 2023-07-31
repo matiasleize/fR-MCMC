@@ -114,10 +114,10 @@ def params_to_chi2_AGN_nuisance(theta, fixed_params, dataset_AGN, n=1,
 #%%
 if __name__ == '__main__':
     #Data AGN
-    from data import leer_data_AGN
+    from data import read_data_AGN
     from matplotlib import pyplot as plt
     os.chdir(path_git+'/fr_mcmc/source/AGN')
-    data_agn = leer_data_AGN('table3.dat')
+    data_agn = read_data_AGN('table3.dat')
 
     beta_true =  6.8 #7.735
     gamma_true = 0.648

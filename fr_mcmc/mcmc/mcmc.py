@@ -17,7 +17,7 @@ path_global = os.path.dirname(path_git)
 # Obs: To import packages this is the sintaxis to change paths:
 os.chdir(path_git); os.sys.path.append('./fr_mcmc/')
 from utils.sampling import MCMC_sampler
-from utils.data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
+from utils.data import read_data_pantheon, read_data_chronometers, read_data_BAO, read_data_AGN
 from utils.chi_square import log_likelihood
 from utils.derived_parameters import derived_parameters
 from config import cfg as config
@@ -49,7 +49,7 @@ def run():
     # Supernovae type IA
     if config.USE_SN == True:
         os.chdir(path_data + 'Pantheon/')
-        ds_SN = leer_data_pantheon('lcparam_full_long_zhel.txt')
+        ds_SN = read_data_pantheon('lcparam_full_long_zhel.txt')
         datasets.append('_SN')
     else:
         ds_SN = None
@@ -57,12 +57,12 @@ def run():
     # Cosmic Chronometers
     if config.USE_CC == True:
         os.chdir(path_data + 'CC/')
-        #ds_CC = leer_data_cronometros('chronometers_data.txt')
+        #ds_CC = read_data_chronometers('chronometers_data.txt')
 
-        #ds_CC = leer_data_cronometros('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_LCDM_8.txt')
-        ds_CC = leer_data_cronometros('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_HS_8.txt')
-        #ds_CC = leer_data_cronometros('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_LCDM_5.txt')
-        #ds_CC = leer_data_cronometros('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_HS_5.txt')
+        #ds_CC = read_data_chronometers('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_LCDM_8.txt')
+        ds_CC = read_data_chronometers('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_HS_8.txt')
+        #ds_CC = read_data_chronometers('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_LCDM_5.txt')
+        #ds_CC = read_data_chronometers('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_HS_5.txt')
 
         datasets.append('_CC')
     else:
@@ -72,10 +72,10 @@ def run():
     if config.USE_BAO == True:    
         os.chdir(path_data + 'BAO/')
         ds_BAO = []
-        archivos_BAO = ['BAO_data_da.txt','BAO_data_dh.txt','BAO_data_dm.txt',
+        files_BAO = ['BAO_data_da.txt','BAO_data_dh.txt','BAO_data_dm.txt',
                         'BAO_data_dv.txt','BAO_data_H.txt']
         for i in range(5):
-            aux = leer_data_BAO(archivos_BAO[i])
+            aux = read_data_BAO(files_BAO[i])
             ds_BAO.append(aux)
         datasets.append('_BAO')
     else:
@@ -85,7 +85,7 @@ def run():
     # AGN
     if config.USE_AGN == True:
         os.chdir(path_data + 'AGN/')
-        ds_AGN = leer_data_AGN('table3.dat')
+        ds_AGN = read_data_AGN('table3.dat')
         datasets.append('_AGN')
     else:
         ds_AGN = None

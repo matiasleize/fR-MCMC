@@ -208,28 +208,28 @@ if __name__ == '__main__':
 
     path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
     os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
-    from data import leer_data_pantheon, leer_data_cronometros, leer_data_BAO, leer_data_AGN
+    from data import read_data_pantheon, read_data_chronometers, read_data_BAO, read_data_AGN
 
     # Supernovas
     os.chdir(path_git+'/fr_mcmc/source/Pantheon/')
-    ds_SN = leer_data_pantheon('lcparam_full_long_zhel.txt')
+    ds_SN = read_data_pantheon('lcparam_full_long_zhel.txt')
 
     # Cronómetros
     os.chdir(path_git+'/fr_mcmc/source/CC/')
-    ds_CC = leer_data_cronometros('chronometers_data.txt')
+    ds_CC = read_data_chronometers('chronometers_data.txt')
 
     # BAO
     os.chdir(path_git+'/fr_mcmc/source/BAO/')
     ds_BAO = []
-    archivos_BAO = ['BAO_data_da.txt','BAO_data_dh.txt','BAO_data_dm.txt',
+    files_BAO = ['BAO_data_da.txt','BAO_data_dh.txt','BAO_data_dm.txt',
                     'BAO_data_dv.txt','BAO_data_H.txt']
     for i in range(5):
-        aux = leer_data_BAO(archivos_BAO[i])
+        aux = read_data_BAO(files_BAO[i])
         ds_BAO.append(aux)
 
     # AGN
     os.chdir(path_git+'/fr_mcmc/source/AGN')
-    ds_AGN = leer_data_AGN('table3.dat')
+    ds_AGN = read_data_AGN('table3.dat')
 
 
     #%%
