@@ -20,7 +20,7 @@ from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000; #kilometers/seconds
 #Parameters order: Mabs,omega_m,b,H_0,n
 
-def aparent_magnitude_th(int_inv_Hs_interpolado, zcmb, zhel):
+def aparent_magnitude_th(int_inv_Hs_interpol, zcmb, zhel):
     '''
     Given an interpolate function of 1/H and arrays for zcmb and zhel,
     this function returns the theoretical expression for the distance modulus (mu)
@@ -28,7 +28,7 @@ def aparent_magnitude_th(int_inv_Hs_interpolado, zcmb, zhel):
     where d_L = (c/H_0) (1+z) int(dz'/E(z')).
     '''
 
-    dc_int =  c_luz_km * int_inv_Hs_interpolado(zcmb)
+    dc_int =  c_luz_km * int_inv_Hs_interpol(zcmb)
     d_L = (1 + zhel) * dc_int
     muth = 25.0 + 5.0 * np.log10(d_L)
     return muth

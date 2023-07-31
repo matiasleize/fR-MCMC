@@ -83,7 +83,7 @@ def params_to_chi2(theta, fixed_params, index=0,
                     dataset_SN=None, dataset_CC=None,
                     dataset_BAO=None, dataset_AGN=None, H0_Riess=False,
                     num_z_points=int(10**5), model='HS',n=1,
-                    nuisance_2 = False, errores_agrandados=False,
+                    nuisance_2 = False, enlarged_errors=False,
                     all_analytic=False):
     '''
     Given the free parameters of the model, return chi square for the data.
@@ -102,7 +102,7 @@ def params_to_chi2(theta, fixed_params, index=0,
     model (str): cosmological model ('LCDM', 'HS', 'EXP').
     n (int): (1, 2)
     nuisance_2 (bool):
-    errores_agrandados (bool):
+    enlarged_errors (bool):
     all_analytic (bool):
     '''
 
@@ -115,45 +115,45 @@ def params_to_chi2(theta, fixed_params, index=0,
     [Mabs, omega_m, b, H_0] = all_parameters(theta, fixed_params, index)
 
     physical_params = [omega_m,b,H_0]
-    zs_modelo, Hs_modelo = Hubble_th(physical_params, n=n, model=model,
+    zs_model, Hs_model = Hubble_th(physical_params, n=n, model=model,
                                 z_min=0, z_max=10, num_z_points=num_z_points,
                                 all_analytic=all_analytic)
 
     if (dataset_CC != None or dataset_BAO != None or dataset_AGN != None):
-        Hs_interpolado = interp1d(zs_modelo, Hs_modelo)
+        Hs_interpol = interp1d(zs_model, Hs_model)
 
     if (dataset_SN != None or dataset_BAO != None or dataset_AGN != None):
-        int_inv_Hs = cumtrapz(Hs_modelo**(-1), zs_modelo, initial=0)
-        int_inv_Hs_interpolado = interp1d(zs_modelo, int_inv_Hs)
+        int_inv_Hs = cumtrapz(Hs_model**(-1), zs_model, initial=0)
+        int_inv_Hs_interpol = interp1d(zs_model, int_inv_Hs)
 
     if dataset_SN != None:
         zcmb, zhel, Cinv, mb = dataset_SN #Import the data
-        muth = aparent_magnitude_th(int_inv_Hs_interpolado, zcmb, zhel)
+        muth = aparent_magnitude_th(int_inv_Hs_interpol, zcmb, zhel)
         muobs =  mb - Mabs
         chi2_SN = chi2_supernovae(muth, muobs, Cinv)
 
     if dataset_CC != None:
         z_data, H_data, dH = dataset_CC #Import the data
-        H_teo = Hs_interpolado(z_data)
+        H_teo = Hs_interpol(z_data)
         chi2_CC = chi2_without_cov(H_teo, H_data, dH**2)
 
     if dataset_BAO != None:
         num_datasets=5
         chies_BAO = np.zeros(num_datasets)
         for i in range(num_datasets): # For each datatype
-            (z_data_BAO, valores_data, errores_data_cuad,wb_fid) = dataset_BAO[i]
+            (z_data_BAO, data_values, data_error_cuad,wb_fid) = dataset_BAO[i]
             if i==0: #Da entry
                 rd = r_drag(omega_m,H_0,wb_fid) # rd calculation
-                distancias_teoricas = Hs_to_Ds(Hs_interpolado, int_inv_Hs_interpolado, z_data_BAO, i)
-                output_th = Ds_to_obs_final(zs_modelo, distancias_teoricas, rd, i)
+                distancias_teoricas = Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data_BAO, i)
+                output_th = Ds_to_obs_final(zs_model, distancias_teoricas, rd, i)
             else: #If not..
-                distancias_teoricas = Hs_to_Ds(Hs_interpolado, int_inv_Hs_interpolado, z_data_BAO, i)
+                distancias_teoricas = Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data_BAO, i)
                 output_th = np.zeros(len(z_data_BAO))
                 for j in range(len(z_data_BAO)): # For each datatype
                      rd = r_drag(omega_m,H_0,wb_fid[j]) #rd calculation
-                     output_th[j] = Ds_to_obs_final(zs_modelo,distancias_teoricas[j],rd,i)
+                     output_th[j] = Ds_to_obs_final(zs_model,distancias_teoricas[j],rd,i)
             #Chi square calculation for each datatype (i)
-            chies_BAO[i] = chi2_without_cov(output_th,valores_data,errores_data_cuad)
+            chies_BAO[i] = chi2_without_cov(output_th,data_values,data_error_cuad)
 
 
         if np.isnan(sum(chies_BAO))==True:
@@ -171,7 +171,7 @@ def params_to_chi2(theta, fixed_params, index=0,
             ebeta = 0.437
             gamma = 0.622
             egamma = 0.014
-        elif errores_agrandados == True:
+        elif enlarged_errors == True:
             beta = 7.735
             ebeta = 0.6
             gamma = 0.648
@@ -182,7 +182,7 @@ def params_to_chi2(theta, fixed_params, index=0,
             gamma = 0.648
             egamma = 0.007
 
-        DlH0_teo = zs_2_logDlH0(int_inv_Hs_interpolado(z_data)*H_0,z_data)
+        DlH0_teo = zs_2_logDlH0(int_inv_Hs_interpol(z_data)*H_0,z_data)
         DlH0_obs =  np.log10(3.24) - 25 + (logFx - gamma * logFuv - beta) / (2*gamma - 2)
 
         df_dgamma =  (-logFx+beta+logFuv) / (2*(gamma-1)**2)
@@ -191,7 +191,7 @@ def params_to_chi2(theta, fixed_params, index=0,
         chi2_AGN = chi2_without_cov(DlH0_teo, DlH0_obs, eDlH0_cuad)
 
     if H0_Riess == True:
-        chi2_H0 = ((Hs_modelo[0]-73.48)/1.66)**2
+        chi2_H0 = ((Hs_model[0]-73.48)/1.66)**2
 
     return chi2_SN + chi2_CC + chi2_AGN + chi2_BAO + chi2_H0
 

@@ -76,15 +76,15 @@ def r_drag(omega_m,H_0,wb = 0.0225, int_z=True): #wb of BBN as default.
 
     return rd_log
 
-def Hs_to_Ds(Hs_interpolado, int_inv_Hs_interpolado, z_data, index):
+def Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data, index):
     if index == 4: #H
-        output = Hs_interpolado(z_data)
+        output = Hs_interpol(z_data)
 
     elif index == 1: #DH
-        output = c_luz_km * (Hs_interpolado(z_data))**(-1)
+        output = c_luz_km * (Hs_interpol(z_data))**(-1)
 
     else:
-        INT = int_inv_Hs_interpolado(z_data)
+        INT = int_inv_Hs_interpol(z_data)
 
         if index == 0: #DA
             output = (c_luz_km/(1 + z_data)) * INT
@@ -95,7 +95,7 @@ def Hs_to_Ds(Hs_interpolado, int_inv_Hs_interpolado, z_data, index):
 
         elif index == 3: #DV
             #output = (((1 +z_data) * DA)**2 * c_luz_km * z_data * (Hs**(-1))) ** (1/3)
-            output = c_luz_km * (INT**2 * z_data * (Hs_interpolado(z_data)**(-1))) ** (1/3)
+            output = c_luz_km * (INT**2 * z_data * (Hs_interpol(z_data)**(-1))) ** (1/3)
 
     return output
 

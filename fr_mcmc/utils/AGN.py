@@ -57,16 +57,16 @@ def params_to_chi2_AGN_nuisance(theta, fixed_params, dataset_AGN, n=1,
             #print(theta)
             omega_m = theta
             [beta, gamma, delta, H_0] = fixed_params
-            zs_modelo = np.linspace(0,10,10**5)
-            Hs_modelo = H_LCDM(zs_modelo,omega_m,H_0)
+            zs_model = np.linspace(0,10,10**5)
+            Hs_model = H_LCDM(zs_model,omega_m,H_0)
 
 
         else:
             if len(theta) == 4:
                 [omega_m, beta, gamma, delta] = theta #This beta is different from the other
                 H_0 = fixed_params
-                zs_modelo = np.linspace(0,10,10**5)
-                Hs_modelo = H_LCDM(zs_modelo,omega_m,H_0)
+                zs_model = np.linspace(0,10,10**5)
+                Hs_model = H_LCDM(zs_model,omega_m,H_0)
 
 
     else:
@@ -78,7 +78,7 @@ def params_to_chi2_AGN_nuisance(theta, fixed_params, dataset_AGN, n=1,
             [beta, gamma, delta, H_0] = fixed_params #This beta is different from the other
 
         physical_params = [omega_m,b,H_0]
-        zs_modelo, Hs_modelo = Hubble_th(physical_params, n=n, model=model,
+        zs_model, Hs_model = Hubble_th(physical_params, n=n, model=model,
                                     z_min=0, z_max=10, num_z_points=num_z_points,
                                     all_analytic=all_analytic)
 
@@ -101,7 +101,7 @@ def params_to_chi2_AGN_nuisance(theta, fixed_params, dataset_AGN, n=1,
         eFx = eFx_unmasked
 
 
-    Dl_teo = Hs_2_logDl(zs_modelo,Hs_modelo,z_data) #Mpc
+    Dl_teo = Hs_2_logDl(zs_model,Hs_model,z_data) #Mpc
     Dl_teo_cm = Dl_teo - np.log10(3.24) + 25
     psi = beta + gamma * logFuv + 2 * (gamma-1) * (Dl_teo_cm + 0.5 * np.log10(4*np.pi))
 

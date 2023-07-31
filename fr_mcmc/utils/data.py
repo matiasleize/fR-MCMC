@@ -73,10 +73,10 @@ def leer_data_cronometros(archivo_cronometros):
     return z, h, dh
 
 def leer_data_BAO(archivo_BAO):
-    z, valores_data, errores_est, errores_sist, wb_fid = np.loadtxt(archivo_BAO,
+    z, data_values, errores_est, errores_sist, wb_fid = np.loadtxt(archivo_BAO,
     usecols=(0,1,2,3,4), skiprows=1,unpack=True)
     errores_totales_cuad = errores_est**2 + errores_sist**2
-    return z, valores_data, errores_totales_cuad, wb_fid
+    return z, data_values, errores_totales_cuad, wb_fid
 
 def leer_data_AGN(archivo_AGN):
     z, Fuv, eFuv, Fx, eFx = np.loadtxt(archivo_AGN,
@@ -120,15 +120,15 @@ if __name__ == '__main__':
     os.chdir(path_git+'/fr_mcmc/source/BAO')
     archivo_BAO='BAO_data_da.txt'
 
-    z, valores_data, errores_data_cuad = leer_data_BAO(archivo_BAO)
-    #z, valores_data, errores_data_cuad
+    z, data_values, data_error_cuad = leer_data_BAO(archivo_BAO)
+    #z, data_values, data_error_cuad
     
     #%%
     os.chdir(path_git+'/fr_mcmc/source/BAO')
     archivo_BAO='BAO_data.txt'
     df = pd.read_csv(archivo_BAO,sep='\t')
     z_data = df.to_numpy()[:,0]
-    valores_data = df.to_numpy()[:,1]
+    data_values = df.to_numpy()[:,1]
     errores_est = df.to_numpy()[:,2]
     errores_sist = df.to_numpy()[:,3]
     errores_totales_cuad = errores_est**2 + errores_sist**2
