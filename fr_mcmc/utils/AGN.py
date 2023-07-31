@@ -11,7 +11,7 @@ c_luz_km = c_luz/1000;
 import os
 import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
-path_datos_global = os.path.dirname(path_git)
+path_global = os.path.dirname(path_git)
 os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
 #from int import Hubble_th
 from solve_sys import Hubble_th
@@ -44,7 +44,7 @@ def chi2_AGN_nuisance(teo, data, errores_cuad):
     chi2 = np.sum( ((data-teo)**2/errores_cuad) + np.log(2*np.pi*errores_cuad))
     return chi2
 
-def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
+def params_to_chi2_AGN_nuisance(theta, fixed_params, dataset_AGN, n=1,
                                 num_z_points=int(10**6), model='HS'
                                 ,less_z=False,all_analytic=False):
     '''
@@ -56,7 +56,7 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
         if isinstance(theta,float):
             #print(theta)
             omega_m = theta
-            [beta, gamma, delta, H_0] = params_fijos
+            [beta, gamma, delta, H_0] = fixed_params
             zs_modelo = np.linspace(0,10,10**5)
             Hs_modelo = H_LCDM(zs_modelo,omega_m,H_0)
 
@@ -64,7 +64,7 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
         else:
             if len(theta) == 4:
                 [omega_m, beta, gamma, delta] = theta #This beta is different from the other
-                H_0 = params_fijos
+                H_0 = fixed_params
                 zs_modelo = np.linspace(0,10,10**5)
                 Hs_modelo = H_LCDM(zs_modelo,omega_m,H_0)
 
@@ -72,10 +72,10 @@ def params_to_chi2_AGN_nuisance(theta, params_fijos, dataset_AGN, n=1,
     else:
         if len(theta) == 5:
             [omega_m, b, beta, gamma, delta] = theta #This beta is different from the other
-            H_0 = params_fijos
+            H_0 = fixed_params
         elif len(theta) == 4:
             [omega_m, b] = theta
-            [beta, gamma, delta, H_0] = params_fijos #This beta is different from the other
+            [beta, gamma, delta, H_0] = fixed_params #This beta is different from the other
 
         physical_params = [omega_m,b,H_0]
         zs_modelo, Hs_modelo = Hubble_th(physical_params, n=n, model=model,
@@ -126,11 +126,11 @@ if __name__ == '__main__':
 
 
     for j,beta_true in enumerate(np.linspace(7.9,8.5,20)):
-        params_fijos = [beta_true, gamma_true, delta_true, H0_true]
+        fixed_params = [beta_true, gamma_true, delta_true, H0_true]
         omegas = np.linspace(0,1,50)
         chi_2 = np.zeros(50)
         for i,omega_m in enumerate(omegas):
-            chi_2[i] = params_to_chi2_AGN_nuisance(omega_m, params_fijos,
+            chi_2[i] = params_to_chi2_AGN_nuisance(omega_m, fixed_params,
                                 data_agn, model='LCDM')
         plt.figure()
         plt.plot(omegas, chi_2)

@@ -21,7 +21,7 @@ class Plotter:
 		self.labels=labels
 		self.title=title
 
-	def graficar_cadenas(self, num_chains = None):
+	def plot_chains(self, num_chains = None):
 		'''Plot the chains for each parameter.'''
 		samples = self.sampler.get_chain()
 		len_chain,nwalkers,ndim=self.sampler.get_chain().shape
@@ -42,7 +42,7 @@ class Plotter:
 		if not self.title==None:
 			fig.suptitle(self.title);
 
-	def graficar_cadenas_derivs(self):
+	def plot_chains_derivs(self):
 		'''Plot the posprocessed chains for each parameter.'''
 		if isinstance(self.sampler, np.ndarray)==True: #Posprocessed chains
 			samples = self.sampler
@@ -62,14 +62,13 @@ class Plotter:
 			fig.suptitle(self.title);
 
 
-	def graficar_contornos(self, discard=0, thin=1, color='b'):
+	def plot_contours(self, discard=0, thin=1, color='b'):
 		'''
-		Grafica los cornerplots para los parámetros a partir de las cadenas
-		de Markov. En la diagonal aparecen las  distribuciones de probabilidad
-		proyectadas para cada parámetro, y fuera de la diagonal los contornos
-		de confianza 2D.
-
-		FALTA: poder cambiar color del plot y darle un label a los plots
+		Plot contour plots for the parameters from Markov chains. Probability
+		distributions for each parameter are in the diagonal, while 2D contours
+		are outside the diagonal.
+		
+		TODO: Allow to change colors of the contours and specify labels on the plots.
 		'''
 		if isinstance(self.sampler, np.ndarray)==True: #Posprocessed chains
 			flat_samples = self.sampler
@@ -91,7 +90,7 @@ class Plotter:
 						legend_labels='')
 
 
-	def reportar_intervalos(self, discard, thin, save_path, hdi=True):
+	def report_intervals(self, discard, thin, save_path, hdi=True):
 		'''
 		Print parameters values, not only the mode values but also their values
 		at one and two sigmas.
@@ -135,7 +134,7 @@ class Plotter:
 			#display(Math(txt))
 
 
-	def graficar_taus_vs_n(self, num_param=None,threshold=100.0):
+	def plot_taus_vs_n(self, num_param=None,threshold=100.0):
 		'''
 		Plot the integrated autocorrelation time with respect to the chain length.
 		Obs: Threshold shouldn't be llower than 50, according to Emcee library.
@@ -145,7 +144,7 @@ class Plotter:
 		sns.set(style='darkgrid', palette="muted", color_codes=True)
 		sns.set_context("paper", font_scale=1.5, rc={"font.size":8,"axes.labelsize":17})
 		plt.grid(True)
-		plt.xlabel("Número de muestras $N$",fontsize=15)
+		plt.xlabel("Number of samples $N$",fontsize=15)
 		plt.ylabel(r"$\hat{\tau}$",fontsize=15)
 		plt.legend(fontsize=17);
 		if num_param==None:
@@ -155,7 +154,7 @@ class Plotter:
 				# Compute the estimators for a few different chain lengths
 				N = np.exp(np.linspace(np.log(threshold), np.log(chain.shape[1]),
 				 	int(chain.shape[1]/threshold))).astype(int)
-				#donde chain.shape[1] es el largo de las cadenas
+				#where chain.shape[1] is the chain length
 
 				taus = np.empty(len(N))
 				for i, n in enumerate(N):
@@ -177,7 +176,7 @@ class Plotter:
 			# Compute the estimators for a few different chain lengths
 			N = np.exp(np.linspace(np.log(threshold), np.log(chain.shape[1]),
 			 	int(chain.shape[1]/threshold))).astype(int)
-			#donde chain.shape[1] es el largo de las cadenas
+			#where chain.shape[1] is the chain length
 
 			taus = np.empty(len(N))
 			for i, n in enumerate(N):
@@ -189,6 +188,6 @@ class Plotter:
 			#plt.axhline(true_tau, color="k", label="truth", zorder=-100)
 			ylim = plt.gca().get_ylim()
 			plt.ylim(ylim)
-			plt.xlabel("Número de muestras $N$")
+			plt.xlabel("Number of samples $N$")
 			plt.ylabel(r"$\hat{\tau}$")
 			plt.legend(fontsize=17);

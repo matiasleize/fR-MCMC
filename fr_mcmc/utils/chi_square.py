@@ -15,11 +15,11 @@ path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
 
 os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
 from solve_sys import Hubble_th
-from supernovae import magn_aparente_teorica, chi2_supernovae
+from supernovae import aparent_magnitude_th, chi2_supernovae
 from BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
 from AGN import zs_2_logDlH0
 
-def chi2_sin_cov(teo, data, errores_cuad):
+def chi2_without_cov(teo, data, errores_cuad):
     '''
     Calculate chi square assuming no correlation.
 
@@ -32,54 +32,54 @@ def chi2_sin_cov(teo, data, errores_cuad):
     chi2 = np.sum((data-teo)**2/errores_cuad)
     return chi2
 
-def all_parameters(theta, params_fijos, index):
+def all_parameters(theta, fixed_params, index):
     '''
     Auxiliary function that reads and organizes fixed and variable parameters into one 
     list according to the index criteria.
 
     theta: object with variable parameters.
-    params_fijos: object with fixed parameters.
+    fixed_params: object with fixed parameters.
     index (int): indicate if the parameters are fixed or variable.
     
     '''
 
     if index == 4:
         [Mabs, omega_m, b, H_0] = theta
-        _ = params_fijos
+        _ = fixed_params
 
     elif index == 31:
         [omega_m, b, H_0] = theta
-        Mabs = params_fijos
+        Mabs = fixed_params
 
     elif index == 32:
         [Mabs, omega_m, H_0] = theta
-        b = params_fijos
+        b = fixed_params
 
     elif index == 33:
         [Mabs, omega_m, b] = theta
-        H_0 = params_fijos
+        H_0 = fixed_params
 
     elif index == 21:
         [omega_m, b] = theta
-        [Mabs, H_0] = params_fijos
+        [Mabs, H_0] = fixed_params
 
     elif index == 22:
         [omega_m, H_0] = theta
-        [Mabs, b] = params_fijos
+        [Mabs, b] = fixed_params
 
     elif index == 23:
         [Mabs, omega_m] = theta
-        [b, H_0] = params_fijos
+        [b, H_0] = fixed_params
 
     elif index == 1:
         omega_m = theta
-        [Mabs, b, H_0] = params_fijos
+        [Mabs, b, H_0] = fixed_params
 
 
     return [Mabs, omega_m, b, H_0]
 
 
-def params_to_chi2(theta, params_fijos, index=0,
+def params_to_chi2(theta, fixed_params, index=0,
                     dataset_SN=None, dataset_CC=None,
                     dataset_BAO=None, dataset_AGN=None, H0_Riess=False,
                     num_z_points=int(10**5), model='HS',n=1,
@@ -89,7 +89,7 @@ def params_to_chi2(theta, params_fijos, index=0,
     Given the free parameters of the model, return chi square for the data.
     
     theta: object with variable parameters.
-    params_fijos: object with fixed parameters.
+    fixed_params: object with fixed parameters.
     index (int): indicate if the parameters are fixed or variable.
 
     dataset_SN:
@@ -112,7 +112,7 @@ def params_to_chi2(theta, params_fijos, index=0,
     chi2_AGN = 0
     chi2_H0 =  0
 
-    [Mabs, omega_m, b, H_0] = all_parameters(theta, params_fijos, index)
+    [Mabs, omega_m, b, H_0] = all_parameters(theta, fixed_params, index)
 
     physical_params = [omega_m,b,H_0]
     zs_modelo, Hs_modelo = Hubble_th(physical_params, n=n, model=model,
@@ -128,14 +128,14 @@ def params_to_chi2(theta, params_fijos, index=0,
 
     if dataset_SN != None:
         zcmb, zhel, Cinv, mb = dataset_SN #Import the data
-        muth = magn_aparente_teorica(int_inv_Hs_interpolado, zcmb, zhel)
+        muth = aparent_magnitude_th(int_inv_Hs_interpolado, zcmb, zhel)
         muobs =  mb - Mabs
         chi2_SN = chi2_supernovae(muth, muobs, Cinv)
 
     if dataset_CC != None:
         z_data, H_data, dH = dataset_CC #Import the data
         H_teo = Hs_interpolado(z_data)
-        chi2_CC = chi2_sin_cov(H_teo, H_data, dH**2)
+        chi2_CC = chi2_without_cov(H_teo, H_data, dH**2)
 
     if dataset_BAO != None:
         num_datasets=5
@@ -153,7 +153,7 @@ def params_to_chi2(theta, params_fijos, index=0,
                      rd = r_drag(omega_m,H_0,wb_fid[j]) #rd calculation
                      output_th[j] = Ds_to_obs_final(zs_modelo,distancias_teoricas[j],rd,i)
             #Chi square calculation for each datatype (i)
-            chies_BAO[i] = chi2_sin_cov(output_th,valores_data,errores_data_cuad)
+            chies_BAO[i] = chi2_without_cov(output_th,valores_data,errores_data_cuad)
 
 
         if np.isnan(sum(chies_BAO))==True:
@@ -188,7 +188,7 @@ def params_to_chi2(theta, params_fijos, index=0,
         df_dgamma =  (-logFx+beta+logFuv) / (2*(gamma-1)**2)
         eDlH0_cuad = (eFx**2 + gamma**2 * eFuv**2 + ebeta**2)/ (2*gamma - 2)**2 + (df_dgamma)**2 * egamma**2 #Square of the errors
 
-        chi2_AGN = chi2_sin_cov(DlH0_teo, DlH0_obs, eDlH0_cuad)
+        chi2_AGN = chi2_without_cov(DlH0_teo, DlH0_obs, eDlH0_cuad)
 
     if H0_Riess == True:
         chi2_H0 = ((Hs_modelo[0]-73.48)/1.66)**2

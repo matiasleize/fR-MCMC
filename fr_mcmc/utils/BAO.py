@@ -14,7 +14,7 @@ c_luz_km = c_luz/1000
 import os
 import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
-path_datos_global = os.path.dirname(path_git)
+path_global = os.path.dirname(path_git)
 os.chdir(path_git)
 os.sys.path.append('./fr_mcmc/utils/')
 from LambdaCDM import H_LCDM_rad
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     import os
     import git
     path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
-    path_datos_global = os.path.dirname(path_git)
+    path_global = os.path.dirname(path_git)
     os.chdir(path_git)
     sys.path.append('./fr_mcmc/utils/')
     from data import leer_data_BAO

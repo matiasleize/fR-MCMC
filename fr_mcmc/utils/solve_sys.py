@@ -22,7 +22,7 @@ from initial_conditions import calculate_initial_conditions, redshift_initial_co
 
 c_light_km = c_light / 1000 # units of km/s
 path_git = git.Repo(".", search_parent_directories=True).working_tree_dir
-path_datos_global = os.path.dirname(path_git)
+path_global = os.path.dirname(path_git)
 os.chdir(path_git)
 os.sys.path.append("./fr_mcmc/utils/")
 from LambdaCDM import H_LCDM

@@ -9,7 +9,7 @@ import time
 import os
 import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
-path_datos_global = os.path.dirname(path_git)
+path_global = os.path.dirname(path_git)
 
 def MCMC_sampler(log_probability, initial_values,
                 filename = "default.h5",
@@ -60,7 +60,7 @@ def MCMC_sampler(log_probability, initial_values,
 	# Now we'll sample for up to max_samples steps
 	for sample in sampler.sample(initial_values, iterations=max_samples, progress=True):
 		# Only check convergence every 'witness_freq' steps
-		if sampler.iteration % witness_freq: #'witness_freq' es cada cuanto chequea convergencia
+		if sampler.iteration % witness_freq: #'witness_freq' is the frequency to check convergence
 			continue
 			
 		os.chdir(save_path)
@@ -78,12 +78,12 @@ def MCMC_sampler(log_probability, initial_values,
 		tau = sampler.get_autocorr_time(tol=0)
 
 		# Check convergence
-		converged = np.all(tau * 100 < sampler.iteration) #100 es el threshold de convergencia
-		#También pido que tau se mantenga relativamente constante:
+		converged = np.all(tau * 100 < sampler.iteration) #100 is the convergence threshold
+		#Also, ask \tau to stay relatively constant:
 		converged &= np.all((np.abs(old_tau - tau) / tau) < tolerance)
 		if converged:
 			textfile_witness = open(witness_file,'a')
-			textfile_witness.write('\n Convergió!')
+			textfile_witness.write('\n Converged!')
 			textfile_witness.close()
 			break
 		old_tau = tau

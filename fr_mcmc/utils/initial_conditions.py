@@ -12,7 +12,7 @@ c_luz_km = c_luz/1000;
 import os
 import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
-path_datos_global = os.path.dirname(path_git)
+path_global = os.path.dirname(path_git)
 #os.chdir(path_git)
 #os.sys.path.append('./fr_mcmc/utils/')
 #from change_of_parameters import physical_to_model_params_HS
@@ -96,8 +96,8 @@ def calculate_initial_conditions(physical_params, zi = 30, model = 'HS', CI_apro
         F_2R_ci = sym.lambdify(R,F_2R)
 
         R_i = Ricci_ci(zi)
-        #H_ci(zi) #The same as Basilakos
-        #H_z_ci(zi) #The same as Basilakos
+        #H_ci(zi) #Same as Basilakos
+        #H_z_ci(zi) #Same as Basilakos
 
         if CI_aprox == True: #Hibrid initial conditions
             xi = Ricci_t_ci(zi) * F_2R_ci(R_i) / (H_ci(zi) * F_R_ci(R_i))
@@ -137,9 +137,10 @@ if __name__ == '__main__':
                             model='EXP')
             output[i,j] = 2 * initial_cond[1]/b #lo convierto en r para comparar
     #np.savetxt('2darray.csv', output, delimiter=',', fmt='%1.2f')
-    output
+    print(output)
     #%%
-    cond_iniciales_hibrid = calculate_initial_conditions(physical_params, zi=zi, model='HS', CI_aprox=True)
-    cond_iniciales_LCDM = calculate_initial_conditions(physical_params, zi=zi, model='HS', CI_aprox=False)
-    print(cond_iniciales_hibrid)
-    print(cond_iniciales_LCDM)
+    initial_cond_hibrid = calculate_initial_conditions(physical_params, zi=zi, model='HS', CI_aprox=True)
+    initial_cond_LCDM = calculate_initial_conditions(physical_params, zi=zi, model='HS', CI_aprox=False)
+    print(initial_cond_LCDM)
+    print(initial_cond_hibrid)
+

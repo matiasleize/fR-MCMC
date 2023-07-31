@@ -12,7 +12,7 @@ from scipy.optimize import minimize
 import os
 import git
 path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
-path_datos_global = os.path.dirname(path_git)
+path_global = os.path.dirname(path_git)
 
 # Obs: To import packages this is the sintaxis to change paths:
 os.chdir(path_git); os.sys.path.append('./fr_mcmc/')
@@ -28,7 +28,7 @@ os.chdir(path_git + '/fr_mcmc/mcmc/')
 def run():
     output_dir = config.OUTPUT_DIR
     model = config.MODEL
-    params_fijos = config.FIXED_PARAMS # Fixed parameters
+    fixed_params = config.FIXED_PARAMS # Fixed parameters
     index = config.LOG_LIKELIHOOD_INDEX
     num_params = int(str(index)[0])
     all_analytic = config.ALL_ANALYTIC
@@ -57,7 +57,13 @@ def run():
     # Cosmic Chronometers
     if config.USE_CC == True:
         os.chdir(path_data + 'CC/')
-        ds_CC = leer_data_cronometros('chronometers_data.txt')
+        #ds_CC = leer_data_cronometros('chronometers_data.txt')
+
+        #ds_CC = leer_data_cronometros('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_LCDM_8.txt')
+        ds_CC = leer_data_cronometros('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_HS_8.txt')
+        #ds_CC = leer_data_cronometros('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_LCDM_5.txt')
+        #ds_CC = leer_data_cronometros('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_HS_5.txt')
+
         datasets.append('_CC')
     else:
         ds_CC = None
@@ -94,7 +100,7 @@ def run():
     datasets = str(''.join(datasets))
 
     # Define the log-likelihood distribution
-    ll = lambda theta: log_likelihood(theta, params_fijos, 
+    ll = lambda theta: log_likelihood(theta, fixed_params, 
                                         index=index,
                                         dataset_SN = ds_SN,
                                         dataset_CC = ds_CC,
@@ -153,7 +159,7 @@ def run():
 
 
     filename = 'sample_' + model + datasets + '_' + str(num_params) + 'params'
-    output_directory = path_datos_global + output_dir + filename
+    output_directory = path_global + output_dir + filename
 
     if not os.path.exists(output_directory):
         os.mkdir(output_directory)
