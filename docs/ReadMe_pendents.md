@@ -8,13 +8,10 @@ Based on: https://medium.com/bcggamma/data-science-python-best-practices-fdb16fd
 
 ### Directories distribution
 '''
-tesis_licenciatura/fr_mcmc --> supermodel/supermodel
-supermodel/supermodel/tests/: this have conatin all that appear in the section "Unit test a lot" 
+supermodel/supermodel/tests/: this have contain all that appear in the section "Unit test a lot" 
 '''
 
 ### Other stuff
-Rename solve_sys as solve_sist (grep if it is necessary to change this in other location).
-
 Add to environment.yml: PythonBox, seaborn, getdist (maybe something else)
 
 All data should be in Pandas df format (maybe).
