@@ -36,8 +36,8 @@ def Taylor_ST(z,omega_m,b,H0):
 
     func = lambdify(N, St_tay,'numpy') # returns a numpy-ready function
 
-    N_dato = -np.log(1+z)
-    numpy_array_of_results = func(N_dato)
+    N_data = -np.log(1+z)
+    numpy_array_of_results = func(N_data)
     return numpy_array_of_results
 
 def Taylor_HS(z,omega_m,b,H0):
@@ -67,8 +67,8 @@ def Taylor_HS(z,omega_m,b,H0):
 
     func = lambdify(N, Hs_tay,'numpy') # returns a numpy-ready function
 
-    N_dato = -np.log(1+z)
-    numpy_array_of_results = func(N_dato)
+    N_data = -np.log(1+z)
+    numpy_array_of_results = func(N_data)
     return numpy_array_of_results
     
 #%%
