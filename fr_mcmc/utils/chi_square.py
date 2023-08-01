@@ -19,17 +19,17 @@ from supernovae import aparent_magnitude_th, chi2_supernovae
 from BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
 from AGN import zs_2_logDlH0
 
-def chi2_without_cov(teo, data, errores_cuad):
+def chi2_without_cov(teo, data, errors_cuad):
     '''
     Calculate chi square assuming no correlation.
 
     teo (array): Theoretical prediction of the model.
     data (array): Observational data to compare with the model.
-    errores_cuad (array): The square of the errors of the data.
+    errors_cuad (array): The square of the errors of the data.
 
     '''
 
-    chi2 = np.sum((data-teo)**2/errores_cuad)
+    chi2 = np.sum((data-teo)**2/errors_cuad)
     return chi2
 
 def all_parameters(theta, fixed_params, index):
@@ -144,14 +144,14 @@ def params_to_chi2(theta, fixed_params, index=0,
             (z_data_BAO, data_values, data_error_cuad,wb_fid) = dataset_BAO[i]
             if i==0: #Da entry
                 rd = r_drag(omega_m,H_0,wb_fid) # rd calculation
-                distancias_teoricas = Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data_BAO, i)
-                output_th = Ds_to_obs_final(zs_model, distancias_teoricas, rd, i)
+                theoretical_distances = Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data_BAO, i)
+                output_th = Ds_to_obs_final(zs_model, theoretical_distances, rd, i)
             else: #If not..
-                distancias_teoricas = Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data_BAO, i)
+                theoretical_distances = Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data_BAO, i)
                 output_th = np.zeros(len(z_data_BAO))
                 for j in range(len(z_data_BAO)): # For each datatype
                      rd = r_drag(omega_m,H_0,wb_fid[j]) #rd calculation
-                     output_th[j] = Ds_to_obs_final(zs_model,distancias_teoricas[j],rd,i)
+                     output_th[j] = Ds_to_obs_final(zs_model,theoretical_distances[j],rd,i)
             #Chi square calculation for each datatype (i)
             chies_BAO[i] = chi2_without_cov(output_th,data_values,data_error_cuad)
 
@@ -210,11 +210,11 @@ if __name__ == '__main__':
     os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
     from data import read_data_pantheon, read_data_chronometers, read_data_BAO, read_data_AGN
 
-    # Supernovas
+    # Supernovae
     os.chdir(path_git+'/fr_mcmc/source/Pantheon/')
     ds_SN = read_data_pantheon('lcparam_full_long_zhel.txt')
 
-    # Cronómetros
+    # Chronometers
     os.chdir(path_git+'/fr_mcmc/source/CC/')
     ds_CC = read_data_chronometers('chronometers_data.txt')
 
@@ -343,7 +343,6 @@ if __name__ == '__main__':
                     #H0_Riess = True,
                     model = 'EXP'
                     )
-    #1077.8293845284927/(1048+20+len(ds_CC[0])-4)
     #%%
     plt.title('EXP: CC+SN+BAO, omega_m=0.352, M=-19.41')
     plt.grid(True)

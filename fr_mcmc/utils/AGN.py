@@ -40,8 +40,8 @@ def Hs_2_logDlH0(zs,Hs,z_data):
 
 
 
-def chi2_AGN_nuisance(teo, data, errores_cuad):
-    chi2 = np.sum( ((data-teo)**2/errores_cuad) + np.log(2*np.pi*errores_cuad))
+def chi2_AGN_nuisance(teo, data, errors_cuad):
+    chi2 = np.sum( ((data-teo)**2/errors_cuad) + np.log(2*np.pi*errors_cuad))
     return chi2
 
 def params_to_chi2_AGN_nuisance(theta, fixed_params, dataset_AGN, n=1,

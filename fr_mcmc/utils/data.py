@@ -73,10 +73,10 @@ def read_data_chronometers(file_chronometers):
     return z, h, dh
 
 def read_data_BAO(file_BAO):
-    z, data_values, errores_est, errores_sist, wb_fid = np.loadtxt(file_BAO,
+    z, data_values, errors_est, errors_sist, wb_fid = np.loadtxt(file_BAO,
     usecols=(0,1,2,3,4), skiprows=1,unpack=True)
-    errores_totales_cuad = errores_est**2 + errores_sist**2
-    return z, data_values, errores_totales_cuad, wb_fid
+    total_errors_cuad = errors_est**2 + errors_sist**2
+    return z, data_values, total_errors_cuad, wb_fid
 
 def read_data_AGN(file_AGN):
     z, Fuv, eFuv, Fx, eFx = np.loadtxt(file_AGN,
@@ -129,7 +129,7 @@ if __name__ == '__main__':
     df = pd.read_csv(file_BAO,sep='\t')
     z_data = df.to_numpy()[:,0]
     data_values = df.to_numpy()[:,1]
-    errores_est = df.to_numpy()[:,2]
-    errores_sist = df.to_numpy()[:,3]
-    errores_totales_cuad = errores_est**2 + errores_sist**2
+    errors_est = df.to_numpy()[:,2]
+    errors_sist = df.to_numpy()[:,3]
+    total_errors_cuad = errors_est**2 + errors_sist**2
     df.to_numpy()[:,4]
