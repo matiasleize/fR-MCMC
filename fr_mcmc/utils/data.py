@@ -6,6 +6,68 @@ import numpy as np
 from numpy.linalg import inv
 import numpy.ma as ma
 
+def read_data_pantheon_plus_shoes(file_pantheon_plus,file_pantheon_plus_shoes_cov):
+
+    '''
+    Takes Pantheon+ data and extracts the data from the zhd and zhel 
+    redshifts, its error dz, in addition to the data of the apparent magnitude
+    with its error: mb and dm. With the errors of the apparent magnitude 
+    builds the associated correlation matrix. The function returns the
+    information of the redshifts, the apparent magnitude 
+    and the correlation matrix inverse.
+    '''
+
+    # Read text with data
+
+    zhd, zhel, mb, mu_shoes, is_cal =np.loadtxt(file_pantheon_plus,
+                                     usecols=(3,7,9,11,14), skiprows=1,
+                                     unpack=True)
+
+    Ccov=np.loadtxt(file_pantheon_plus_shoes_cov,unpack=True)
+
+    data=np.zeros(len(zhd))
+    for i in range(len (zhd)):
+        if is_cal[i] == 0:
+            data[i] = mb[i]
+        elif is_cal[i] == 1:
+            data[i] = mu_shoes[i]
+
+    sn=len(data)
+
+    Ccov=Ccov[1:] #The first element is the total number of row/columns
+    #We made the final covariance matrix..
+    Ccov=Ccov.reshape(sn,sn)
+
+    #.. and finally we invert it
+    Cinv=inv(Ccov)
+    return zhd, zhel, Cinv, data, is_cal
+
+def read_data_pantheon_plus(file_pantheon_plus,file_pantheon_plus_cov):
+
+    '''
+    Takes Pantheon+ data and extracts the data from the zhd and zhel 
+    redshifts, its error dz, in addition to the data of the apparent magnitude
+    with its error: mb and dm. With the errors of the apparent magnitude 
+    builds the associated correlation matrix. The function returns the
+    information of the redshifts, the apparent magnitude 
+    and the correlation matrix inverse.
+    '''
+
+    # Read text with data
+
+    zhd, zhel, mb, is_cal =np.loadtxt(file_pantheon_plus,
+                                     usecols=(3,7,9,14), skiprows=1,
+                                     unpack=True)
+
+    data=np.zeros(len(zhd))
+    for i in range(len (zhd)):
+        if is_cal[i] == 0:
+            data[i] = mb[i]
+
+    Ccov=np.load(file_pantheon_plus_cov)['arr_0']
+    Cinv=inv(Ccov)
+    return zhd, zhel, Cinv, data
+
 def read_data_pantheon(file_pantheon, masked = False, min_z = 0, max_z = 30):
 
     '''
@@ -29,7 +91,6 @@ def read_data_pantheon(file_pantheon, masked = False, min_z = 0, max_z = 30):
     Csys=Csys.reshape(sn,sn)
     #We made the final covariance matrix..
     Ccov=Csys+Dstat
-
 
     if masked == True:
         mask = ma.masked_where((zcmb <= max_z) & ((zcmb >= min_z)) , zcmb).mask
@@ -62,10 +123,7 @@ def read_data_pantheon_2(file_pantheon,file_pantheon_2):
     #We made the final covariance matrix and then we invert it.
     Ccov=Csys+Dstat
     Cinv=inv(Ccov)
-
     return zcmb0, zcmb_1, zhel0, Cinv, mb0, x1, cor, hmass
-
-
 
 def read_data_chronometers(file_chronometers):
     # Read text with data
@@ -87,7 +145,6 @@ def read_data_AGN(file_AGN):
     sorted_eFuv = eFuv[arr1inds]
     sorted_Fx = Fx[arr1inds]
     sorted_eFx = eFx[arr1inds]
-
     return sorted_z, sorted_Fuv, sorted_eFuv, sorted_Fx, sorted_eFx
 
 def read_data_BAO_odintsov(file_BAO_odintsov):
@@ -102,26 +159,32 @@ if __name__ == '__main__':
     path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
     os.chdir(path_git)
 
+    #%% Pantheon plus
+    os.chdir(path_git+'/fr_mcmc/source/Pantheon_plus_shoes')
+    zhd, zhel, Cinv, mb = read_data_pantheon_plus('Pantheon+SH0ES.dat',
+                            'covmat_pantheon_plus_only.npz')
+
+    #%% Pantheon plus + SH0ES
+    os.chdir(path_git+'/fr_mcmc/source/Pantheon_plus_shoes')
+    zhd, zhel, Cinv, mb, is_cal = read_data_pantheon_plus_shoes('Pantheon+SH0ES.dat',
+                                    'Pantheon+SH0ES_STAT+SYS.cov')
+
+    #%% Pantheon
+    os.chdir(path_git+'/fr_mcmc/source/Pantheon')
+    zcmb, zhel, Cinv, mb = read_data_pantheon('lcparam_full_long_zhel.txt')
+
     #%% AGN
     os.chdir(path_git+'/fr_mcmc/source/AGN')
     aux = read_data_AGN('table3.dat')
 
-    #%% Supernovae
-    os.chdir(path_git+'/fr_mcmc/source/Pantheon')
-    zcmb, zhel, Cinv, mb = read_data_pantheon('lcparam_full_long_zhel.txt')
-    #zcmb, zhel, Cinv, mb
-
     #%% Cosmic chronometers
     os.chdir(path_git+'/fr_mcmc/source/CC')
-#    z_data, H_data, dH  = read_data_chronometers('chronometers_data.txt')
-    z_data, H_data, dH  = read_data_chronometers('chronometers_data_nunes.txt')
+    z_data, H_data, dH  = read_data_chronometers('chronometers_data.txt')
 
     #%% BAO
     os.chdir(path_git+'/fr_mcmc/source/BAO')
     file_BAO='BAO_data_da.txt'
-
-    z, data_values, data_error_cuad = read_data_BAO(file_BAO)
-    #z, data_values, data_error_cuad
+    z, data_values, data_error_cuad, _ = read_data_BAO(file_BAO)
     
     #%%
     os.chdir(path_git+'/fr_mcmc/source/BAO')
