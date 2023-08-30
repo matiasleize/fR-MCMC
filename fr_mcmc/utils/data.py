@@ -5,6 +5,7 @@ Functions related to data management
 import numpy as np
 from numpy.linalg import inv
 import numpy.ma as ma
+import pandas as pd
 
 def read_data_pantheon_plus_shoes(file_pantheon_plus,file_pantheon_plus_shoes_cov):
 
@@ -18,12 +19,22 @@ def read_data_pantheon_plus_shoes(file_pantheon_plus,file_pantheon_plus_shoes_co
     '''
 
     # Read text with data
+    df = pd.read_csv(file_pantheon_plus,delim_whitespace=True)
+    zhd = df['zHD']
+    zhel = df['zHEL']
+    mb = df['m_b_corr']
+    mu_shoes = df['MU_SH0ES']
+    is_cal = df['IS_CALIBRATOR']
 
-    zhd, zhel, mb, mu_shoes, is_cal =np.loadtxt(file_pantheon_plus,
-                                     usecols=(3,7,9,11,14), skiprows=1,
-                                     unpack=True)
+    sn=len(zhd)
 
     Ccov=np.loadtxt(file_pantheon_plus_shoes_cov,unpack=True)
+    Ccov=Ccov[1:] #The first element is the total number of row/columns
+    #We made the final covariance matrix..
+    Ccov=Ccov.reshape(sn,sn)
+
+    #.. and finally we invert it
+    Cinv=inv(Ccov)
 
     data=np.zeros(len(zhd))
     for i in range(len (zhd)):
@@ -32,14 +43,6 @@ def read_data_pantheon_plus_shoes(file_pantheon_plus,file_pantheon_plus_shoes_co
         elif is_cal[i] == 1:
             data[i] = mu_shoes[i]
 
-    sn=len(data)
-
-    Ccov=Ccov[1:] #The first element is the total number of row/columns
-    #We made the final covariance matrix..
-    Ccov=Ccov.reshape(sn,sn)
-
-    #.. and finally we invert it
-    Cinv=inv(Ccov)
     return zhd, zhel, Cinv, data, is_cal
 
 def read_data_pantheon_plus(file_pantheon_plus,file_pantheon_plus_cov):
@@ -55,18 +58,19 @@ def read_data_pantheon_plus(file_pantheon_plus,file_pantheon_plus_cov):
 
     # Read text with data
 
-    zhd, zhel, mb, is_cal =np.loadtxt(file_pantheon_plus,
-                                     usecols=(3,7,9,14), skiprows=1,
-                                     unpack=True)
+    data = pd.read_csv(file_pantheon_plus,delim_whitespace=True)
+    ww = (data['zHD']>0.01) | (np.array(data['IS_CALIBRATOR'],dtype=bool))
 
-    data=np.zeros(len(zhd))
-    for i in range(len (zhd)):
-        if is_cal[i] == 0:
-            data[i] = mb[i]
+    zhd = data['zHD'][ww]
+    zhel = data['zHEL'][ww]
+    mb = data['m_b_corr'][ww]
 
     Ccov=np.load(file_pantheon_plus_cov)['arr_0']
     Cinv=inv(Ccov)
-    return zhd, zhel, Cinv, data
+
+
+
+    return zhd, zhel, Cinv, mb
 
 def read_data_pantheon(file_pantheon, masked = False, min_z = 0, max_z = 30):
 
