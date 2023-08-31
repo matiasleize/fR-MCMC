@@ -17,7 +17,8 @@ path_global = os.path.dirname(path_git)
 # Obs: To import packages this is the sintaxis to change paths:
 os.chdir(path_git); os.sys.path.append('./fr_mcmc/')
 from utils.sampling import MCMC_sampler
-from utils.data import read_data_pantheon, read_data_chronometers, read_data_BAO, read_data_AGN
+from utils.data import read_data_pantheon_plus_shoes, read_data_pantheon_plus, read_data_pantheon,\
+                       read_data_chronometers, read_data_BAO, read_data_AGN
 from utils.chi_square import log_likelihood
 from utils.derived_parameters import derived_parameters
 from config import cfg as config
@@ -46,6 +47,25 @@ def run():
     path_data = path_git + '/fr_mcmc/source/'
     datasets = []
 
+    # Pantheon Plus + Shoes
+    if config.USE_PPLUS_SHOES == True:
+        os.chdir(path_data + 'Pantheon_plus_shoes/')
+
+        ds_SN_plus_shoes = read_data_pantheon_plus_shoes('Pantheon+SH0ES.dat',
+                                    'Pantheon+SH0ES_STAT+SYS.cov')
+        datasets.append('_PPS')
+    else:
+        ds_SN_plus_shoes = None
+
+    # Pantheon Plus
+    if config.USE_PPLUS == True:
+        os.chdir(path_data + 'Pantheon_plus_shoes/')
+        ds_SN_plus = read_data_pantheon_plus('Pantheon+SH0ES.dat',
+                                'covmat_pantheon_plus_only.npz')        
+        datasets.append('_PP')
+    else:
+        ds_SN_plus = None
+
     # Supernovae type IA
     if config.USE_SN == True:
         os.chdir(path_data + 'Pantheon/')
@@ -57,10 +77,10 @@ def run():
     # Cosmic Chronometers
     if config.USE_CC == True:
         os.chdir(path_data + 'CC/')
-        #ds_CC = read_data_chronometers('chronometers_data.txt')
+        ds_CC = read_data_chronometers('chronometers_data.txt')
 
         #ds_CC = read_data_chronometers('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_LCDM_8.txt')
-        ds_CC = read_data_chronometers('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_HS_8.txt')
+        #ds_CC = read_data_chronometers('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_HS_8.txt')
         #ds_CC = read_data_chronometers('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_LCDM_5.txt')
         #ds_CC = read_data_chronometers('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_HS_5.txt')
 
@@ -102,6 +122,8 @@ def run():
     # Define the log-likelihood distribution
     ll = lambda theta: log_likelihood(theta, fixed_params, 
                                         index=index,
+                                        dataset_SN_plus_shoes = ds_SN_plus_shoes,
+                                        dataset_SN_plus = ds_SN_plus,
                                         dataset_SN = ds_SN,
                                         dataset_CC = ds_CC,
                                         dataset_BAO = ds_BAO,
