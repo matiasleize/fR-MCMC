@@ -80,6 +80,7 @@ def all_parameters(theta, fixed_params, index):
 
 
 def params_to_chi2(theta, fixed_params, index=0,
+                    dataset_SN_plus_shoes=None, dataset_SN_plus=None,
                     dataset_SN=None, dataset_CC=None,
                     dataset_BAO=None, dataset_AGN=None, H0_Riess=False,
                     num_z_points=int(10**5), model='HS',n=1,
@@ -122,9 +123,23 @@ def params_to_chi2(theta, fixed_params, index=0,
     if (dataset_CC != None or dataset_BAO != None or dataset_AGN != None):
         Hs_interpol = interp1d(zs_model, Hs_model)
 
-    if (dataset_SN != None or dataset_BAO != None or dataset_AGN != None):
+    if (dataset_SN_plus_shoes != None or dataset_SN_plus != None or
+        dataset_SN != None or dataset_BAO != None or dataset_AGN != None):
         int_inv_Hs = cumtrapz(Hs_model**(-1), zs_model, initial=0)
         int_inv_Hs_interpol = interp1d(zs_model, int_inv_Hs)
+
+    if dataset_SN_plus_shoes != None:
+        zhd, zhel, mb, mu_shoes, Cinv, is_cal = dataset_SN_plus_shoes #Import the data
+        muobs = mb - Mabs
+        muth_num = aparent_magnitude_th(int_inv_Hs_interpol, zhd, zhel) #Numeric prediction of mu
+        muth = muth_num*(-is_cal + 1) + mu_shoes*(is_cal) #Merge num predicion with mu_shoes
+        chi2_SN = chi2_supernovae(muth, muobs, Cinv)
+
+    if dataset_SN_plus != None:
+        zhd, zhel, Cinv, mb = dataset_SN_plus #Import the data
+        muth = aparent_magnitude_th(int_inv_Hs_interpol, zhd, zhel)
+        muobs =  mb - Mabs
+        chi2_SN = chi2_supernovae(muth, muobs, Cinv)
 
     if dataset_SN != None:
         zcmb, zhel, Cinv, mb = dataset_SN #Import the data
@@ -208,13 +223,24 @@ if __name__ == '__main__':
 
     path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
     os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
-    from data import read_data_pantheon, read_data_chronometers, read_data_BAO, read_data_AGN
+    from data import read_data_pantheon_plus_shoes, read_data_pantheon_plus, read_data_pantheon,\
+                     read_data_chronometers, read_data_BAO, read_data_AGN
 
-    # Supernovae
+    # Pantheon plus + SH0ES
+    os.chdir(path_git+'/fr_mcmc/source/Pantheon_plus_shoes')
+    ds_SN_plus_shoes = read_data_pantheon_plus_shoes('Pantheon+SH0ES.dat',
+                                    'Pantheon+SH0ES_STAT+SYS.cov')
+
+    # Pantheon plus
+    os.chdir(path_git+'/fr_mcmc/source/Pantheon_plus_shoes')
+    ds_SN_plus = read_data_pantheon_plus('Pantheon+SH0ES.dat',
+                                'covmat_pantheon_plus_only.npz')
+
+    # Pantheon
     os.chdir(path_git+'/fr_mcmc/source/Pantheon/')
     ds_SN = read_data_pantheon('lcparam_full_long_zhel.txt')
 
-    # Chronometers
+    # Cosmic Chronometers
     os.chdir(path_git+'/fr_mcmc/source/CC/')
     ds_CC = read_data_chronometers('chronometers_data.txt')
 
@@ -233,125 +259,14 @@ if __name__ == '__main__':
 
 
     #%%
-    a = params_to_chi2([-19.37, 0.3, 70], 0.01, index=32,
-                    #dataset_SN = ds_SN,
-                    #dataset_CC = ds_CC,
+    chi2 = params_to_chi2([-19.37, 0.3, 70], 0.01, index=32,
+                    dataset_SN_plus_shoes = ds_SN_plus_shoes,
+                    dataset_SN_plus = ds_SN_plus,
+                    dataset_SN = ds_SN,
+                    dataset_CC = ds_CC,
                     dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
+                    dataset_AGN = ds_AGN,
                     H0_Riess = True,
                     model = 'HS'
                     )
-    print(a)
-    #%%
-    from scipy.stats import chi2
-    N = len(ds_SN[0])
-    P = 3
-    df = N - P
-    x = np.linspace(0,2000, 10**5)
-    y = chi2.pdf(x, df, loc=0, scale=1)
-    plt.vlines(a,0,np.max(y),'r')
-    plt.plot(x,y)
-
-    #%%
-    bs = np.linspace(0,2,22)
-    chies_HS = np.zeros(len(bs))
-    chies_EXP = np.zeros(len(bs))
-    for (i,b) in enumerate(bs):
-        chies_EXP[i] = params_to_chi2([0.325,b,68], -19.35, index=31,
-                        #dataset_SN = ds_SN,
-                        dataset_CC = ds_CC,
-                        #dataset_BAO = ds_BAO,
-                        #dataset_AGN = ds_AGN,
-                        H0_Riess = True,
-                        model = 'EXP'
-                        )
-        chies_HS[i] = params_to_chi2([0.325,b,68], -19.35, index=31,
-                        #dataset_SN = ds_SN,
-                        dataset_CC = ds_CC,
-                        #dataset_BAO = ds_BAO,
-                        #dataset_AGN = ds_AGN,
-                        H0_Riess = True,
-                        model = 'HS'
-                        )
-        print(i)
-
-        plt.figure()
-        plt.title('CC+H0')
-        plt.ylabel(r'$\chi^2$')
-        plt.xlabel('b')
-        plt.grid(True)
-        plt.plot(bs,chies_HS,label = 'Hu-Sawicki model')
-        plt.plot(bs,chies_EXP,label = 'Exponencial model')
-        plt.legend()
-
-    #%%
-    bs = np.linspace(0.1,4,100)
-    chis_1 = np.zeros(len(bs))
-    chis_2 = np.zeros(len(bs))
-    chis_3 = np.zeros(len(bs))
-    chis_4 = np.zeros(len(bs))
-    chis_5 = np.zeros(len(bs))
-    chis_6 = np.zeros(len(bs))
-    for (i,b) in enumerate(bs):
-        #print(i,b)
-        chis_1[i] = params_to_chi2([-19.41, 0.352, b, 62], 0, index=4,
-                    dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'EXP'
-                    )
-        chis_2[i] = params_to_chi2([-19.41, 0.352, b, 63], 0, index=4,
-                    dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'EXP'
-                    )
-
-        chis_3[i] = params_to_chi2([-19.41, 0.352, b, 64], 0, index=4,
-                    dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'EXP'
-                    )
-        chis_4[i] = params_to_chi2([-19.41, 0.352, b, 65], 0, index=4,
-                    dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'EXP'
-                    )
-        chis_5[i] = params_to_chi2([-19.41, 0.352, b, 66], 0, index=4,
-                    dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'EXP'
-                    )
-        chis_6[i] = params_to_chi2([-19.41, 0.352, b, 67], 0, index=4,
-                    dataset_SN = ds_SN,
-                    dataset_CC = ds_CC,
-                    dataset_BAO = ds_BAO,
-                    #dataset_AGN = ds_AGN,
-                    #H0_Riess = True,
-                    model = 'EXP'
-                    )
-    #%%
-    plt.title('EXP: CC+SN+BAO, omega_m=0.352, M=-19.41')
-    plt.grid(True)
-    plt.plot(bs,chis_1,label='H0=62')
-    plt.plot(bs,chis_2,label='H0=63')
-    plt.plot(bs,chis_3,label='H0=64')
-    plt.plot(bs,chis_4,label='H0=65')
-    plt.plot(bs,chis_5,label='H0=66')
-    plt.plot(bs,chis_6,label='H0=67')
-    plt.ylabel(r'$\chi^2$')
-    plt.xlabel('b')
-    plt.legend()
+    print(chi2)
