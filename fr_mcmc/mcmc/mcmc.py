@@ -117,7 +117,13 @@ def run():
     else:
         H0_Riess = False
 
-    datasets = str(''.join(datasets))
+    #Related to priors
+    if config.OMEGA_M_ASTRO_PRIOR == True: #Omega_m gaussian prior
+        datasets.append('_PROA')
+    if config.M_ABS_CM_PRIOR == True: #M_abs Camarena & Marra prior
+        datasets.append('_PRCM')
+
+
 
     # Define the log-likelihood distribution
     ll = lambda theta: log_likelihood(theta, fixed_params, 
@@ -146,9 +152,24 @@ def run():
             if (omega_m_min < omega_m < omega_m_max and b_min < b < b_max and H0_min < H0 < H0_max):
                 return 0.0
         elif index == 32:
-            M, omega_m, H0 = theta
-            if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max and H0_min < H0 < H0_max):
-                return 0.0
+            if config.OMEGA_M_ASTRO_PRIOR == True: #Omega_m gaussian prior
+                M, omega_m, H0 = theta
+                if not M_min < M < M_max and H0_min < H0 < H0_max:
+                    return -np.inf
+                mu = 0.19
+                sigma = 0.06
+                return np.log(1.0/(np.sqrt(2*np.pi)*sigma))-0.5*(omega_m-mu)**2/sigma**2  
+            elif config.M_ABS_CM_PRIOR == True: #M_abs Camarena & Marra prior
+                M, omega_m, H0 = theta
+                if not omega_m_min < omega_m < omega_m_max and H0_min < H0 < H0_max:
+                    return -np.inf
+                mu = -19.2435
+                sigma = 0.0373
+                return np.log(1.0/(np.sqrt(2*np.pi)*sigma))-0.5*(M-mu)**2/sigma**2  
+            else: #Flat prior
+                M, omega_m, H0 = theta
+                if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max and H0_min < H0 < H0_max):
+                    return 0.0
         elif index == 33:
             M, omega_m, b = theta
             if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max and b_min < b < b_max):
@@ -179,6 +200,7 @@ def run():
             return -np.inf
         return lp + ll(theta)
 
+    datasets = str(''.join(datasets))
 
     filename = 'sample_' + model + datasets + '_' + str(num_params) + 'params'
     output_directory = path_global + output_dir + filename
