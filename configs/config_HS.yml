@@ -1,10 +1,15 @@
 #Example of a configuration file for the Hu-Sawicki model.
 
-USE_SN: True
-USE_CC: True
+USE_PPLUS_SHOES: True
+USE_PPLUS: False
+USE_SN: False
+USE_CC: False
 USE_BAO: False
 USE_AGN: False
 USE_H0: False
+
+M_ABS_CM_PRIOR: False #Camarena & Marra M_abs prior
+OMEGA_M_ASTRO_PRIOR: False #Astrophysical Omega_m prior
 
 MODEL: 'HS' #Choose between 'LCDM', 'HS' or 'EXP'
 WITNESS_NUM: 24 #Suggestion: (model_number) + (datasets_number) 
