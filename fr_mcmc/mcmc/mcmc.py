@@ -17,10 +17,11 @@ path_global = os.path.dirname(path_git)
 # Obs: To import packages this is the sintaxis to change paths:
 os.chdir(path_git); os.sys.path.append('./fr_mcmc/')
 from utils.sampling import MCMC_sampler
+from utils.derived_parameters import derived_parameters
 from utils.data import read_data_pantheon_plus_shoes, read_data_pantheon_plus, read_data_pantheon,\
                        read_data_chronometers, read_data_BAO, read_data_AGN
 from utils.chi_square import log_likelihood
-from utils.derived_parameters import derived_parameters
+from utils.priors import log_prior # Must be the last import before config to avoid issues!
 from config import cfg as config
 os.chdir(path_git); os.sys.path.append('./fr_mcmc/plotting/')
 import analysis
@@ -33,15 +34,9 @@ def run():
     index = config.LOG_LIKELIHOOD_INDEX
     num_params = int(str(index)[0])
     all_analytic = config.ALL_ANALYTIC
+    bnds = config.BOUNDS
 
     witness_file = 'witness_' + str(config.WITNESS_NUM) + '.txt'
-    
-    bnds = config.BOUNDS
-    [M_min, M_max] = config.M_PRIOR
-    [omega_m_min, omega_m_max] = config.OMEGA_M_PRIOR
-    if model != 'LCDM':
-        [b_min, b_max] = config.B_PRIOR
-    [H0_min, H0_max] = config.H0_PRIOR
 
     #%% Import cosmological data
     path_data = path_git + '/fr_mcmc/source/'
@@ -101,7 +96,6 @@ def run():
     else:
         ds_BAO = None
 
-
     # AGN
     if config.USE_AGN == True:
         os.chdir(path_data + 'AGN/')
@@ -123,8 +117,6 @@ def run():
     if config.M_ABS_CM_PRIOR == True: #M_abs Camarena & Marra prior
         datasets.append('_PRCM')
 
-
-
     # Define the log-likelihood distribution
     ll = lambda theta: log_likelihood(theta, fixed_params, 
                                         index=index,
@@ -138,67 +130,15 @@ def run():
                                         model = model,
                                         all_analytic = all_analytic
                                         )
-
     nll = lambda theta: -ll(theta) # negative log likelihood
 
-    # Define the prior distribution
-    def log_prior(theta):
-        if index == 4:
-            M, omega_m, b, H0 = theta
-            if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max and b_min < b < b_max and H0_min < H0 < H0_max):
-                return 0.0
-        elif index == 31:
-            omega_m, b, H0 = theta
-            if (omega_m_min < omega_m < omega_m_max and b_min < b < b_max and H0_min < H0 < H0_max):
-                return 0.0
-        elif index == 32:
-            if config.OMEGA_M_ASTRO_PRIOR == True: #Omega_m gaussian prior
-                M, omega_m, H0 = theta
-                if not M_min < M < M_max and H0_min < H0 < H0_max:
-                    return -np.inf
-                mu = 0.19
-                sigma = 0.06
-                return np.log(1.0/(np.sqrt(2*np.pi)*sigma))-0.5*(omega_m-mu)**2/sigma**2  
-            elif config.M_ABS_CM_PRIOR == True: #M_abs Camarena & Marra prior
-                M, omega_m, H0 = theta
-                if not omega_m_min < omega_m < omega_m_max and H0_min < H0 < H0_max:
-                    return -np.inf
-                mu = -19.2435
-                sigma = 0.0373
-                return np.log(1.0/(np.sqrt(2*np.pi)*sigma))-0.5*(M-mu)**2/sigma**2  
-            else: #Flat prior
-                M, omega_m, H0 = theta
-                if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max and H0_min < H0 < H0_max):
-                    return 0.0
-        elif index == 33:
-            M, omega_m, b = theta
-            if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max and b_min < b < b_max):
-                return 0.0
-        elif index == 21:
-            omega_m, b = theta
-            if (omega_m_min < omega_m < omega_m_max and b_min < b < b_max):
-                return 0.0
-        elif index == 22:
-            omega_m, H0 = theta
-            if (omega_m_min < omega_m < omega_m_max and H0_min < H0 < H0_max):
-                return 0.0
-        elif index == 23:
-            M, omega_m = theta
-            if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max):
-                return 0.0
-
-        elif index == 1:
-            omega_m = theta
-            if omega_m_min < omega_m < omega_m_max:
-                return 0.0
-        return -np.inf
-    
+    #Define the prior distribution
+    lp = lambda theta: log_prior(theta, index) 
     # Define the posterior distribution
     def log_probability(theta):
-        lp = log_prior(theta)
-        if not np.isfinite(lp): # Maybe this condition is not necessary..
+        if not np.isfinite(lp(theta)): # Maybe this condition is not necessary..
             return -np.inf
-        return lp + ll(theta)
+        return lp(theta) + ll(theta)
 
     datasets = str(''.join(datasets))
 
