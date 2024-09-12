@@ -20,22 +20,49 @@ def read_data_pantheon_plus_shoes(file_pantheon_plus,file_pantheon_plus_shoes_co
 
     # Read text with data
     df = pd.read_csv(file_pantheon_plus,delim_whitespace=True)
-    zhd = df['zHD']
-    zhel = df['zHEL']
-    mb = df['m_b_corr']
-    mu_shoes = df['MU_SH0ES']
-    is_cal = df['IS_CALIBRATOR']
+
+    #################################################################################+
+    # NEW for PPS: We mask the data with zHD<0.01 and IS_CALIBRATOR==False
+    ww = (df['zHD']>0.01) | (np.array(df['IS_CALIBRATOR'],dtype=bool))
+    zhd = df['zHD'][ww]
+    zhel = df['zHEL'][ww]
+    mb = df['m_b_corr'][ww]
+    ceph_dist = df['CEPH_DIST'][ww] #FIXED BUG, before it read: 'mu_shoes = df['MU_SH0ES']' which was wrong!
+    is_cal = df['IS_CALIBRATOR'][ww]
+    #################################################################################
     
     #Load the covariance matrix elements
-    Ccov=np.loadtxt(file_pantheon_plus_shoes_cov,unpack=True)
-    Ccov=Ccov[1:] #The first element is the total number of row/columns
+    #Ccov=np.loadtxt(file_pantheon_plus_shoes_cov,unpack=True)
+    #Ccov=Ccov[1:] #The first element is the total number of row/columns
     #We made the final covariance matrix..
-    sn=len(zhd)
-    Ccov=Ccov.reshape(sn,sn)
-    #.. and finally we invert it
-    Cinv=inv(Ccov)
+    sn=len(df['zHD'])
+    #Ccov=Ccov.reshape(sn,sn)
 
-    return zhd, zhel, mb, mu_shoes, Cinv, is_cal
+    f = open(file_pantheon_plus_shoes_cov)
+    line = f.readline()
+    n = int(len(zhd))
+    Cov_PANplus = np.zeros((n,n))
+    ii = -1
+    jj = -1
+    mine = 999
+    maxe = -999
+    for i in range(sn):
+        jj = -1
+        if ww[i]:
+            ii += 1
+        for j in range(sn):
+            if ww[j]:
+                jj += 1
+            val = float(f.readline())
+            if ww[i]:
+                if ww[j]:
+                    Cov_PANplus[ii,jj] = val
+    f.close()
+
+    #.. and finally we invert it
+    Cinv = np.linalg.inv(Cov_PANplus)
+
+    return zhd, zhel, mb, ceph_dist, Cinv, is_cal
 
 def read_data_pantheon_plus(file_pantheon_plus,file_pantheon_plus_cov):
 
@@ -59,8 +86,6 @@ def read_data_pantheon_plus(file_pantheon_plus,file_pantheon_plus_cov):
 
     Ccov=np.load(file_pantheon_plus_cov)['arr_0']
     Cinv=inv(Ccov)
-
-
 
     return zhd, zhel, Cinv, mb
 
