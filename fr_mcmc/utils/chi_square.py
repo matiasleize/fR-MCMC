@@ -80,12 +80,12 @@ def all_parameters(theta, fixed_params, index):
 
 
 def params_to_chi2(theta, fixed_params, index=0,
-                    dataset_SN_plus_shoes=None, dataset_SN_plus=None,
-                    dataset_SN=None, dataset_CC=None,
-                    dataset_BAO=None, dataset_AGN=None, H0_Riess=False,
-                    num_z_points=int(10**5), model='HS',n=1,
-                    nuisance_2 = False, enlarged_errors=False,
-                    all_analytic=False):
+                   dataset_SN_plus_shoes=None, dataset_SN_plus=None,
+                   dataset_SN=None, dataset_CC=None,
+                   dataset_BAO=None, dataset_AGN=None, H0_Riess=False,
+                   num_z_points=int(10**5), model='HS',n=1,
+                   nuisance_2 = False, enlarged_errors=False,
+                   all_analytic=False):
     '''
     Given the free parameters of the model, return chi square for the data.
     
@@ -153,19 +153,20 @@ def params_to_chi2(theta, fixed_params, index=0,
         chi2_CC = chi2_without_cov(H_teo, H_data, dH**2)
 
     if dataset_BAO != None:
+        WB_BBN = 0.02218 #± 0.00055 #Baryon density (eq. 2.8 arXiv:2404.03002)
         num_datasets=5
         chies_BAO = np.zeros(num_datasets)
         for i in range(num_datasets): # For each datatype
-            (z_data_BAO, data_values, data_error_cuad,wb_fid) = dataset_BAO[i]
+            (z_data_BAO, data_values, data_error_cuad) = dataset_BAO[i]
             if i==0: #Da entry
-                rd = r_drag(omega_m,H_0,wb_fid) # rd calculation
+                rd = r_drag(omega_m, H_0, WB_BBN) # rd calculation
                 theoretical_distances = Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data_BAO, i)
                 output_th = Ds_to_obs_final(zs_model, theoretical_distances, rd, i)
             else: #If not..
                 theoretical_distances = Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data_BAO, i)
                 output_th = np.zeros(len(z_data_BAO))
                 for j in range(len(z_data_BAO)): # For each datatype
-                     rd = r_drag(omega_m,H_0,wb_fid[j]) #rd calculation
+                     rd = r_drag(omega_m, H_0, WB_BBN) #rd calculation
                      output_th[j] = Ds_to_obs_final(zs_model,theoretical_distances[j],rd,i)
             #Chi square calculation for each datatype (i)
             chies_BAO[i] = chi2_without_cov(output_th,data_values,data_error_cuad)
