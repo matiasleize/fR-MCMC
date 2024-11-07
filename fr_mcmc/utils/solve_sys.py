@@ -73,7 +73,18 @@ def get_odes(z, variables, physical_params, model='HS'):
 
         def gamma(r, c1, c2):
             return -(c1 - (c2*r + 1)**2)*(c2*r + 1)/(2*c1*c2*r)
+        
+        '''
+        #TODO: CHECK THESES FUNCTION: r and b are equally defined here and on 
+        # Augusto's paper (page 3 of 2311.15955)?
+        
+        def gamma_HS_augusto(r, b): 
+            return (r + b) * ( (r + b)**2 - 2*b ) / (4*b*r)
 
+        def gamma_ST_augusto(r, b):
+            return (r**2 + b**2) * ( (r**2 + b**2)**2 - 4*r*b**2 ) / (4*r*b**2 * (3*r**2 - b**2))
+        '''
+            
         G = gamma(r, B, D) # Goes like r^3/r = r^2
 
         s0 = (-w + x**2 + (1+v)*x - 2*v + 4*y) / (z+1)
