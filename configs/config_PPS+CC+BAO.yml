@@ -1,0 +1,35 @@
+#Example of a configuration file for the LCDM model.
+USE_PPLUS_SHOES: True
+USE_PPLUS: False
+USE_SN: False
+USE_CC: True
+USE_BAO: True
+USE_AGN: False
+USE_H0: False
+
+MODEL: 'LCDM' #Choose between 'LCDM', 'HS' or 'EXP'
+WITNESS_NUM: 15 #Suggestion: (model_number) + (datasets_number) 
+FIXED_PARAMS: [0]
+LOG_LIKELIHOOD_INDEX: 32 #See docs/parameters_protocol.md
+NUM_WALKERS: 12
+MAX_SAMPLES: 100000 #Maximum number of samples
+WITNESS_FREQ: 10 #Frequency in which witness is refreshed
+
+#For now only flat priors
+M_PRIOR: [-20, -18]
+OMEGA_M_PRIOR: [0.2, 0.4]
+B_PRIOR: [0, 1] #Only read if MODEL is 'HS' or 'EXP'
+H0_PRIOR: [65, 85]
+
+#For the mean values if needed: 
+#They have to have the same length of the number of free params.
+GUEST: [-19.352, 0.22, 70]
+BOUNDS: [[-25, -18], [0.1, 0.5], [65, 75]]
+
+ALL_ANALYTIC: False #Use Basilakos et al. approximation for all parameters combination.
+
+#Directory in which output files are stored
+OUTPUT_DIR: '/fR-output/'
+
+#Other things that are not in use:
+#DATA_PATH: './data'
