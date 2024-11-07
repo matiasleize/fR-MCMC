@@ -16,6 +16,7 @@ path_global = os.path.dirname(path_git)
 
 # Obs: To import packages this is the sintaxis to change paths:
 os.chdir(path_git); os.sys.path.append('./fr_mcmc/')
+
 from utils.sampling import MCMC_sampler
 from utils.derived_parameters import derived_parameters
 from utils.data import read_data_pantheon_plus_shoes, read_data_pantheon_plus, read_data_pantheon,\
@@ -27,6 +28,7 @@ os.chdir(path_git); os.sys.path.append('./fr_mcmc/plotting/')
 import analysis
 
 os.chdir(path_git + '/fr_mcmc/mcmc/')
+
 def run():
     output_dir = config.OUTPUT_DIR
     model = config.MODEL
