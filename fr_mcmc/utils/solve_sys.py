@@ -26,10 +26,10 @@ path_global = os.path.dirname(path_git)
 os.chdir(path_git)
 os.sys.path.append("./fr_mcmc/utils/")
 from LambdaCDM import H_LCDM
-from taylor import Taylor_HS
+from taylor import Taylor_HS, Taylor_ST
 #%%
 
-def get_odes(z, variables, physical_params, model='HS'):
+def get_odes(z, variables, physical_params, model='HS', n=1):
     '''
     Returns the system of ODEs for the given cosmological model.
 
@@ -52,9 +52,10 @@ def get_odes(z, variables, physical_params, model='HS'):
     list
         Set of ODEs for the dynamical variables.
     '''    
-    omega_m, b, _ = physical_params
+
 
     if model == 'EXP': # For the Exponential model
+        omega_m, b, _ = physical_params
         E, tildeR = variables
 
         beta = 2/b
@@ -65,38 +66,37 @@ def get_odes(z, variables, physical_params, model='HS'):
 
         return [s0, s1]
 
-    elif model == 'HS': # For the Hu-Sawicki model
+    elif (model == 'HS' or model == 'ST'): # For the Hu-Sawicki or Starobinsky model
+        _, b, _ = physical_params
         x, y, v, w, r = variables
-
-        # Calculate the model parameters
-        B, D = physical_to_model_params_HS(omega_m, b) # (c1,c2) = (B,D) from De la Cruz et al.
-
-        def gamma(r, c1, c2):
-            return -(c1 - (c2*r + 1)**2)*(c2*r + 1)/(2*c1*c2*r)
         
-        '''
-        #TODO: CHECK THESES FUNCTION: r and b are equally defined here and on 
-        # Augusto's paper (page 3 of 2311.15955)?
-        
-        def gamma_HS_augusto(r, b): 
-            return (r + b) * ( (r + b)**2 - 2*b ) / (4*b*r)
+        #Gamma Goes like r^3/r = r^2
+        if model == 'HS':
+            if n==1:
+                Gamma = (r + b) * ((r + b)**2 - 2*b) / (4*b*r)
+            else:
+                N = ((r**n) + (b**n))*(r*(((r**n) + (b**n))**2) - 2*n*((r*b)**n))
+                D = 2*n*((r*b)**n)*((n+1)*(r**n) + (1-n)*(b**n))
+                Gamma = N/D
 
-        def gamma_ST_augusto(r, b):
-            return (r**2 + b**2) * ( (r**2 + b**2)**2 - 4*r*b**2 ) / (4*r*b**2 * (3*r**2 - b**2))
-        '''
-            
-        G = gamma(r, B, D) # Goes like r^3/r = r^2
+        elif model == 'ST':
+            if n==1:
+                Gamma = (r**2 + b**2) * ((r**2 + b**2)**2 - 4*r*b**2) / (4*r*b**2 * (3*r**2 - b**2)) 
+            else:
+                N = (b**2 + r**2)*((b**2 + r**2)**(n+1) - 4*n*r*(b**(2*n)))
+                D = 4*r*n*(b**(2*n))*((2*n+1)*(r**2) - b**2)
+                Gamma = N/D
 
         s0 = (-w + x**2 + (1+v)*x - 2*v + 4*y) / (z+1)
-        s1 = (- (v*x*G - x*y + 4*y - 2*y*v)) / (z+1)
-        s2 = (-v*(x*G + 4 - 2*v)) / (z+1)
+        s1 = (- (v*x*Gamma - x*y + 4*y - 2*y*v)) / (z+1)
+        s2 = (-v*(x*Gamma + 4 - 2*v)) / (z+1)
         s3 = (w*(-1 + x + 2*v)) / (z+1)
-        s4 = -(x*r*G) / (1+z)
+        s4 = -(x*r*Gamma) / (1+z)
 
         return [s0, s1, s2, s3, s4]
 
     else:
-        raise ValueError('Invalid model specified. Choose from "EXP" or "HS".')
+        raise ValueError('Invalid model specified. Choose from "EXP", "HS" or "ST".')
 
 def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
                 initial_z=10, final_z=0,
@@ -126,7 +126,7 @@ def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
 
     model: str, default='HS'
         The f(R) model to use, this parameter should be one of the following:
-        'HS', 'EXP'.
+        'HS', 'ST', 'EXP'.
 
     epsilon: float, default=10**(-10)
         A small float number used to find the initial condition in the EXP model.
@@ -192,7 +192,7 @@ def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
         zs_final = np.linspace(final_z,initial_z,num_z_points)
         Hs_final = f(zs_final)
 
-    elif model=='HS':
+    elif (model=='HS' or model =='ST'):
         # Calculate the IC, eta and the parameters of the ODE.
         initial_cond = calculate_initial_conditions(physical_params, zi=initial_z)
 
@@ -266,15 +266,23 @@ def Hubble_th(physical_params, *args, b_crit=0.15, all_analytic=False,
         else:
             zs, Hs = integrator([omega_m, b, H0], *args, initial_z=z_max, final_z=z_min, **kwargs)
 
-    else: # HS or ST
-        if (b <= b_crit) or (all_analytic==True): # Analytic approximation
-            zs = np.linspace(z_min, z_max, num_z_points)
-            Hs = Taylor_HS(zs, omega_m, b, H0) if n == 1 else Taylor_ST(zs, omega_m, b, H0)
-        else:
-            zs, Hs = integrator([omega_m, b, H0], initial_z=z_max, final_z=z_min, **kwargs)     
+    elif(model == 'HS' or model == 'ST'):
+        if n==1:                
+            if (b <= b_crit) or (all_analytic==True): # Analytic approximation
+                zs = np.linspace(z_min, z_max, num_z_points)
+                if model == 'HS':
+                    Hs = Taylor_HS(zs, omega_m, b, H0)
+                elif model == 'ST':
+                    Hs = Taylor_ST(zs, omega_m, b, H0) 
+            else: # Numerical integration
+                zs, Hs = integrator([omega_m, b, H0], initial_z=z_max, final_z=z_min, **kwargs)     
     
-    return zs, Hs   
+    else: #n != 1
+            raise ValueError('Not a valid Taylor!')
 
+    return zs, Hs
+    
+    
 #%%   
 if __name__ == '__main__':
     from matplotlib import pyplot as plt
@@ -302,16 +310,20 @@ if __name__ == '__main__':
 
     # Set physical parameters
     omega_m = 0.3
-    b = 0.1
+    b = 0.01
     H_0 = 73
     physical_params_hs = np.array([omega_m, b, H_0])
+    physical_params_st = np.array([omega_m, b, H_0])
     physical_params_exp = np.array([omega_m, 10, H_0])
 
     # Plot Hubble diagrams for different models
     plt.figure()
-    for model_name, physical_params in [('HS', physical_params_hs), ('EXP', physical_params_exp)]:
+
+    for model_name, physical_params in [('HS', physical_params_hs), \
+                                        ('ST', physical_params_st), \
+                                        ('EXP', physical_params_exp)]:
         plot_hubble_diagram(model_name, physical_params)
-    
+
     #Plot LCDM Hubble parameter
     redshift_LCDM = np.linspace(0,10,int(10**5))
     plt.plot(redshift_LCDM, H_LCDM(redshift_LCDM,omega_m,H_0),'k--',label=r'$\rm \Lambda CDM$') 
