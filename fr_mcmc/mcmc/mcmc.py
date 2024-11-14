@@ -18,11 +18,11 @@ path_global = os.path.dirname(path_git)
 os.chdir(path_git); os.sys.path.append('./fr_mcmc/')
 
 from utils.sampling import MCMC_sampler
-from utils.derived_parameters import derived_parameters
+#from utils.derived_parameters import derived_parameters
 from utils.data import read_data_pantheon_plus_shoes, read_data_pantheon_plus, read_data_pantheon,\
-                       read_data_chronometers, read_data_BAO, read_data_AGN
+                       read_data_chronometers, read_data_BAO, read_data_DESI, read_data_AGN
 from utils.chi_square import log_likelihood
-from utils.priors import log_prior # Must be the last import before config to avoid issues!
+#from utils.priors import log_prior # Must be the last import before config to avoid issues!
 from config import cfg as config
 os.chdir(path_git); os.sys.path.append('./fr_mcmc/plotting/')
 import analysis
@@ -36,9 +36,25 @@ def run():
     index = config.LOG_LIKELIHOOD_INDEX
     num_params = int(str(index)[0])
     all_analytic = config.ALL_ANALYTIC
-    bnds = config.BOUNDS
 
     witness_file = 'witness_' + str(config.WITNESS_NUM) + '.txt'
+
+    bnds = config.BOUNDS
+    if model == 'LCDM':
+        [omega_m_min, omega_m_max] = config.OMEGA_M_PRIOR
+        [H0_min, H0_max] = config.H0_PRIOR
+
+    elif (model == 'HS' or model =='ST' or model =='EXP'): 
+        [omega_m_min, omega_m_max] = config.OMEGA_M_PRIOR
+        [b_min, b_max] = config.B_PRIOR
+        [H0_min, H0_max] = config.H0_PRIOR
+
+
+    if (config.USE_BAO == True or config.USE_DESI == True):
+        [bao_param_min, bao_param_max] = config.BAO_PARAM_PRIOR
+
+    if (config.USE_SN == True or config.USE_PPLUS  == True or config.USE_PPLUS_SHOES  == True):
+        [M_min, M_max] = config.M_PRIOR
 
     #%% Import cosmological data
     path_data = path_git + '/fr_mcmc/source/'
@@ -75,12 +91,6 @@ def run():
     if config.USE_CC == True:
         os.chdir(path_data + 'CC/')
         ds_CC = read_data_chronometers('chronometers_data.txt')
-
-        #ds_CC = read_data_chronometers('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_LCDM_8.txt')
-        #ds_CC = read_data_chronometers('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_HS_8.txt')
-        #ds_CC = read_data_chronometers('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_LCDM_5.txt')
-        #ds_CC = read_data_chronometers('/home/matias/Documents/Repos/fR-MCMC/notebooks/CC_from_HS_5.txt')
-
         datasets.append('_CC')
     else:
         ds_CC = None
@@ -98,6 +108,14 @@ def run():
     else:
         ds_BAO = None
 
+    # DESI
+    if config.USE_DESI == True:    
+        os.chdir(path_data + 'DESI/')
+        ds_DESI = read_data_DESI('DESI_data_dm_dh.txt','DESI_data_dv.txt')
+        datasets.append('_DESI')
+    else:
+        ds_DESI = None
+
     # AGN
     if config.USE_AGN == True:
         os.chdir(path_data + 'AGN/')
@@ -114,10 +132,12 @@ def run():
         H0_Riess = False
 
     #Related to priors
-    if config.OMEGA_M_ASTRO_PRIOR == True: #Omega_m gaussian prior
-        datasets.append('_PROA')
-    if config.M_ABS_CM_PRIOR == True: #M_abs Camarena & Marra prior
-        datasets.append('_PRCM')
+    #if config.OMEGA_M_ASTRO_PRIOR == True: #Omega_m gaussian prior
+    #    datasets.append('_PROA')
+    #if config.M_ABS_CM_PRIOR == True: #M_abs Camarena & Marra prior
+    #    datasets.append('_PRCM')
+
+    datasets = str(''.join(datasets))
 
     # Define the log-likelihood distribution
     ll = lambda theta: log_likelihood(theta, fixed_params, 
@@ -127,22 +147,64 @@ def run():
                                         dataset_SN = ds_SN,
                                         dataset_CC = ds_CC,
                                         dataset_BAO = ds_BAO,
+                                        dataset_DESI = ds_DESI,
                                         dataset_AGN = ds_AGN,
                                         H0_Riess = H0_Riess,
                                         model = model,
                                         all_analytic = all_analytic
                                         )
+
     nll = lambda theta: -ll(theta) # negative log likelihood
 
-    #Define the prior distribution
-    lp = lambda theta: log_prior(theta, index) 
+    # Define the prior distribution
+    def log_prior(theta, model):
+        if model == 'LCDM':
+            if index == 4:
+                M, bao_param, omega_m, H0 = theta
+                if (M_min < M < M_max and bao_param_min < bao_param < bao_param_max and omega_m_min < omega_m < omega_m_max and H0_min < H0 < H0_max):
+                    return 0.0
+            elif index == 31:
+                M, omega_m, H0 = theta
+                if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max and H0_min < H0 < H0_max):
+                    return 0.0
+            elif index == 32:
+                bao_param, omega_m, H0 = theta
+                if (bao_param_min < bao_param < bao_param_max and omega_m_min < omega_m < omega_m_max and H0_min < H0 < H0_max):
+                    return 0.0
+
+        elif (model == 'HS' or model =='ST' or model =='EXP'):
+            if index == 5:
+                M, bao_param, omega_m, b, H0 = theta
+                if (M_min < M < M_max and bao_param_min < bao_param < bao_param_max and omega_m_min < omega_m < omega_m_max and b_min < b < b_max and H0_min < H0 < H0_max):
+                    return 0.0
+            elif index == 41:
+                M, bao_param, b, H0 = theta
+                if (M_min < M < M_max and bao_param_min < bao_param < bao_param_max and b_min < b < b_max and H0_min < H0 < H0_max):
+                    return 0.0
+            elif index == 42:
+                M, omega_m, b, H0 = theta
+                if (M_min < M < M_max and omega_m_min < omega_m < omega_m_max and b_min < b < b_max and H0_min < H0 < H0_max):
+                    return 0.0
+            elif index == 43:
+                bao_param, omega_m, b, H0 = theta
+                if (bao_param_min < bao_param < bao_param_max and omega_m_min < omega_m < omega_m_max and b_min < b < b_max and H0_min < H0 < H0_max):
+                    return 0.0
+            elif index == 31:
+                M, b, H0 = theta
+                if (M_min < M < M_max and b_min < b < b_max and H0_min < H0 < H0_max):
+                    return 0.0
+            elif index == 32:
+                bao_param, b, H0 = theta
+                if (bao_param_min < bao_param < bao_param_max and b_min < b < b_max and H0_min < H0 < H0_max):
+                    return 0.0
+        return -np.inf
+    
     # Define the posterior distribution
     def log_probability(theta):
-        if not np.isfinite(lp(theta)): # Maybe this condition is not necessary..
+        lp = log_prior(theta, model)
+        if not np.isfinite(lp): # Maybe this condition is not necessary..
             return -np.inf
-        return lp(theta) + ll(theta)
-
-    datasets = str(''.join(datasets))
+        return lp + ll(theta)
 
     filename = 'sample_' + model + datasets + '_' + str(num_params) + 'params'
     output_directory = path_global + output_dir + filename
@@ -151,7 +213,6 @@ def run():
         os.mkdir(output_directory)
 
     filename_ml = 'maximun_likelihood' + '_' + model + datasets + '_' + str(num_params) + 'params'
-
     
     # If exist, import mean values of the free parameters. If not, calculate, save and load calculation.
     os.chdir(output_directory)
@@ -162,7 +223,6 @@ def run():
         print('Calculating maximum likelihood parameters ..')
         initial = np.array(config.GUEST)
         soln = minimize(nll, initial, options = {'eps': 0.01}, bounds = bnds)
-
         np.savez(filename_ml, sol=soln.x)
         with np.load(filename_ml + '.npz') as data:
             sol = data['sol']
@@ -170,10 +230,9 @@ def run():
 
 
     # Define initial values of each chain using the minimun 
-    # values of the chisquare.
+    # values of the chi-squared.
     pos = sol * (1 +  0.01 * np.random.randn(config.NUM_WALKERS, num_params))
 
-    
     filename_h5 = filename + '.h5'
 
     MCMC_sampler(log_probability,pos, 
@@ -206,17 +265,16 @@ def run():
         textfile_witness.write(('\n Estimated time: {} min'.format(len(samples)/60)))
         textfile_witness.close()
 
-        new_samples = derived_parameters(reader,discard=burnin,thin=thin,model=model)
-        np.savez(filename+'_deriv', new_samples=new_samples)
+        #new_samples = derived_parameters(reader,discard=burnin,thin=thin,model=model)
+        #np.savez(filename+'_deriv', new_samples=new_samples)
 
         textfile_witness = open(witness_file,'a')
         textfile_witness.write('\n Done!')
         textfile_witness.close()
 
         # Print the output
-        with np.load(filename+'_deriv.npz') as data:
-            ns = data['new_samples']
-        
+        #with np.load(filename+'_deriv.npz') as data:
+        #    ns = data['new_samples']
 
     # Plot the results
     analysis.run(filename)
