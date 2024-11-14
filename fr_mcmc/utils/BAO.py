@@ -99,7 +99,7 @@ def Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data, index):
 
     return output
 
-def Ds_to_obs_final(zs, Dist, rd, index):
+def Ds_to_obs_final(Dist, rd, index):
     if index == 4: #H
         output = Dist*rd
     else: #Every distances
