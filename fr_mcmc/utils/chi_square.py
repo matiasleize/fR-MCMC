@@ -164,14 +164,14 @@ def params_to_chi2(theta, fixed_params, index=0,
         for i in range(num_datasets): # For each datatype
             (z_data_BAO, data_values, data_error_cuad) = dataset_BAO[i]
             if i==0: #Da entry
-                rd = r_drag(omega_m, H_0, WB_BBN) # rd calculation
+                rd = r_drag(omega_m, H_0, bao_param) # rd calculation
                 theoretical_distances = Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data_BAO, i)
                 output_th = Ds_to_obs_final(theoretical_distances, rd, i)
             else: #If not..
                 theoretical_distances = Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data_BAO, i)
                 output_th = np.zeros(len(z_data_BAO))
                 for j in range(len(z_data_BAO)): # For each datatype
-                     rd = r_drag(omega_m, H_0, WB_BBN) #rd calculation
+                     rd = r_drag(omega_m, H_0, bao_param) #rd calculation
                      output_th[j] = Ds_to_obs_final(theoretical_distances[j],rd,i)
             #Chi square calculation for each datatype (i)
             chies_BAO[i] = chi2_without_cov(output_th,data_values,data_error_cuad)
@@ -184,17 +184,8 @@ def params_to_chi2(theta, fixed_params, index=0,
         chi2_BAO = np.sum(chies_BAO)
 
     if dataset_DESI != None:
-    
-        #elif index == 31:
-        #    wb_fid = bao_param
-        #    rd = r_drag(omega_m, H_0, wb_fid) #rd calculation
-        #elif index == 21:
-        #    wb_fid = 0.0224 #OJO ACA
-        #    rd = r_drag(omega_m, H_0, wb_fid) #rd calculation
-        #else:
-        #    raise ValueError('Introduce a valid index for DESI!')
-        
-        rd = bao_param #if we want to use wb instead of rd, we need to change this line wirh the commented ones above       
+        rd = r_drag(omega_m, H_0, bao_param) # rd calculation
+
         (set_1, set_2) = dataset_DESI
         z_eff_1, data_dm_rd, errors_dm_rd, data_dh_rd, errors_dh_rd, rho = set_1 
         z_eff_2, data_dv_rd, errors_dv_rd = set_2
