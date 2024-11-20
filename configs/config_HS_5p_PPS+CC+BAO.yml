@@ -19,13 +19,13 @@ WITNESS_FREQ: 10 #Frequency in which witness is refreshed
 M_PRIOR: [-20, -18]
 BAO_PARAM_PRIOR: [0.020, 0.026]
 OMEGA_M_PRIOR: [0.2, 0.4]
-B_PRIOR: [0, 1] #Only read if MODEL is 'HS' or 'EXP'
+B_PRIOR: [0, 5] #Only read if MODEL is 'HS' or 'EXP'
 H0_PRIOR: [65, 85]
 
 #For the mean values if needed: 
 #They have to have the same length of the number of free params.
-GUEST: [-19.352, 0.02218, 0.22, 70]
-BOUNDS: [[-25, -18], [0.020, 0.026], [0.1, 0.5], [65, 75]]
+GUEST: [-19.352, 0.02218, 0.22, 2, 70]
+BOUNDS: [[-25, -18], [0.020, 0.026], [0.1, 0.5], [0, 5], [65, 75]]
 
 ALL_ANALYTIC: False #Use Basilakos et al. approximation for all parameters combination.
 
