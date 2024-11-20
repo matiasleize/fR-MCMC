@@ -20,23 +20,27 @@ from config import cfg as config
 
 os.chdir(path_git + '/fr_mcmc/plotting/')
 
-def parameters_labels(index):
-    if index == 4:
-        return ['$M_{abs}$', '$\Omega_{m}$', 'b', '$H_{0}$']
-    elif index == 31:
-        return ['$\Omega_{m}$', 'b', '$H_{0}$']
-    elif index == 32:
-        return ['$M_{abs}$', '$\Omega_{m}$', '$H_{0}$']
-    elif index == 33:
-        return ['$M_{abs}$', '$\Omega_{m}$', 'b']
-    elif index == 21:
-        return ['$\Omega_{m}$', 'b']
-    elif index == 22:
-        return ['$\Omega_{m}$', '$H_{0}$']
-    elif index == 23:
-        return ['$M_{abs}$', '$\Omega_{m}$']
-    elif index == 1:
-        return ['$\Omega_{m}$'] #list or str?
+def parameters_labels(index, model):
+    if model == 'LCDM':
+        if index == 4:
+            return ['$M_{abs}$', '$\omega_{b}$', '$\Omega_{m}$', '$H_{0}$']
+        elif index == 31:
+            ['$M_{abs}$', '$\Omega_{m}$', '$H_{0}$']
+        elif index == 32:
+            ['$\omega_{b}$', '$\Omega_{m}$', '$H_{0}$']
+    elif (model == 'HS' or model == 'ST' or model == 'EXP'):
+        if index == 5:
+            ['$M_{abs}$', '$\omega_{b}$', '$\Omega_{m}$', 'b', '$H_{0}$']
+        elif index == 41:
+            ['$M_{abs}$', '$\omega_{b}$', 'b', '$H_{0}$']
+        elif index == 42:
+            ['$M_{abs}$', '$\Omega_{m}$', 'b', '$H_{0}$']
+        elif index == 43:
+            ['$\omega_{b}$', '$\Omega_{m}$', 'b', '$H_{0}$']
+        elif index == 31:
+            ['$M_{abs}$', 'b', '$H_{0}$']
+        elif index == 32:
+            ['$\omega_{b}$', 'b', '$H_{0}$']
 
 def run(filename):
     model = config.MODEL
@@ -44,7 +48,7 @@ def run(filename):
     output_path = path_global + output_dir + filename
     os.chdir(output_path)
 
-    parameters_label = parameters_labels(config.LOG_LIKELIHOOD_INDEX)
+    parameters_label = parameters_labels(config.LOG_LIKELIHOOD_INDEX, model)
     if model == 'LCDM':
         reader = emcee.backends.HDFBackend(filename + '.h5')
         samples = reader.get_chain()

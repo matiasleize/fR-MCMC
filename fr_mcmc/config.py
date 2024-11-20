@@ -15,7 +15,7 @@ os.chdir(path_git + '/configs/')
 yml_file = 'config_LCDM_4p_PPS+CC+BAO.yml'
 #yml_file = 'config_HS_5p_PPS+CC+BAO.yml'
 
-with open(yml_file, "r") as ymlfile:
+with open(yml_file, "r") as ymlfile: 
     full_cfg = yaml.safe_load(ymlfile)
     
 cfg = Box({**full_cfg}, default_box=True, default_box_attr=None)
