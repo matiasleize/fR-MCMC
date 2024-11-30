@@ -31,7 +31,7 @@ BOUNDS: [[0.1, 0.5], [65, 85]]
 ALL_ANALYTIC: False #Use Basilakos et al. approximation for all parameters combination.
 
 #Directory in which output files are stored
-OUTPUT_DIR: '/fR-output/'
+OUTPUT_DIR: '/fR-output/LCDM/'
 
 #Other things that are not in use:
 #DATA_PATH: './data'
