@@ -188,7 +188,8 @@ def params_to_chi2(theta, fixed_params, index=0,
         for i in range(num_datasets): # For each datatype
             (z_data_BAO, data_values, data_squared_errors) = dataset_BAO[i]
             if i==0: #Da entry
-                theoretical_distances = Hs_to_Ds(Hs_interp, int_inv_Hs_interp, z_data_BAO, i)
+                rd = r_drag(omega_m, H_0, bao_param) # rd calculation
+                theoretical_distances = Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data_BAO, i)
                 output_th = Ds_to_obs_final(theoretical_distances, rd, i)
             else: #If not..
                 theoretical_distances = Hs_to_Ds(Hs_interp, int_inv_Hs_interp, z_data_BAO, i)
