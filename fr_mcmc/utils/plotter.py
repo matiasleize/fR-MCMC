@@ -95,9 +95,6 @@ class Plotter:
 		Print parameters values, not only the mode values but also their values
 		at one and two sigmas.
 		'''
-		sns.set(style='darkgrid', palette="muted", color_codes=True)
-		sns.set_context("paper", font_scale=1.2, rc={"font.size":10,"axes.labelsize":12})
-
 
 		if isinstance(self.sampler, np.ndarray)==True: #Posprocessed chains
 			samples = self.sampler

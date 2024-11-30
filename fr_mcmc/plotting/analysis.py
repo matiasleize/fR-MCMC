@@ -20,43 +20,54 @@ from config import cfg as config
 
 os.chdir(path_git + '/fr_mcmc/plotting/')
 
-def parameters_labels(index):
-    if index == 4:
-        return ['$M_{abs}$', '$\Omega_{m}$', 'b', '$H_{0}$']
-    elif index == 31:
-        return ['$\Omega_{m}$', 'b', '$H_{0}$']
-    elif index == 32:
-        return ['$M_{abs}$', '$\Omega_{m}$', '$H_{0}$']
-    elif index == 33:
-        return ['$M_{abs}$', '$\Omega_{m}$', 'b']
-    elif index == 21:
-        return ['$\Omega_{m}$', 'b']
-    elif index == 22:
-        return ['$\Omega_{m}$', '$H_{0}$']
-    elif index == 23:
-        return ['$M_{abs}$', '$\Omega_{m}$']
-    elif index == 1:
-        return ['$\Omega_{m}$'] #list or str?
+def parameters_labels(index, model):
+    if model == 'LCDM':
+        if index == 4:
+            return ['$M_{abs}$', '$r_{d}$', r'$\Omega_m$', '$H_{0}$']
+        elif index == 31:
+            return ['$M_{abs}$', r'$\Omega_m$', '$H_{0}$']
+        elif index == 32:
+            return ['$r_{d}$', r'$\Omega_m$', '$H_{0}$']
+        elif index == 21:
+            return [r'$\Omega_m$', '$H_{0}$']
+
+    elif (model == 'HS' or model == 'ST' or model == 'EXP'):
+        if index == 5:
+            return ['$M_{abs}$', '$r_{d}$', '$\Omega_m^{f(R)}$', r'$b$', '$H_{0}^{f(R)}$']
+        elif index == 41:
+            return ['$M_{abs}$', '$r_{d}$', r'$b$', '$H_{0}^{f(R)}$']
+        elif index == 42:
+            return ['$M_{abs}$', '$\Omega_m^{f(R)}$', r'$b$', '$H_{0}^{f(R)}$']
+        elif index == 43:
+            return ['$r_{d}$', '$\Omega_m^{f(R)}$', r'$b$', '$H_{0}^{f(R)}$']
+        elif index == 31:
+            return ['$M_{abs}$', r'$b$', '$H_{0}^{f(R)}$']
+        elif index == 32:
+            return ['$r_{d}$', r'$b$', '$H_{0}^{f(R)}$']
+        elif index == 33:
+            return [r'$\Omega_m$^{f(R)}', r'$b$', '$H_{0}^{f(R)}$']
 
 def run(filename):
     model = config.MODEL
     output_dir = config.OUTPUT_DIR
+    index = config.LOG_LIKELIHOOD_INDEX
+
     output_path = path_global + output_dir + filename
     os.chdir(output_path)
 
-    parameters_label = parameters_labels(config.LOG_LIKELIHOOD_INDEX)
-    if model == 'LCDM':
-        reader = emcee.backends.HDFBackend(filename + '.h5')
-        samples = reader.get_chain()
-        burnin= burnin=int(0.2*len(samples[:,0])); thin=1
-        analysis = Plotter(reader, parameters_label, 'Titulo')
+    parameters_label = parameters_labels(index, model)
+    #if model == 'LCDM':
+    reader = emcee.backends.HDFBackend(filename + '.h5')
+    samples = reader.get_chain()
+    burnin = int(0.2*len(samples[:,0])); thin=1
+    analysis = Plotter(reader, parameters_label, 'Title')
 
-    else:    
-        with np.load(filename + '_deriv.npz') as data:
-            ns = data['new_samples']
-        analysis = Plotter(ns, parameters_label, '')
-        burnin = 0 # already has the burnin
-        thin = 1
+    #else:    
+    #    with np.load(filename + '_deriv.npz') as data:
+    #        ns = data['new_samples']
+    #    analysis = Plotter(ns, parameters_label, '')
+    #    burnin = 0 # already has the burnin
+    #    thin = 1
 
     results_dir = '/results'
     if not os.path.exists(output_path + results_dir):
@@ -66,10 +77,10 @@ def run(filename):
     plt.savefig(output_path + results_dir + '/cornerplot.png')
     plt.close()
 
-    if model == 'LCDM':
-        analysis.plot_chains()
-    else:
-        analysis.plot_chains_derivs()
+    #if model == 'LCDM':
+    analysis.plot_chains()
+    #else:
+    #    analysis.plot_chains_derivs()
     plt.savefig(output_path + results_dir + '/chains.png')
     plt.close()
     analysis.report_intervals(discard=burnin, thin=thin, save_path = output_path + results_dir)
