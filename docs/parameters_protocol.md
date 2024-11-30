@@ -1,17 +1,26 @@
 Here is the protocol of the free and fixed parameters:
 
 ```
+LCDM:
 index     free parameters             fixed parameters     
 
-4         Mabs, omega_m, b, H_0       _
+4         Mabs, rd, Omega_m, H_0      _
 
-31        omega_m, b, H_0             Mabs
-32        Mabs, omega_m, H_0          b
-33        Mabs, omega_m, b            H_0
+31        Mabs, Omega_m, H_0          rd
+32        rd, Omega_m, H_0            Mabs
+21        Omega_m, H_0                Mabs, rd
 
-21        omega_m, b                  Mabs, H_0
-22        omega_m, H_0                Mabs, b
-23        Mabs, omega_m               b, H_0
 
-1         omega_m                     Mabs, b, H_0
+HS-ST-EXP:
+index     free parameters             fixed parameters     
+
+5         Mabs, rd, Omega_m, b, H_0   _
+
+41        Mabs, rd, b, H_0            Omega_m
+42        Mabs, Omega_m, b, H_0       rd
+43        rd, Omega_m, b, H_0         Mabs
+
+31        Mabs, b, H_0                rd, Omega_m
+32        rd, b, H_0                  Mabs, Omega_m
+33        Omega_m, b, H_0             Mabs, rd
 ```
