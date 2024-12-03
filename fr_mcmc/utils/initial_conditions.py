@@ -32,7 +32,7 @@ def redshift_initial_condition(physical_params, eps=10**(-10)):
     zi = (2 * omega_l*(-np.log(eps)-2*beta)/(beta*omega_m))**(1/3) - 1
     return zi
 
-def calculate_initial_conditions(physical_params, zi = 30, model = 'HS', CI_aprox=True):
+def calculate_initial_conditions(physical_params, zi = 30, model = 'HS', CI_aprox=False):
     '''
     Initial conditions for the differential equations
     of the Hu-Sawicki and Starobinsky model (n=1).
@@ -60,15 +60,15 @@ def calculate_initial_conditions(physical_params, zi = 30, model = 'HS', CI_apro
 
         return[E0, tildeR_i]
 
-    elif model=='HS':
+    elif (model=='HS' or model=='ST'):
         R = sym.Symbol('R')
-        Lamb = 3 * (1-omega_m)
-
+        Lamb = 3 * (1-omega_m) #/c_light_km**2
+        
         #c1,c2 = physical_to_model_params_HS(omega_m,b)
         #R_HS = 2 * Lamb * c2/c1
-        R_HS = 6 * c_luz_km**2 * omega_m / (7800 * (8315)**2) 
+        #R_HS = 6 * c_light_km**2 * omega_m / (7800 * (8315)**2)
 
-        R_0 = R_HS #This is not the same of R_i, which is R on the IC!
+        R_0 = Lamb #This is not the same of R_i, which is R on the IC!
 
         #F calculation
         F = R - 2 * Lamb * (1 - 1/ (1 + (R/(b*Lamb))) )
@@ -84,7 +84,7 @@ def calculate_initial_conditions(physical_params, zi = 30, model = 'HS', CI_apro
         H = E
         H_z = E_z
 
-        Ricci = (12*H**2 + 6*H_z*(-H*(1+z)))
+        Ricci = (12*H**2 + 6*H_z*(-H*(1+z)))#/c_light_km**2
         Ricci_t = sym.simplify(sym.diff(Ricci,z)*(-H*(1+z)))
 
         Ricci_ci = sym.lambdify(z,Ricci)

@@ -17,7 +17,7 @@ from scipy.constants import c as c_light  # units of m/s
 from scipy.integrate import solve_ivp
 from scipy.interpolate import interp1d
 
-from change_of_parameters import physical_to_model_params_HS
+#from change_of_parameters import physical_to_model_params_HS
 from initial_conditions import calculate_initial_conditions, redshift_initial_condition
 
 c_light_km = c_light / 1000 # units of km/s
@@ -194,11 +194,14 @@ def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
 
     elif (model=='HS' or model =='ST'):
         # Calculate the IC, eta and the parameters of the ODE.
-        initial_cond = calculate_initial_conditions(physical_params, zi=initial_z)
+        initial_cond = calculate_initial_conditions(physical_params, zi=initial_z, model=model)
 
-        h = H0/100
-        R_HS = (omega_m * h**2)/(0.13*8315**2) # units of Mpc**(-2)
-        eta = c_light_km * np.sqrt(R_HS/6) # units of (km/seg)/Mpc
+        Lamb = 3  * (1-omega_m) * H0**2 #/c_light_km**2
+
+        #h = H0/100
+        #R_HS = (omega_m * h**2)/(0.13*8315**2) ## units of Mpc**(-2)
+        
+        eta = np.sqrt(Lamb/6) #* c_light_km ## units of (km/seg)/Mpc
 
         zs_int = np.linspace(initial_z, final_z, num_z_points)
 
@@ -305,23 +308,24 @@ if __name__ == '__main__':
         redshifts, hubble_values = Hubble_th(physical_params, model=model_name) if hubble_th else \
                                    integrator(physical_params, model=model_name)
         # Plot Hubble function
-        plt.plot(redshifts, hubble_values, '.', label=model_name)
+        plt.plot(redshifts, hubble_values, '-', label=model_name)
 
 
     # Set physical parameters
     omega_m = 0.3
-    b = 0.01
+    b = 2
     H_0 = 73
     physical_params_hs = np.array([omega_m, b, H_0])
     physical_params_st = np.array([omega_m, b, H_0])
-    physical_params_exp = np.array([omega_m, 10, H_0])
+    physical_params_exp = np.array([omega_m, 10*b, H_0])
 
     # Plot Hubble diagrams for different models
     plt.figure()
 
     for model_name, physical_params in [('HS', physical_params_hs), \
                                         ('ST', physical_params_st), \
-                                        ('EXP', physical_params_exp)]:
+                                        ('EXP', physical_params_exp)
+                                        ]:
         plot_hubble_diagram(model_name, physical_params)
 
     #Plot LCDM Hubble parameter
