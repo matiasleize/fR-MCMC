@@ -33,13 +33,13 @@ def parameters_labels(index, model):
 
     elif (model == 'HS' or model == 'ST' or model == 'EXP'):
         if index == 5:
-            return ['$M_{abs}$', '$r_{d}$', '$\Omega_m^{f(R)}$', r'$b$', '$H_{0}^{f(R)}$']
+            return ['$M_{abs}$', '$r_{d}$', '$\Omega_{m}^{f(R)}$', r'$b$', '$H_{0}^{f(R)}$']
         elif index == 41:
             return ['$M_{abs}$', '$r_{d}$', r'$b$', '$H_{0}^{f(R)}$']
         elif index == 42:
-            return ['$M_{abs}$', '$\Omega_m^{f(R)}$', r'$b$', '$H_{0}^{f(R)}$']
+            return ['$M_{abs}$', '$\Omega_{m}^{f(R)}$', r'$b$', '$H_{0}^{f(R)}$']
         elif index == 43:
-            return ['$r_{d}$', '$\Omega_m^{f(R)}$', r'$b$', '$H_{0}^{f(R)}$']
+            return ['$r_{d}$', '$\Omega_{m}^{f(R)}$', r'$b$', '$H_{0}^{f(R)}$']
         elif index == 31:
             return ['$M_{abs}$', r'$b$', '$H_{0}^{f(R)}$']
         elif index == 32:
