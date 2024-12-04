@@ -16,6 +16,7 @@ path_global = os.path.dirname(path_git)
 
 os.chdir(path_git); os.sys.path.append('./fr_mcmc/')
 from utils.plotter import Plotter
+from utils.derived_parameters import derived_parameters
 from config import cfg as config
 
 os.chdir(path_git + '/fr_mcmc/plotting/')
@@ -56,18 +57,26 @@ def run(filename):
     os.chdir(output_path)
 
     parameters_label = parameters_labels(index, model)
-    #if model == 'LCDM':
-    reader = emcee.backends.HDFBackend(filename + '.h5')
-    samples = reader.get_chain()
-    burnin = int(0.2*len(samples[:,0])); thin=1
-    analysis = Plotter(reader, parameters_label, 'Title')
+    if model == 'LCDM':
+        reader = emcee.backends.HDFBackend(filename + '.h5')
+        samples = reader.get_chain()
+        burnin = int(0.2*len(samples[:,0])); thin=1
+        analysis = Plotter(reader, parameters_label, 'Title')
 
-    #else:    
-    #    with np.load(filename + '_deriv.npz') as data:
-    #        ns = data['new_samples']
-    #    analysis = Plotter(ns, parameters_label, '')
-    #    burnin = 0 # already has the burnin
-    #    thin = 1
+    else:    
+        reader = emcee.backends.HDFBackend(filename + '.h5')
+        samples = reader.get_chain()
+        burnin = int(0.2*len(samples[:,0])); thin=1
+        samples = reader.get_chain(discard=burnin, flat=True, thin=thin)
+        new_samples = derived_parameters(reader,discard=burnin,thin=thin,model=model)
+        np.savez(filename+'_deriv', new_samples=new_samples)
+
+
+        with np.load(filename + '_deriv.npz') as data:
+            ns = data['new_samples']
+        analysis = Plotter(ns, parameters_label, '')
+        burnin = 0 # already has the burnin
+        thin = 1
 
     results_dir = '/results'
     if not os.path.exists(output_path + results_dir):
