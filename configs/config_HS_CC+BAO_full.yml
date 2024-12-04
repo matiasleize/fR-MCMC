@@ -2,7 +2,7 @@
 USE_PPLUS_SHOES: False
 USE_PPLUS: False
 USE_SN: False
-USE_CC: False
+USE_CC: True
 USE_BAO: False
 USE_BAO_FULL: True
 USE_AGN: False
