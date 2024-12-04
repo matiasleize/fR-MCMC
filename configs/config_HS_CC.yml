@@ -19,9 +19,9 @@ WITNESS_FREQ: 10 #Frequency in which witness is refreshed
 #For now only flat priors
 M_PRIOR: [-20, -18]
 BAO_PARAM_PRIOR: [100, 200]
-OMEGA_M_PRIOR: [0.1, 0.8]
-B_PRIOR: [0, 5] #Only read if MODEL is 'HS' or 'EXP'
-H0_PRIOR: [55, 85]
+OMEGA_M_PRIOR: [0.05, 0.8]
+B_PRIOR: [0, 10] #Only read if MODEL is 'HS' or 'EXP'
+H0_PRIOR: [50, 100]
 
 #For the mean values if needed: 
 #They have to have the same length of the number of free params.
