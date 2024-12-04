@@ -6,8 +6,8 @@ import sympy as sym
 from sympy.utilities.lambdify import lambdify
 import numpy as np
 import math
-from scipy.constants import c as c_luz #meters/seconds
-c_luz_km = c_luz/1000;
+from scipy.constants import c as c_light #meters/seconds
+c_light_km = c_light/1000;
 
 import os
 import git
