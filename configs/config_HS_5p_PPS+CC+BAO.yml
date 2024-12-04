@@ -19,7 +19,7 @@ WITNESS_FREQ: 10 #Frequency in which witness is refreshed
 M_PRIOR: [-20, -18]
 BAO_PARAM_PRIOR: [0.020, 0.026]
 OMEGA_M_PRIOR: [0.2, 0.4]
-B_PRIOR: [0, 4] #Only read if MODEL is 'HS' or 'EXP'
+B_PRIOR: [0, 5] #Only read if MODEL is 'HS' or 'EXP'
 H0_PRIOR: [65, 85]
 
 #For the mean values if needed: 
