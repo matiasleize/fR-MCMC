@@ -28,8 +28,8 @@ os.chdir(path_git + '/configs/')
 #yml_file = 'config_HS_BAO_full.yml'
 #yml_file = 'config_HS_PPS+CC.yml'
 #yml_file = 'config_HS_PPS+BAO_full.yml'
-yml_file = 'config_HS_CC+BAO_full.yml'
-#yml_file = 'config_HS_PPS+CC+BAO_full.yml'
+#yml_file = 'config_HS_CC+BAO_full.yml'
+yml_file = 'config_HS_PPS+CC+BAO_full.yml'
 
 ##ST
 #yml_file = 'config_ST_PPS.yml'
