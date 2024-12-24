@@ -6,7 +6,6 @@ Parameter order in this file: Mabs,omega_m,b,H_0,n
 
 import numpy as np; #np.random.seed(42)
 import emcee
-import yaml
 from scipy.optimize import minimize
 
 import os

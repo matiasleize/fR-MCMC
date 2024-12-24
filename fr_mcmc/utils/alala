@@ -1,0 +1,20 @@
+numpy D
+matplotlib D
+scipy D
+pandas D
+seaborn D
+getdist D
+emcee D
+
+gitpython D
+arviz
+numba
+sympy
+torch D
+
+pip install GitPython
+pip install arviz
+pip install python-box
+conda install simpy
+conda install numba
+conda install pytorch torchvision torchaudio cpuonly -c pytorch

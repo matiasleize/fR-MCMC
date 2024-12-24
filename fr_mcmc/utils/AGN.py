@@ -3,7 +3,7 @@ Functions related to AGN data.
 """
 import numpy as np
 from scipy.interpolate import interp1d
-from scipy.integrate import cumtrapz as cumtrapz
+from scipy.integrate import cumulative_trapezoid as cumulative_trapezoid
 
 from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000;
@@ -25,14 +25,14 @@ def zs_2_logDlH0(INT,z_data):
 
 ### Nuisance AGN
 def Hs_2_logDl(zs,Hs,z_data):
-    INT = cumtrapz(Hs**(-1), zs, initial=0)
+    INT = cumulative_trapezoid(Hs**(-1), zs, initial=0)
 
     Dl = (c_luz_km * (1 + zs)) * INT #Mpc
     output = interp1d(zs,Dl)
     return np.log10(output(z_data)) #log(Mpc)
 
 def Hs_2_logDlH0(zs,Hs,z_data):
-    INT = cumtrapz(Hs**(-1), zs, initial=0)
+    INT = cumulative_trapezoid(Hs**(-1), zs, initial=0)
 
     Dl = (c_luz_km * (1 + zs)) * H0 * INT #Mpc
     output = interp1d(zs,Dl)
@@ -125,10 +125,10 @@ if __name__ == '__main__':
     H0_true =  70
 
 
-    for j,beta_true in enumerate(np.linspace(7.9,8.5,20)):
+    for j,beta_true in enumerate(np.linspace(7.9,8.5,2)):
         fixed_params = [beta_true, gamma_true, delta_true, H0_true]
-        omegas = np.linspace(0,1,50)
-        chi_2 = np.zeros(50)
+        omegas = np.linspace(0,1,2)
+        chi_2 = np.zeros(2)
         for i,omega_m in enumerate(omegas):
             chi_2[i] = params_to_chi2_AGN_nuisance(omega_m, fixed_params,
                                 data_agn, model='LCDM')
@@ -136,6 +136,7 @@ if __name__ == '__main__':
         plt.plot(omegas, chi_2)
         plt.grid()
         plt.title(r'$\beta$ = {}'.format(beta_true))
-        plt.ylabel('$\chi^{2}$')
-        plt.xlabel('$\Omega_{m}$')
+        plt.ylabel('$\\chi^{2}$')
+        plt.xlabel('$\\Omega_{m}$')
+        plt.show()
         plt.close()

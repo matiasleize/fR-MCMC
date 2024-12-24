@@ -5,7 +5,7 @@ the parameters of the model and the datasets which are use.
 
 import numpy as np
 from scipy.interpolate import interp1d
-from scipy.integrate import cumtrapz as cumtrapz
+from scipy.integrate import cumulative_trapezoid as cumulative_trapezoid
 from scipy.constants import c as c_light #meters/seconds
 c_light_km = c_light/1000
 
@@ -20,6 +20,7 @@ from supernovae import aparent_magnitude_th, chi2_supernovae
 from BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
 from AGN import zs_2_logDlH0
 from constants import OMEGA_R_0, WB_BBN
+#from ML import H_ML
 
 def chi2_without_cov(teo, data, errors_cuad):
     '''
@@ -128,6 +129,8 @@ def params_to_chi2(theta, fixed_params, index=0,
     chi2_AGN = 0
     chi2_H0 =  0
 
+    ML_bool = False
+
     if model == 'LCDM':
         [Mabs, bao_param, omega_m, H_0] = all_parameters(theta, fixed_params, model, index)
         zs_model = np.linspace(0, 10, num_z_points)
@@ -136,13 +139,18 @@ def params_to_chi2(theta, fixed_params, index=0,
     elif (model == 'HS' or model == 'ST' or model == 'EXP'):
         [Mabs, bao_param, omega_m, b, H_0] = all_parameters(theta, fixed_params, model, index)
         physical_params = [omega_m, b, H_0]
-        #try:
-        zs_model, Hs_model = Hubble_th(physical_params, n=n, model=model,
-                                    z_min=0, z_max=10, num_z_points=num_z_points,
-                                    all_analytic=all_analytic)
-        #except Exception as e:
-        #    # If integration fails, reject the step
-        #    return -np.inf
+        
+        if ML_bool == True:
+            zs_model = np.linspace(0, 10, num_z_points)
+            Hs_model = H_ML(zs_model, [b, omega_m, H_0, _])
+        else:
+            #try:
+            zs_model, Hs_model = Hubble_th(physical_params, n=n, model=model,
+                                        z_min=0, z_max=10, num_z_points=num_z_points,
+                                        all_analytic=all_analytic)
+            #except Exception as e:
+            #    # If integration fails, reject the step
+            #    return -np.inf
 
     if (dataset_CC != None or dataset_BAO != None or dataset_DESI != None or 
         dataset_BAO_full != None or dataset_AGN != None):
@@ -151,7 +159,7 @@ def params_to_chi2(theta, fixed_params, index=0,
     if (dataset_SN_plus_shoes != None or dataset_SN_plus != None or
         dataset_SN != None or dataset_BAO != None or dataset_AGN != None or 
         dataset_DESI != None or dataset_BAO_full != None):
-        int_inv_Hs = cumtrapz(Hs_model**(-1), zs_model, initial=0)
+        int_inv_Hs = cumulative_trapezoid(Hs_model**(-1), zs_model, initial=0)
         int_inv_Hs_interp = interp1d(zs_model, int_inv_Hs)
 
     if (dataset_BAO != None or dataset_DESI != None or 
@@ -189,7 +197,7 @@ def params_to_chi2(theta, fixed_params, index=0,
             (z_data_BAO, data_values, data_squared_errors) = dataset_BAO[i]
             if i==0: #Da entry
                 rd = r_drag(omega_m, H_0, bao_param) # rd calculation
-                theoretical_distances = Hs_to_Ds(Hs_interpol, int_inv_Hs_interpol, z_data_BAO, i)
+                theoretical_distances = Hs_to_Ds(Hs_interp, int_inv_Hs_interp, z_data_BAO, i)
                 output_th = Ds_to_obs_final(theoretical_distances, rd, i)
             else: #If not..
                 theoretical_distances = Hs_to_Ds(Hs_interp, int_inv_Hs_interp, z_data_BAO, i)
@@ -394,7 +402,7 @@ if __name__ == '__main__':
                         model = 'LCDM'
                         )
                         
-    print(r'$\chi_{\rm \Lambda CDM}^{2}$:', chi2_lcdm_value)
+    print(r'$\\chi_{\rm \Lambda CDM}^{2}$:', chi2_lcdm_value)
 
     chi2_HS_value = params_to_chi2([-19.37, 147, 0.3, 0.1, 70], None, index=5,
                     dataset_SN_plus_shoes = ds_SN_plus_shoes,
@@ -408,7 +416,7 @@ if __name__ == '__main__':
                     H0_Riess = True,
                     model = 'HS'
                     )
-    print(r'$\chi_{\rm HS}^{2}$', chi2_HS_value)
+    print(r'$\\chi_{\rm HS}^{2}$', chi2_HS_value)
 
     chi2_ST_value = params_to_chi2([-19.37, 147, 0.3, 0.1, 70], None, index=5,
                 dataset_SN_plus_shoes = ds_SN_plus_shoes,
@@ -422,7 +430,7 @@ if __name__ == '__main__':
                 H0_Riess = True,
                 model = 'ST'
                 )
-    print(r'$\chi_{\rm ST}^{2}$:', chi2_ST_value)
+    print(r'$\\chi_{\rm ST}^{2}$:', chi2_ST_value)
 
     chi2_EXP_value = params_to_chi2([-19.37, 147, 0.3, 0.1, 70], None, index=5,
                 dataset_SN_plus_shoes = ds_SN_plus_shoes,
@@ -436,5 +444,5 @@ if __name__ == '__main__':
                 H0_Riess = True,
                 model = 'EXP'
                 )
-    print(r'$\chi_{\rm EXP}^{2}$:', chi2_EXP_value)
+    print(r'$\\chi_{\rm EXP}^{2}$:', chi2_EXP_value)
     

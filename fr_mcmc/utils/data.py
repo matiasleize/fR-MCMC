@@ -19,7 +19,7 @@ def read_data_pantheon_plus_shoes(file_pantheon_plus,file_pantheon_plus_shoes_co
     '''
 
     # Read text with data
-    df = pd.read_csv(file_pantheon_plus,delim_whitespace=True)
+    df = pd.read_csv(file_pantheon_plus,sep='\s+')
 
     #################################################################################+
     # NEW for PPS: We mask the data with zHD<0.01 and IS_CALIBRATOR==False
@@ -77,7 +77,7 @@ def read_data_pantheon_plus(file_pantheon_plus,file_pantheon_plus_cov):
 
     # Read text with data
 
-    df = pd.read_csv(file_pantheon_plus,delim_whitespace=True)
+    df = pd.read_csv(file_pantheon_plus,sep='\s+')
     ww = (df['zHD']>0.01) | (np.array(df['IS_CALIBRATOR'],dtype=bool))
 
     zhd = df['zHD'][ww]

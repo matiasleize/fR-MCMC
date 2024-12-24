@@ -1,0 +1,15 @@
+# Range of b:
+b_prime_min: 1e-13
+b_max: 3
+
+# Range of Om_m_0:
+Om_m_0_min: 0.05
+Om_m_0_max: 0.4
+
+# Model and how the system of equations is written:
+model: Hu-Sawicki
+n: 1
+
+# Set the value of alpha in the perturbative reparametrization and whether the perturbation is normalized:
+alpha_nominator: 1
+alpha_denominator: 6

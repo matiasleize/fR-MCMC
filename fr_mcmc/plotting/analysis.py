@@ -24,29 +24,29 @@ os.chdir(path_git + '/fr_mcmc/plotting/')
 def parameters_labels(index, model):
     if model == 'LCDM':
         if index == 4:
-            return ['$M_{abs}$', '$r_{d}$', r'$\Omega_m$', '$H_{0}$']
+            return ['$M_{abs}$', '$r_{d}$', r'$\\Omega_m$', '$H_{0}$']
         elif index == 31:
-            return ['$M_{abs}$', r'$\Omega_m$', '$H_{0}$']
+            return ['$M_{abs}$', r'$\\Omega_m$', '$H_{0}$']
         elif index == 32:
-            return ['$r_{d}$', r'$\Omega_m$', '$H_{0}$']
+            return ['$r_{d}$', r'$\\Omega_m$', '$H_{0}$']
         elif index == 21:
-            return [r'$\Omega_m$', '$H_{0}$']
+            return [r'$\\Omega_m$', '$H_{0}$']
 
     elif (model == 'HS' or model == 'ST' or model == 'EXP'):
         if index == 5:
-            return ['$M_{abs}$', '$r_{d}$', '$\Omega_{m}^{f(R)}$', r'$b$', '$H_{0}^{f(R)}$']
+            return ['$M_{abs}$', '$r_{d}$', '$\\Omega_{m}^{LCDM}$', r'$b$', '$H_{0}^{LCDM}$']
         elif index == 41:
-            return ['$M_{abs}$', '$r_{d}$', r'$b$', '$H_{0}^{f(R)}$']
+            return ['$M_{abs}$', '$r_{d}$', r'$b$', '$H_{0}^{LCDM}$']
         elif index == 42:
-            return ['$M_{abs}$', '$\Omega_{m}^{f(R)}$', r'$b$', '$H_{0}^{f(R)}$']
+            return ['$M_{abs}$', '$\\Omega_{m}^{LCDM}$', r'$b$', '$H_{0}^{LCDM}$']
         elif index == 43:
-            return ['$r_{d}$', '$\Omega_{m}^{f(R)}$', r'$b$', '$H_{0}^{f(R)}$']
+            return ['$r_{d}$', '$\\Omega_{m}^{LCDM}$', r'$b$', '$H_{0}^{LCDM}$']
         elif index == 31:
-            return ['$M_{abs}$', r'$b$', '$H_{0}^{f(R)}$']
+            return ['$M_{abs}$', r'$b$', '$H_{0}^{LCDM}$']
         elif index == 32:
-            return ['$r_{d}$', r'$b$', '$H_{0}^{f(R)}$']
+            return ['$r_{d}$', r'$b$', '$H_{0}^{LCDM}$']
         elif index == 33:
-            return [r'$\Omega_m$^{f(R)}', r'$b$', '$H_{0}^{f(R)}$']
+            return [r'$\\Omega_m$^{LCDM}', r'$b$', '$H_{0}^{LCDM}$']
 
 def run(filename):
     model = config.MODEL
@@ -96,7 +96,7 @@ def run(filename):
 
     textfile_witness = open(output_path + results_dir + '/metadata.dat','w')
     textfile_witness.write('{}'.format(config))
-
+    textfile_witness.close()
 if __name__ == "__main__":
     run('sample_LCDM_SN_2params')
 

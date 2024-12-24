@@ -4,8 +4,7 @@ Functions related to BAO data.
 import numpy as np
 from numba import jit
 from scipy.interpolate import interp1d
-from scipy.integrate import cumtrapz as cumtrapz
-from scipy.integrate import simps as simps
+from scipy.integrate import simpson as simpson
 from scipy.integrate import quad as quad
 
 from scipy.constants import c as c_light #meters/seconds
@@ -53,7 +52,7 @@ def r_drag_viejo(Omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de 
 
     integrando_log = c_light_km / (H_int_log * np.sqrt(3*(1 + R_bar*(1+zs_int_log)**(-1))))
 
-    rd_log = simps(integrando_log,zs_int_log)
+    rd_log = simpson(integrando_log,zs_int_log)
     return rd_log
 
 @jit

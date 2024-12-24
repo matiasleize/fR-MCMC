@@ -31,7 +31,7 @@ BOUNDS: [[-21, -18.5], [0.25, 0.4], [0, 1], [65, 75]]
 ALL_ANALYTIC: False #Use Basilakos et al. approximation for all parameters combination.
 
 #Directory in which output files are stored
-OUTPUT_DIR: '/fR-output/HS/'
+OUTPUT_DIR: '/fR-output/HS/lala/'
 
 #Other things that are not in use:
 #DATA_PATH: './data'

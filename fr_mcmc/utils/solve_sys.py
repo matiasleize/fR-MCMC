@@ -101,7 +101,7 @@ def get_odes(z, variables, physical_params, model='HS', n=1):
 def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
                 initial_z=10, final_z=0,
                 system_equations=get_odes, verbose=False,
-                model='HS',method='RK45', rtol=1e-11, atol=1e-16):
+                model='HS',method='RK45', rtol=1e-3, atol=1e-6): #, rtol=1e-11, atol=1e-16):
     '''
     Numerical integration of the system of differential equations between
     initial_z and final_z, given the initial conditions of the variables
@@ -330,12 +330,12 @@ if __name__ == '__main__':
 
     #Plot LCDM Hubble parameter
     redshift_LCDM = np.linspace(0,10,int(10**5))
-    plt.plot(redshift_LCDM, H_LCDM(redshift_LCDM,omega_m,H_0),'k--',label=r'$\rm \Lambda CDM$') 
+    plt.plot(redshift_LCDM, H_LCDM(redshift_LCDM,omega_m,H_0),'k--',label=r'$\\rm \Lambda CDM$') 
     
     # Format plot
     plt.title('Hubble parameter for $f(R)$ models')
     plt.xlabel('z')
-    plt.ylabel(r'H(z) $\rm [(km/seg)/Mpc]$')
+    plt.ylabel(r'H(z) $\\rm [(km/seg)/Mpc]$')
     plt.legend(loc='best')
     plt.grid(True)
     plt.show()

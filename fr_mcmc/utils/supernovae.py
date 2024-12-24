@@ -14,7 +14,6 @@ os.sys.path.append('./fr_mcmc/utils/')
 
 from LambdaCDM import H_LCDM
 
-from scipy.integrate import cumtrapz as cumtrapz
 from scipy.interpolate import interp1d
 from scipy.constants import c as c_luz #meters/seconds
 c_luz_km = c_luz/1000; #kilometers/seconds

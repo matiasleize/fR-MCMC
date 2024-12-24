@@ -3,7 +3,6 @@ from matplotlib import pyplot as plt
 from getdist import plots, MCSamples
 import time
 import emcee
-import corner
 import seaborn as sns
 import pandas as pd
 from IPython.display import display, Math
@@ -163,7 +162,7 @@ class Plotter:
 				plt.plot(N, taus, '.-', label="{}".format(labels[j]))
 			ylim = plt.gca().get_ylim()
 			plt.ylim(ylim)
-			plt.plot(N, N / threshold, "--k", label=r"$\tau = N/{}$".format(threshold))
+			plt.plot(N, N / threshold, "--k", label=r"$\\tau = N/{}$".format(threshold))
 			plt.legend(loc = 'best', fontsize=12)
 			plt.show()
 
@@ -181,7 +180,7 @@ class Plotter:
 			taus=np.cumsum(taus)
 
 			plt.loglog(N, taus, '.-')
-			plt.plot(N, N / threshold, "--k", label=r"$\tau = N/{}$".format(threshold))
+			plt.plot(N, N / threshold, "--k", label=r"$\\tau = N/{}$".format(threshold))
 			#plt.axhline(true_tau, color="k", label="truth", zorder=-100)
 			ylim = plt.gca().get_ylim()
 			plt.ylim(ylim)
