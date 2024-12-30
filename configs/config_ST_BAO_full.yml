@@ -1,17 +1,17 @@
 #Example of a configuration file for the LCDM model.
-USE_PPLUS_SHOES: True
+USE_PPLUS_SHOES: False
 USE_PPLUS: False
 USE_SN: False
-USE_CC: True
+USE_CC: False
 USE_BAO: False
-USE_BAO_FULL: False
+USE_BAO_FULL: True
 USE_AGN: False
 USE_H0: False
 
 MODEL: 'ST' #Choose between 'LCDM', 'HS' or 'EXP'
 WITNESS_NUM: 1 #Suggestion: (model_number) + (datasets_number) 
-FIXED_PARAMS: [0]
-LOG_LIKELIHOOD_INDEX: 42 #See docs/parameters_protocol.md
+FIXED_PARAMS: [0,0]
+LOG_LIKELIHOOD_INDEX: 33 #See docs/parameters_protocol.md
 NUM_WALKERS: 12
 MAX_SAMPLES: 100000 #Maximum number of samples
 WITNESS_FREQ: 10 #Frequency in which witness is refreshed
@@ -20,16 +20,13 @@ WITNESS_FREQ: 10 #Frequency in which witness is refreshed
 M_PRIOR: [-20, -18]
 BAO_PARAM_PRIOR: [100, 200]
 OMEGA_M_PRIOR: [0.2, 0.4]
-B_PRIOR: [0, 2] #Only read if MODEL is 'HS' or 'EXP'
+B_PRIOR: [0, 5] #Only read if MODEL is 'HS' or 'EXP'
 H0_PRIOR: [65, 85]
 
 #For the mean values if needed: 
 #They have to have the same length of the number of free params.
-#GUEST: [-19.352, 147, 0.22, 70]
-#BOUNDS: [[-25, -18], [100, 200], [0.1, 0.5], [65, 75]]
-
-GUEST: [-19.352, 0.3, 0.1, 70]
-BOUNDS: [[-21, -18.5], [0.25, 0.4], [0, 1], [65, 75]]
+GUEST: [0.299, 0.1, 69]
+BOUNDS: [[0.26, 0.33], [0, 0.2], [68, 70]]
 
 ALL_ANALYTIC: False #Use Basilakos et al. approximation for all parameters combination.
 
