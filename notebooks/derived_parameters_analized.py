@@ -38,20 +38,20 @@ output_dir = '/fR-output/HS/'
 filename='sample_HS_BAO_full_3params'
 output_path = path_global + output_dir + filename
 os.chdir(output_path)
-with np.load(filename+'_deriv.npz') as data:
+with np.load(filename+'_ML_deriv.npz') as data:
     sample_HS_BAO = data['new_samples']
 
 
 filename='sample_HS_PPS_4params'
 output_path = path_global + output_dir + filename
 os.chdir(output_path)
-with np.load(filename+'_deriv.npz') as data:
+with np.load(filename+'_ML_deriv.npz') as data:
     sample_HS_PPS = data['new_samples']
 
 filename='sample_HS_PPS_BAO_full_4params'
 output_path = path_global + output_dir + filename
 os.chdir(output_path)
-with np.load(filename+'_deriv.npz') as data:
+with np.load(filename+'_ML_deriv.npz') as data:
     sample_HS_PPS_BAO = data['new_samples']
 
 #print(sample_HS_PPS_BAO)
