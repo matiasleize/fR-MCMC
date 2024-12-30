@@ -16,6 +16,7 @@ os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
 
 from LambdaCDM import H_LCDM
 from solve_sys import Hubble_th
+from ML import H_ML, ML_limits
 from supernovae import aparent_magnitude_th, chi2_supernovae
 from BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
 from AGN import zs_2_logDlH0
@@ -129,8 +130,7 @@ def params_to_chi2(theta, fixed_params, index=0,
     chi2_AGN = 0
     chi2_H0 =  0
 
-    ML_bool = False
-
+    ML_bool = True
     if model == 'LCDM':
         [Mabs, bao_param, omega_m, H_0] = all_parameters(theta, fixed_params, model, index)
         zs_model = np.linspace(0, 10, num_z_points)
@@ -140,17 +140,31 @@ def params_to_chi2(theta, fixed_params, index=0,
         [Mabs, bao_param, omega_m, b, H_0] = all_parameters(theta, fixed_params, model, index)
         physical_params = [omega_m, b, H_0]
         
-        if ML_bool == True:
-            zs_model = np.linspace(0, 10, num_z_points)
-            Hs_model = H_ML(zs_model, [b, omega_m, H_0, _])
+        if (model == 'HS' or model == 'ST') and ML_bool == True:    
+            Om_m_0_min, Om_m_0_max, b_min, b_max = ML_limits(model)
+            #print(Om_m_0_min, Om_m_0_max, b_min, b_max)
+
+            #If parameters are inside the ML training..
+            if (Om_m_0_min < omega_m < Om_m_0_max) and (b_min < b < b_max):
+                zs_model = np.linspace(0, 10, num_z_points)
+                Hs_model = H_ML(zs_model, [b, omega_m, H_0, 0], model=model)
+            else:
+                try:
+                    zs_model, Hs_model = Hubble_th(physical_params, n=n, model=model,
+                                                z_min=0, z_max=10, num_z_points=num_z_points,
+                                                all_analytic=all_analytic)
+                except Exception as e:
+                    # If integration fails, reject the step
+                    return -np.inf
+
         else:
-            #try:
-            zs_model, Hs_model = Hubble_th(physical_params, n=n, model=model,
-                                        z_min=0, z_max=10, num_z_points=num_z_points,
-                                        all_analytic=all_analytic)
-            #except Exception as e:
-            #    # If integration fails, reject the step
-            #    return -np.inf
+            try:
+                zs_model, Hs_model = Hubble_th(physical_params, n=n, model=model,
+                                            z_min=0, z_max=10, num_z_points=num_z_points,
+                                            all_analytic=all_analytic)
+            except Exception as e:
+                # If integration fails, reject the step
+                return -np.inf
 
     if (dataset_CC != None or dataset_BAO != None or dataset_DESI != None or 
         dataset_BAO_full != None or dataset_AGN != None):

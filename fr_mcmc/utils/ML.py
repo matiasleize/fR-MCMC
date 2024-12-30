@@ -6,70 +6,139 @@ import torch
 from ML_utils import CustomCondition, f_R_reparams, _shape_manager
 import yaml
 from scipy.constants import c as c_ms
-from matplotlib import pyplot as plt
-
-model = 'Hu-Sawicki'
-path = f'{model}_nets'
-
 c = c_ms/1000
 
-#with open(f'../trained_net/{path}/saved_config.yaml') as yaml_file_f_R:
-with open(f'{path}/saved_config.yaml') as yaml_file_f_R:
-    try:
-        Config_f_R = yaml.safe_load(yaml_file_f_R)
-    except yaml.YAMLError as exc:
-        print(exc)
+from matplotlib import pyplot as plt
 
-#with open(f'../trained_net/{path}/saved_d_L_config.yaml') as yaml_file_f_R_d_L:
-with open(f'{path}/saved_d_L_config.yaml') as yaml_file_f_R_d_L:
-    try:
-        Config_f_R_d_L = yaml.safe_load(yaml_file_f_R_d_L)
-    except yaml.YAMLError as exc:
-        print(exc)
+import os
+import git
+path_git = git.Repo('.', search_parent_directories=True).working_tree_dir
+os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
 
-# Set the range of the independent variable:
-z_0 = 10.0
-z_rescale = z_0
-z_d_L_rescale = Config_f_R_d_L['z_rescale']
+# Add necessary paths to sys.path
+#os.sys.path.extend([
+#    os.path.join(path_git, 'fr_mcmc'),
+#    os.path.join(path_git, 'fr_mcmc', 'trained_net')
+#])
 
-z_prime_min = 0.0
-z_prime_max = 1.0
+def ML_model_selection(model):
+    if model == 'HS':
+        model_name = 'Hu-Sawicki'
+    elif model == 'ST':
+        model_name = 'Starobinsky'
+    
+    path = f'{model_name}_nets'
 
-z_min = z_prime_min
-z_max = min(z_rescale, z_d_L_rescale)*z_prime_max
+    # Change to the mcmc directory
+    #os.chdir(os.path.join(path_git, 'fr_mcmc', 'trained_net'))
+    #os.chdir(path_git); os.sys.path.append('./fr_mcmc/trained_net/')
 
-# Set the range of the parameters of the bundle:
-b_prime_min = float(Config_f_R['b_prime_min'])
-b_prime_max = 1.0
+    with open(f'{path_git}/fr_mcmc/trained_net/{path}/saved_config.yaml') as yaml_file_f_R:
+        try:
+            Config_f_R = yaml.safe_load(yaml_file_f_R)
+        except yaml.YAMLError as exc:
+            print(exc)
 
-b_max = Config_f_R['b_max']
-b_min = b_prime_min*b_max
+    with open(f'{path_git}/fr_mcmc/trained_net/{path}/saved_d_L_config.yaml') as yaml_file_f_R_d_L:
+        try:
+            Config_f_R_d_L = yaml.safe_load(yaml_file_f_R_d_L)
+        except yaml.YAMLError as exc:
+            print(exc)
+    return Config_f_R, Config_f_R_d_L 
+    
+def ML_limits(model):
 
-Om_m_0_min = Config_f_R['Om_m_0_min']
-Om_m_0_max = Config_f_R['Om_m_0_max']
+    if model == 'HS':
+        model_name = 'Hu-Sawicki'
+    elif model == 'ST':
+        model_name = 'Starobinsky'
+    
+    path = f'{model_name}_nets'
+    
+    Config_f_R, Config_f_R_d_L = ML_model_selection(model)
 
-# Set neural network parameters and renormalizations:
-alpha_nominator = Config_f_R['alpha_nominator']
-alpha_denominator = Config_f_R['alpha_denominator']
-alpha = alpha_nominator/alpha_denominator
+    # Set the range of the independent variable:
+    z_0 = 10.0
+    z_rescale = z_0
+    z_d_L_rescale = Config_f_R_d_L['z_rescale']
 
-nets = torch.load(f'../trained_net/{path}/nets_f_R.ph', map_location=torch.device('cpu'),weights_only=False)
-net_INT = torch.load(f'../trained_net/{path}/nets_f_R_d_L.ph', map_location=torch.device('cpu'),weights_only=False)
+    z_prime_min = 0.0
+    z_prime_max = 1.0
 
-f_R = f_R_reparams(z_0=z_0, b_prime_min=b_prime_min, b_max=b_max, alpha=alpha)
+    z_min = z_prime_min
+    z_max = min(z_rescale, z_d_L_rescale)*z_prime_max
 
-conditions = [CustomCondition(f_R.v_reparam),
-              CustomCondition(f_R.r_prime_reparam)
-              ]
+    # Set the range of the parameters of the bundle:
+    b_prime_min = float(Config_f_R['b_prime_min'])
+    b_prime_max = 1.0
 
-r_prime_net_index = -1
-v_net_index = 2
+    b_max = Config_f_R['b_max']
+    b_min = b_prime_min*b_max
 
-r_prime = BundleSolution1D([nets[r_prime_net_index]], [conditions[-1]])
-v = BundleSolution1D([nets[v_net_index]], [conditions[0]])
+    Om_m_0_min = Config_f_R['Om_m_0_min']
+    Om_m_0_max = Config_f_R['Om_m_0_max']
 
-def H_ML(z, theta, **kwarg):
+    return Om_m_0_min, Om_m_0_max, b_min, b_max
+
+def ML_process(model):
+
+    if model == 'HS':
+        model_name = 'Hu-Sawicki'
+    elif model == 'ST':
+        model_name = 'Starobinsky'
+    
+    path = f'{model_name}_nets'
+
+    
+    Config_f_R, Config_f_R_d_L = ML_model_selection(model)
+
+    # Set the range of the independent variable:
+    z_0 = 10.0
+    z_rescale = z_0
+    z_d_L_rescale = Config_f_R_d_L['z_rescale']
+
+    z_prime_min = 0.0
+    z_prime_max = 1.0
+
+    z_min = z_prime_min
+    z_max = min(z_rescale, z_d_L_rescale)*z_prime_max
+
+    # Set the range of the parameters of the bundle:
+    b_prime_min = float(Config_f_R['b_prime_min'])
+    b_prime_max = 1.0
+
+    b_max = Config_f_R['b_max']
+    b_min = b_prime_min*b_max
+
+    Om_m_0_min = Config_f_R['Om_m_0_min']
+    Om_m_0_max = Config_f_R['Om_m_0_max']
+
+    # Set neural network parameters and renormalizations:
+    alpha_nominator = Config_f_R['alpha_nominator']
+    alpha_denominator = Config_f_R['alpha_denominator']
+    alpha = alpha_nominator/alpha_denominator
+
+    nets = torch.load(f'{path_git}/fr_mcmc/trained_net/{path}/nets_f_R.ph', map_location=torch.device('cpu'),weights_only=False)
+    net_INT = torch.load(f'{path_git}/fr_mcmc/trained_net/{path}/nets_f_R_d_L.ph', map_location=torch.device('cpu'),weights_only=False)
+
+    f_R = f_R_reparams(z_0=z_0, b_prime_min=b_prime_min, b_max=b_max, alpha=alpha)
+
+    conditions = [CustomCondition(f_R.v_reparam),
+                CustomCondition(f_R.r_prime_reparam)
+                ]
+
+    r_prime_net_index = -1
+    v_net_index = 2
+
+    r_prime = BundleSolution1D([nets[r_prime_net_index]], [conditions[-1]])
+    v = BundleSolution1D([nets[v_net_index]], [conditions[0]])
+    
+    return z_rescale, b_max, r_prime, v
+
+def H_ML(z, theta, model='HS', **kwarg):
     b, Om_m_0, H_0 = theta[:-1]
+
+    z_rescale, b_max, r_prime, v = ML_process(model)
 
     z_prime = 1 - (z/z_rescale)
     b_prime = b/b_max
@@ -92,8 +161,6 @@ def H_ML(z, theta, **kwarg):
         out = out[0][0]
     return out
 
-condition_INT = [BundleIVP(t_0=0, u_0=0)]
-sol_INT = BundleSolution1D([net_INT[0]], [condition_INT[0]])
 
 def INT(z, b, Om_m_0):
     shape, no_reshape = _shape_manager(z, b, Om_m_0)
@@ -101,6 +168,10 @@ def INT(z, b, Om_m_0):
     z_prime = z/z_d_L_rescale
     b_prime = (b/b_max)*shape
     Om_m_0 = Om_m_0 * shape
+
+    condition_INT = [BundleIVP(t_0=0, u_0=0)]
+    sol_INT = BundleSolution1D([net_INT[0]], [condition_INT[0]])
+
 
     out = sol_INT(z_prime,
                   b_prime,
