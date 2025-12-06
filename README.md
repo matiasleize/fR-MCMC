@@ -13,7 +13,7 @@ In order to create a virtual environment with the libraries that are needed to r
 * Activate the virtual environment: ```source activate fR-MCMC```
 
 ## Create an output directory:
-Output files can be particarly heavy stuff. For instance, the markov chains are saved in h5 format of several MegaBites. To avoid the unnecessary use of memory in the main repository, output files are stored in an independent directory in the computer's user. For default, this file must be created in the same directory that the Git's repository was cloned:
+Output files can be particularly heavy stuff. For instance, the markov chains are saved in h5 format of several MegaBites. To avoid the unnecessary use of memory in the main repository, output files are stored in an independent directory in the computer's user. For default, this file must be created in the same directory that the Git's repository was cloned:
 
 ```
 root_directory/              Root directory
