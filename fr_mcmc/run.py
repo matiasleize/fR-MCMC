@@ -23,7 +23,7 @@ def main(task, outputfile):
 			tasks[task]()
 		except:
 		    logger.error(f"Task {task} failed")
-		    raise
+			raise
 
 	elif task == "analysis":
 		try:
