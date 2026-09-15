@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below, and cite the associated paper."
+type: software
+title: "fR-MCMC"
+abstract: "Cosmological analyses of f(R) theories using MCMC."
+authors:
+  - family-names: "Leizerovich"
+    given-names: "Matías"
+    affiliation: "Faculty of Exact and Natural Sciences, University of Buenos Aires"
+repository-code: "https://github.com/matiasleize/fR-MCMC"
+license: MIT
+keywords:
+  - bayesian-inference
+  - modified-gravity
+  - cosmology
+  - MCMC
+preferred-citation:
+  type: article
+  title: "Testing f(R) gravity models with quasar x-ray and UV fluxes"
+  authors:
+    - family-names: "Leizerovich"
+      given-names: "Matías"
+    - family-names: "Kraiselburd"
+      given-names: "Lucila"
+    - family-names: "Landau"
+      given-names: "Susana"
+    - family-names: "Scóccola"
+      given-names: "Claudia"
+  journal: "Physical Review D"
+  volume: 105
+  issue: 10
+  start: "103526"
+  year: 2022
+  doi: "10.1103/PhysRevD.105.103526"
+  url: "https://journals.aps.org/prd/abstract/10.1103/PhysRevD.105.103526"
