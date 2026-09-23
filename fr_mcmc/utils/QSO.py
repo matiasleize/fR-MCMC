@@ -124,9 +124,6 @@ def log_likelihood(*args, dataset_QSO=None, k_QSO=None, **kargs):
     chi_square.log_likelihood, plus dataset_QSO (output of read_data_QSO) and k_QSO
     (None: k marginalized analytically).
     '''
-    if dataset_QSO is not None and kargs.get('use_ml', False):
-        raise NotImplementedError('The QSO likelihood does not support use_ml=True')
-
     ll = chi_square.log_likelihood(*args, **kargs)
     if dataset_QSO is None or not np.isfinite(ll):
         return ll
