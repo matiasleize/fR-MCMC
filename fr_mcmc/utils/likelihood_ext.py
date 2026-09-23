@@ -45,9 +45,6 @@ def log_likelihood(*args, dataset_QSO=None, dataset_CC_cov=None, k_QSO=None, **k
     '''
     chi_square.log_likelihood plus the QSO and CC (with covariance) terms.
     '''
-    if (dataset_QSO is not None or dataset_CC_cov is not None) and kargs.get('use_ml', False):
-        raise NotImplementedError('QSO and CC_cov do not support use_ml=True')
-
     ll = chi_square.log_likelihood(*args, **kargs)
     if (dataset_QSO is None and dataset_CC_cov is None) or not np.isfinite(ll):
         return ll
