@@ -12,7 +12,10 @@ MODEL: 'ST' #Choose between 'LCDM', 'HS' or 'EXP'
 WITNESS_NUM: 1 #Suggestion: (model_number) + (datasets_number) 
 FIXED_PARAMS: [0]
 LOG_LIKELIHOOD_INDEX: 42 #See docs/parameters_protocol.md
-NUM_WALKERS: 12
+NUM_WALKERS: 32
+N_PROCESSES: #Processes to evaluate the walkers in parallel (empty: min(cores, NUM_WALKERS); 1: serial)
+CONV_FREQ: 100 #Convergence (N > 100 tau, |Delta tau|/tau < 1%) is checked every CONV_FREQ iterations
+MOVES: stretch #Proposal of emcee: stretch (default) or DE (0.8 DEMove + 0.2 DESnookerMove)
 MAX_SAMPLES: 100000 #Maximum number of samples
 WITNESS_FREQ: 10 #Frequency in which witness is refreshed
 
@@ -29,6 +32,9 @@ GUEST: [-19.352, 0.332, 0.1, 72]
 BOUNDS: [[-19.4, -19], [0.30, 0.36], [0, 0.2], [70, 75]]
 
 ALL_ANALYTIC: False #Use Basilakos et al. approximation for all parameters combination.
+USE_C: True #Compute H(z) with the C implementation (utils/solve_sys_c)
+RD_GRID: False #r_d from the CLASS grid (True) or CLASS at each step (False)
+USE_ML: False #HS/ST: use the neural networks inside their training range
 
 #Directory in which output files are stored
 OUTPUT_DIR: '/fR-output/ST/'
