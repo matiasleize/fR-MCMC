@@ -10,8 +10,8 @@ default CLASS precision (HyRec). The grid has two extra nodes on each side of th
 range, so that the cubic spline is accurate up to the edges of the valid range.
 
 Usage (needs the Python wrapper of vanilla CLASS):
-    CLASSY_PATH=/path/to/classy python make_rd_grid.py
-By default CLASSY_PATH is ~/Documents/PhD/code/class_public-3.3.4/classy_py310.
+    python make_rd_grid.py
+classy is taken from the environment; CLASSY_PATH=/path/to/classy overrides it.
 '''
 import os
 import sys
@@ -20,9 +20,9 @@ from multiprocessing import Pool
 
 import numpy as np
 
-CLASSY_PATH = os.environ.get(
-    'CLASSY_PATH', os.path.expanduser('~/Documents/PhD/code/class_public-3.3.4/classy_py310'))
-sys.path.insert(0, CLASSY_PATH)
+CLASSY_PATH = os.environ.get('CLASSY_PATH')
+if CLASSY_PATH:
+    sys.path.insert(0, CLASSY_PATH)
 import classy  # noqa: E402
 
 M_NCDM = 0.06
