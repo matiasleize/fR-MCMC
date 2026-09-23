@@ -47,10 +47,18 @@ def chi2_AGN_nuisance(teo, data, errors_cuad):
 def params_to_chi2_AGN_nuisance(theta, fixed_params, dataset_AGN, n=1,
                                 num_z_points=int(10**6), model='HS'
                                 ,less_z=False,all_analytic=False):
+    
     '''
+    [NOT USED IN THE MAIN PIPELINE]
+    
+    Alternative AGN likelihood that works with beta_2 = beta_1 + (gamma-1)*log(4pi),
+    i.e. using log(d_L) in cm instead of log(d_L * H0). This is NOT the same beta
+    as in the main likelihood (likelihood.py), which follows Li et al. (2021).
+    
     Given the model parameters, it returns the statistics chi squared
     for the AGN data.
     '''
+
     #Here we define the parameters
     if model == 'LCDM':
         if isinstance(theta,float):
