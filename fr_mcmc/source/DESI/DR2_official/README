@@ -1,0 +1,4 @@
+# DESI DR2 BAO (arXiv:2503.14738). Generated from DR2_official/ (CobayaSampler/bao_data, desi_bao_dr2)
+Official DESI DR2 BAO mean and covariance (Gaussian likelihood, all tracers).
+Source: https://github.com/CobayaSampler/bao_data/tree/master/desi_bao_dr2
+DESI_DR2_dm_dh.txt and DESI_DR2_dv.txt (one level up) are generated from these files.
