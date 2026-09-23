@@ -26,7 +26,11 @@ path_global = os.path.dirname(path_git)
 os.chdir(path_git)
 os.sys.path.append("./fr_mcmc/utils/")
 from LambdaCDM import H_LCDM
+from constants import Omega_r
 from taylor import Taylor_HS, Taylor_ST
+
+# Default redshift of the initial conditions of the HS integration (see integrator)
+Z_IC_HS = 30
 #%%
 
 def get_odes(z, variables, physical_params, model='HS', n=1):
@@ -55,14 +59,15 @@ def get_odes(z, variables, physical_params, model='HS', n=1):
 
 
     if model == 'EXP': # For the Exponential model
-        omega_m, b, _ = physical_params
+        omega_m, b, H0 = physical_params
         E, tildeR = variables
 
         beta = 2/b
-        omega_l = 1 - omega_m
+        omega_r = Omega_r(H0) # radiation: enters with the matter in the density term
+        omega_l = 1 - omega_m - omega_r
 
         s0 = omega_l * tildeR/E - 2 * E
-        s1 = (np.exp(beta*tildeR)/(beta**2)) * (omega_m * np.exp(-3*z)/(E**2)-1+beta*np.exp(-beta*tildeR) + omega_l*(1-(1+beta*tildeR)*np.exp(-beta*tildeR))/(E**2))
+        s1 = (np.exp(beta*tildeR)/(beta**2)) * ((omega_m * np.exp(-3*z) + omega_r * np.exp(-4*z))/(E**2)-1+beta*np.exp(-beta*tildeR) + omega_l*(1-(1+beta*tildeR)*np.exp(-beta*tildeR))/(E**2))
 
         return [s0, s1]
 
@@ -80,6 +85,10 @@ def get_odes(z, variables, physical_params, model='HS', n=1):
                 Gamma = N/D
 
         elif model == 'ST':
+            # f_RR = 0 at (2n+1) r^2 = b^2 (Gamma diverges) and f_RR < 0 below (unstable model).
+            # Return NaN so that the integration fails instead of taking tiny steps.
+            if (2*n + 1) * r**2 <= b**2:
+                return [np.nan] * 5
             if n==1:
                 Gamma = (r**2 + b**2) * ((r**2 + b**2)**2 - 4*r*b**2) / (4*r*b**2 * (3*r**2 - b**2)) 
             else:
@@ -101,7 +110,7 @@ def get_odes(z, variables, physical_params, model='HS', n=1):
 def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
                 initial_z=10, final_z=0,
                 system_equations=get_odes, verbose=False,
-                model='HS',method='RK45', rtol=1e-3, atol=1e-6): #, rtol=1e-11, atol=1e-16):
+                model='HS',method=None, rtol=1e-8, atol=1e-10, z_ic=None):
     '''
     Numerical integration of the system of differential equations between
     initial_z and final_z, given the initial conditions of the variables
@@ -138,17 +147,24 @@ def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
     verbose: bool, default=False
         If True, prints the time of integration.
 
-    method: str, default='RK45'
+    method: str, default=None
         Integration method, the method must be compatible with the method
-        argument of scipy.integrate.solve_ivp.
+        argument of scipy.integrate.solve_ivp. If None, 'RK45' is used for HS and ST
+        and 'Radau' for EXP (the EXP system is stiff and RK45 does not converge).
 
-    rtol: float, default=1e-11
+    rtol: float, default=1e-8
         Relative tolerance, the tolerance must be compatible with the rtol
         argument of scipy.integrate.solve_ivp.
 
-    atol: float, default=1e-16
+    atol: float, default=1e-10
         Absolute tolerance, the tolerance must be compatible with the atol
         argument of scipy.integrate.solve_ivp.
+
+    z_ic: float, default=None
+        HS and ST: redshift of the (LCDM) initial conditions, where the integration starts.
+        H(z) is returned between final_z and initial_z. If None: Z_IC_HS for HS and
+        initial_z for ST. For HS, the LCDM initial conditions are only approximate at z=10
+        (f - (R - 2 Lambda) decays as 1/R) and starting at higher redshift reduces the error.
 
     Returns: 
     --------
@@ -174,7 +190,9 @@ def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
 
         sol = solve_ivp(system_equations, (x_ci,x_final),
             initial_cond, t_eval=xs_int, args=(physical_params, model),
-            rtol=rtol, atol=atol, method=method)
+            rtol=rtol, atol=atol, method='Radau' if method is None else method)
+
+        assert sol.success, 'Something is wrong with the integration!'
 
         xs_ode = sol.t[::-1]
         zs_ode = np.exp(-xs_ode)-1
@@ -182,10 +200,10 @@ def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
 
         # LCDM part
         zs_LCDM = np.linspace(z_ci,initial_z,num_z_points)
-        Hs_LCDM = H0 * np.sqrt(omega_m * (1+zs_LCDM)**3 + (1-omega_m))
+        Hs_LCDM = H_LCDM(zs_LCDM, omega_m, H0)
 
-        zs_aux = np.hstack(zs_ode,zs_LCDM)
-        Hs_aux = np.hstack(Hs_ode,Hs_LCDM)
+        zs_aux = np.hstack((zs_ode,zs_LCDM[1:])) # z_ci is already in zs_ode
+        Hs_aux = np.hstack((Hs_ode,Hs_LCDM[1:]))
 
         f = interp1d(zs_aux,Hs_aux)
 
@@ -194,9 +212,12 @@ def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
 
     elif (model=='HS' or model =='ST'):
         # Calculate the IC, eta and the parameters of the ODE.
-        initial_cond = calculate_initial_conditions(physical_params, zi=initial_z, model=model)
+        if z_ic is None:
+            z_ic = Z_IC_HS if model == 'HS' else initial_z
+        z_ic = max(z_ic, initial_z)
+        initial_cond = calculate_initial_conditions(physical_params, zi=z_ic, model=model)
 
-        Lamb = 3  * (1-omega_m) * H0**2 #/c_light_km**2
+        Lamb = 3  * (1-omega_m-Omega_r(H0)) * H0**2 #/c_light_km**2
 
         #h = H0/100
         #R_HS = (omega_m * h**2)/(0.13*8315**2) ## units of Mpc**(-2)
@@ -205,9 +226,9 @@ def integrator(physical_params, epsilon=10**(-10), num_z_points=int(10**5),
 
         zs_int = np.linspace(initial_z, final_z, num_z_points)
 
-        sol = solve_ivp(system_equations, (initial_z,final_z),
+        sol = solve_ivp(system_equations, (z_ic,final_z),
             initial_cond, t_eval=zs_int, args=(physical_params, model),
-            rtol=rtol, atol=atol, method=method)
+            rtol=rtol, atol=atol, method='RK45' if method is None else method)
 
         assert len(sol.t)==num_z_points, 'Something is wrong with the integration!'
         assert np.all(zs_int==sol.t), 'Not all the values of z coincide with the ones that were required!'
@@ -261,13 +282,14 @@ def Hubble_th(physical_params, *args, b_crit=0.15, all_analytic=False,
         Hs = H_LCDM(zs, omega_m, H0)
 
     elif model == 'EXP':
-        log_eps_inv = -np.log10(epsilon)
-        b_crit = (4 + omega_m/(1-omega_m)) / log_eps_inv
+        log_eps_inv = -np.log(epsilon)
+        b_crit = (4 + omega_m/(1-omega_m-Omega_r(H0))) / log_eps_inv
         if (b <= b_crit) or (all_analytic==True): # Analytic approximation
             zs = np.linspace(z_min, z_max, num_z_points)
             Hs = H_LCDM(zs, omega_m, H0)
         else:
-            zs, Hs = integrator([omega_m, b, H0], *args, initial_z=z_max, final_z=z_min, **kwargs)
+            zs, Hs = integrator([omega_m, b, H0], *args, initial_z=z_max, final_z=z_min, model=model,
+                                num_z_points=num_z_points, epsilon=epsilon, **kwargs)
 
     elif(model == 'HS' or model == 'ST'):
         if n==1:                
@@ -278,7 +300,8 @@ def Hubble_th(physical_params, *args, b_crit=0.15, all_analytic=False,
                 elif model == 'ST':
                     Hs = Taylor_ST(zs, omega_m, b, H0) 
             else: # Numerical integration
-                zs, Hs = integrator([omega_m, b, H0], initial_z=z_max, final_z=z_min, **kwargs)     
+                zs, Hs = integrator([omega_m, b, H0], initial_z=z_max, final_z=z_min, model=model,
+                                    num_z_points=num_z_points, **kwargs)     
     
     else: #n != 1
             raise ValueError('Not a valid Taylor!')
