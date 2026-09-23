@@ -2,9 +2,12 @@
 USE_PPLUS_SHOES: False
 USE_PPLUS: False
 USE_SN: False
-USE_CC: True
-USE_BAO: False
-USE_BAO_FULL: True
+USE_CC_LEGACY: True
+USE_CC: False #CC: 33 puntos con la covarianza de Moresco et al. (2020) (se solapa con CC_LEGACY: usar uno solo)
+USE_BAO_LEGACY_1: False
+USE_BAO_LEGACY_2: True
+USE_DESI_DR2: False #DESI DR2 (se solapa con BAO_LEGACY_1 y BAO_LEGACY_2: usar uno solo)
+USE_QSO: False #Quasares de Benetti et al. (2025)
 USE_AGN: False
 USE_H0: False
 
@@ -25,6 +28,8 @@ BAO_PARAM_PRIOR: [100, 200]
 OMEGA_M_PRIOR: [0.2, 0.4]
 B_PRIOR: [0, 5] #Only read if MODEL is 'HS' or 'EXP'
 H0_PRIOR: [65, 85]
+OMEGA_M_ASTRO_PRIOR: False #Prior gaussiano sobre Omega_m
+M_ABS_CM_PRIOR: False #Prior de Camarena & Marra sobre M_abs
 
 #For the mean values if needed: 
 #They have to have the same length of the number of free params.
@@ -34,7 +39,9 @@ BOUNDS: [[0.26, 0.33], [0, 0.2], [68, 70]]
 ALL_ANALYTIC: False #Use Basilakos et al. approximation for all parameters combination.
 USE_C: True #Compute H(z) with the C implementation (utils/solve_sys_c)
 RD_GRID: False #r_d from the CLASS grid (True) or CLASS at each step (False)
-USE_ML: False #HS/ST: use the neural networks inside their training range
+RD_FIXED: #r_d (Mpc) directo; vacio: se calcula con CLASS/grilla (tiene prioridad sobre RD_GRID)
+WB_FROM_PARAM: False #True: omega_b = bao_param muestreado (BAO_PARAM_PRIOR en unidades de omega_b, grilla valida en [0.019, 0.026])
+K_QSO: #parametro k de la lkl de QSO; vacio: marginalizado analiticamente
 
 #Directory in which output files are stored
 OUTPUT_DIR: '/fR-output/HS/'
