@@ -2,7 +2,6 @@
 Functions related to BAO data.
 """
 import numpy as np
-from numba import jit
 from scipy.interpolate import interp1d
 from scipy.integrate import simpson as simpson
 from scipy.integrate import quad as quad
@@ -55,7 +54,8 @@ def r_drag_viejo(Omega_m,H_0,wb = 0.0225, int_z=True): #wb x default tomo el de 
     rd_log = simpson(integrando_log,zs_int_log)
     return rd_log
 
-@jit
+# Si se reactiva la rama dataset_BAO (r_drag), esta funcion es candidata a @njit:
+# es aritmetica escalar pura dentro de un quad.
 def integrand(z, Om_m_0, H_0, wb):
     R_bar = wb * 10**5 / 2.473
 
@@ -83,12 +83,25 @@ def r_drag(Omega_m,H_0,wb = 0.0225, int_z=True): #wb of BBN as default.
     return rd_log
 
 # r_d computed with CLASS at each call. It requires the Python wrapper of vanilla CLASS
-# (classy, https://github.com/lesgourg/class_public), not a modified version. If the environment
-# variable CLASSY_PATH is set, classy is imported from there; otherwise from
-# ~/Documents/PhD/code/class_public-3.3.4/classy_py310 if it exists, or from the environment.
+# (classy, https://github.com/lesgourg/class_public), not a modified version.
+# By default classy is imported from the environment (it is declared in pyproject.toml).
+# CLASSY_PATH overrides that with a specific build, e.g. a local class_public tree; note
+# that such a build is tied to the Python version it was compiled against.
 _class_instance = None
-_CLASSY_PATH = os.environ.get('CLASSY_PATH',
-                              os.path.expanduser('~/Documents/PhD/code/class_public-3.3.4/classy_py310'))
+_CLASSY_PATH = os.environ.get('CLASSY_PATH')
+
+
+def _import_classy():
+    if _CLASSY_PATH:
+        if os.path.isdir(_CLASSY_PATH) and _CLASSY_PATH not in os.sys.path:
+            os.sys.path.insert(0, _CLASSY_PATH)
+        import classy
+        import warnings
+        warnings.warn('classy imported from CLASSY_PATH ({}): make sure it is vanilla '
+                      'CLASS and built for this Python'.format(classy.__file__))
+        return classy
+    import classy
+    return classy
 
 def r_drag_class(Omega_m, H_0, wb=0.02218, m_ncdm=0.06):
     '''
@@ -98,12 +111,7 @@ def r_drag_class(Omega_m, H_0, wb=0.02218, m_ncdm=0.06):
     '''
     global _class_instance
     if _class_instance is None:
-        if os.path.isdir(_CLASSY_PATH) and _CLASSY_PATH not in os.sys.path:
-            os.sys.path.insert(0, _CLASSY_PATH)
-        import classy
-        if 'class_public' not in classy.__file__:
-            import warnings
-            warnings.warn('classy imported from {}: it may not be vanilla CLASS'.format(classy.__file__))
+        classy = _import_classy()
         _class_instance = classy.Class()
     cosmo = _class_instance
     h = H_0/100
