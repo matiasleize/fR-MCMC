@@ -3,11 +3,49 @@ from matplotlib import pyplot as plt
 from getdist import plots, MCSamples
 import time
 import emcee
-import seaborn as sns
 import pandas as pd
 from IPython.display import display, Math
-import arviz as az
 from scipy.stats import scoreatpercentile
+
+
+def _set_style(font_size, label_size=17):
+	"""Estilo de las figuras (reemplaza sns.set / sns.set_context)."""
+	# matplotlib renombro los estilos seaborn-* a seaborn-v0_8-* en la 3.6
+	for _name in ('seaborn-v0_8-darkgrid', 'seaborn-darkgrid'):
+		if _name in plt.style.available:
+			plt.style.use(_name)
+			break
+	plt.rcParams.update({
+		"font.size": font_size,
+		"axes.labelsize": label_size,
+		"axes.titlesize": label_size,
+		"xtick.labelsize": font_size,
+		"ytick.labelsize": font_size,
+		"legend.fontsize": font_size,
+	})
+
+
+def hdi(samples, hdi_prob):
+	"""Highest density interval por columna, para muestras unimodales.
+
+	Equivalente a arviz.hdi (verificado bit a bit contra arviz 0.10 para
+	hdi_prob = 0.68, 0.95 y 0.997). Devuelve un array (n_params, 2).
+	"""
+	samples = np.asarray(samples)
+	if samples.ndim == 1:
+		samples = samples[:, None]
+	n = samples.shape[0]
+	n_inc = int(np.floor(hdi_prob * n))
+	n_int = n - n_inc
+	if n_int <= 0:
+		raise ValueError("muy pocas muestras para hdi_prob={}".format(hdi_prob))
+	out = np.empty((samples.shape[1], 2))
+	for j in range(samples.shape[1]):
+		x = np.sort(samples[:, j])
+		widths = x[n_inc:] - x[:n_int]
+		k = int(np.argmin(widths))
+		out[j] = (x[k], x[k + n_inc])
+	return out
 
 class Plotter:
 	'''
@@ -24,8 +62,7 @@ class Plotter:
 		'''Plot the chains for each parameter.'''
 		samples = self.sampler.get_chain()
 		len_chain,nwalkers,ndim=self.sampler.get_chain().shape
-		sns.set(style='darkgrid', palette="muted", color_codes=True)
-		sns.set_context("paper", font_scale=1.5, rc={"font.size":10,"axes.labelsize":17})
+		_set_style(font_size=10)
 		fig, axes = plt.subplots(ndim, figsize=(10, 7), sharex=True)
 
 		for i in range(ndim):
@@ -46,8 +83,7 @@ class Plotter:
 		if isinstance(self.sampler, np.ndarray)==True: #Posprocessed chains
 			samples = self.sampler
 			len_chain,ndim=samples.shape
-		sns.set(style='darkgrid', palette="muted", color_codes=True)
-		sns.set_context("paper", font_scale=1.5, rc={"font.size":10,"axes.labelsize":17})
+		_set_style(font_size=10)
 		fig, axes = plt.subplots(ndim, figsize=(10, 7), sharex=True)
 
 		for i in range(ndim):
@@ -110,8 +146,8 @@ class Plotter:
 			two_s = 95
 
 			if hdi==True:
-				one_sigma = az.hdi(samples,hdi_prob = one_s/100)[i]
-				two_sigma = az.hdi(samples,hdi_prob = two_s/100)[i]
+				one_sigma = hdi(samples, one_s/100)[i]
+				two_sigma = hdi(samples, two_s/100)[i]
 			else:
 				one_sigma = [scoreatpercentile(samples[:,i], 100-one_s), scoreatpercentile(samples[:,i], one_s)]
 				two_sigma = [scoreatpercentile(samples[:,i], 100-two_s), scoreatpercentile(samples[:,i], two_s)]
@@ -137,8 +173,7 @@ class Plotter:
 		For more info: https://emcee.readthedocs.io/en/stable/tutorials/autocorr/
 		 '''
 		labels = self.labels
-		sns.set(style='darkgrid', palette="muted", color_codes=True)
-		sns.set_context("paper", font_scale=1.5, rc={"font.size":8,"axes.labelsize":17})
+		_set_style(font_size=8)
 		plt.grid(True)
 		plt.xlabel("Number of samples $N$",fontsize=15)
 		plt.ylabel(r"$\hat{\tau}$",fontsize=15)
