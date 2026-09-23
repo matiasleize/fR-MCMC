@@ -78,13 +78,18 @@ def read_data_pantheon_plus(file_pantheon_plus,file_pantheon_plus_cov):
     # Read text with data
 
     df = pd.read_csv(file_pantheon_plus,sep='\s+')
-    ww = (df['zHD']>0.01) | (np.array(df['IS_CALIBRATOR'],dtype=bool))
+    # Without SH0ES the Cepheid hosts are not calibrators: only the Hubble flow (zHD > 0.01)
+    # is used, as in Brout et al. 2022.
+    ww = np.array(df['zHD']>0.01)
 
     zhd = df['zHD'][ww]
     zhel = df['zHEL'][ww]
     mb = df['m_b_corr'][ww]
 
-    Ccov=np.load(file_pantheon_plus_cov)['arr_0']
+    # Full STAT+SYS covariance (first line is N), restricted to the selected SNe
+    sn = len(df['zHD'])
+    Ccov = np.loadtxt(file_pantheon_plus_cov, skiprows=1).reshape(sn,sn)
+    Ccov = Ccov[np.ix_(ww,ww)]
     Cinv=inv(Ccov)
 
     return zhd, zhel, Cinv, mb
@@ -161,14 +166,14 @@ def read_data_DESI(file_DESI_1, file_DESI_2):
     # Read text with data
     z_eff_1, data_dm_rd, errors_dm_rd, data_dh_rd, errors_dh_rd, rho = np.loadtxt(file_DESI_1,
                                                                      usecols=(0,1,2,3,4,5),
-                                                                     skiprows=1, unpack=True)
+                                                                     skiprows=1, unpack=True, ndmin=2)
     
     set_1 = z_eff_1, data_dm_rd, errors_dm_rd, data_dh_rd, errors_dh_rd, rho 
 
     # Read text with data
     z_eff_2, data_dv_rd, errors_dv_rd = np.loadtxt(file_DESI_2,
                                                 usecols=(0,1,2),
-                                                skiprows=1, unpack=True)
+                                                skiprows=1, unpack=True, ndmin=2)
     set_2 = z_eff_2, data_dv_rd, errors_dv_rd
     return [set_1, set_2]
 
@@ -213,7 +218,7 @@ if __name__ == '__main__':
     #%% Pantheon plus
     os.chdir(path_git+'/fr_mcmc/source/Pantheon_plus_shoes')
     zhd, zhel, Cinv, mb = read_data_pantheon_plus('Pantheon+SH0ES.dat',
-                            'covmat_pantheon_plus_only.npz')
+                            'Pantheon+SH0ES_STAT+SYS.cov')
 
     #%% Pantheon plus + SH0ES
     os.chdir(path_git+'/fr_mcmc/source/Pantheon_plus_shoes')
@@ -233,17 +238,17 @@ if __name__ == '__main__':
     z_data, H_data, dH  = read_data_chronometers('chronometers_data.txt')
 
     #%% BAO
-    os.chdir(path_git+'/fr_mcmc/source/BAO')
+    os.chdir(path_git+'/fr_mcmc/source/BAO_legacy_1')
     file_BAO='BAO_data_da.txt'
     z, data_values, total_errors_cuad = read_data_BAO(file_BAO)
     
     #%% BAO full
-    os.chdir(path_git+'/fr_mcmc/source/BAO_full/')
+    os.chdir(path_git+'/fr_mcmc/source/BAO_legacy_2/')
     ds_BAO_full = read_data_BAO_full('BAO_full_1.csv','BAO_full_2.csv')
     print(ds_BAO_full)
 
     #%%
-    os.chdir(path_git+'/fr_mcmc/source/BAO')
+    os.chdir(path_git+'/fr_mcmc/source/BAO_legacy_1')
     file_BAO='BAO_data.txt'
     df = pd.read_csv(file_BAO,sep='\t')
     z_data = df.to_numpy()[:,0]
