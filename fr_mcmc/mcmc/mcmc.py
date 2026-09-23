@@ -33,7 +33,9 @@ from utils.data import (
     read_data_pantheon_plus_shoes, read_data_pantheon_plus, read_data_pantheon,
     read_data_chronometers, read_data_BAO, read_data_DESI, read_data_BAO_full, read_data_AGN
 )
-from utils.chi_square import log_likelihood
+from utils.QSO import read_data_QSO
+from utils.CC_cov import read_data_CC_cov
+from utils.likelihood_ext import log_likelihood
 from utils.derived_parameters import derived_parameters
 
 from config import cfg as config
@@ -59,7 +61,8 @@ def run():
     all_analytic = config.ALL_ANALYTIC
     use_c = config.USE_C == True # Compute H(z) in C (utils/solve_sys_c)
     rd_grid = config.RD_GRID == True # r_d from the CLASS grid instead of CLASS at each step
-    use_ml = config.USE_ML == True # HS/ST: neural networks instead of the integration
+    rd_fixed = config.RD_FIXED # r_d (Mpc) given directly; empty: computed (overrides RD_GRID)
+    wb_from_param = config.WB_FROM_PARAM == True # omega_b = bao_param (sampled) for r_d
 
     witness_file = f'witness_{config.WITNESS_NUM}.txt'
     
@@ -74,7 +77,7 @@ def run():
         [H0_min, H0_max] = config.H0_PRIOR
 
 
-    if config.USE_BAO or config.USE_DESI or config.USE_BAO_FULL:
+    if config.USE_BAO_LEGACY_1 or config.USE_DESI_DR2 or config.USE_BAO_LEGACY_2:
         [bao_param_min, bao_param_max] = config.BAO_PARAM_PRIOR
 
     if config.USE_SN or config.USE_PPLUS or config.USE_PPLUS_SHOES:
@@ -115,19 +118,38 @@ def run():
         ds_SN = None
 
     # Cosmic Chronometers
-    if config.USE_CC == True:
+    if config.USE_CC_LEGACY == True:
         # CC_legacy (30 puntos, diagonal): la tabla de Leizerovich et al. (2022), PRD 105, 103526.
         # La compilacion nueva de 33 puntos (source/CC/) se usa con la covarianza de Moresco,
         # via CC_cov.read_data_CC_cov; en diagonal no corresponde a nada publicado.
         os.chdir(os.path.join(path_data, 'CC_legacy'))
 
         ds_CC = read_data_chronometers('chronometers_data.txt')
-        datasets.append('_CC')
+        datasets.append('_CC_legacy')
     else:
         ds_CC = None
 
+    # Cosmic Chronometers with the covariance of Moresco et al. (2020):
+    # la tabla nueva de 33 puntos (source/CC/) mas la covarianza (source/CC_cov/).
+    if config.USE_CC == True:
+        ds_CC_cov = read_data_CC_cov(os.path.join(path_data, 'CC', 'chronometers_data.txt'),
+                                     os.path.join(path_data, 'CC_cov', 'HzTable_MM_BC03.dat'),
+                                     os.path.join(path_data, 'CC_cov', 'data_MM20.dat'))
+        datasets.append('_CC')
+    else:
+        ds_CC_cov = None
+
+    # Quasars of Benetti et al. (2025). k_QSO empty: k marginalized analytically.
+    if config.USE_QSO == True:
+        os.chdir(os.path.join(path_data, 'QSO'))
+
+        ds_QSO = read_data_QSO('qso_benetti2025.txt')
+        datasets.append('_QSO')
+    else:
+        ds_QSO = None
+
     # BAO
-    if config.USE_BAO == True:    
+    if config.USE_BAO_LEGACY_1 == True:    
         os.chdir(os.path.join(path_data, 'BAO_legacy_1'))
 
         ds_BAO = []
@@ -136,24 +158,24 @@ def run():
         for i in range(5):
             aux = read_data_BAO(files_BAO[i])
             ds_BAO.append(aux)
-        datasets.append('_BAO')
+        datasets.append('_BAO_legacy_1')
     else:
         ds_BAO = None
 
     # DESI
-    if config.USE_DESI == True:    
+    if config.USE_DESI_DR2 == True:    
         os.chdir(os.path.join(path_data, 'DESI'))
 
         ds_DESI = read_data_DESI('DESI_DR2_dm_dh.txt','DESI_DR2_dv.txt') # DR1: 'DESI_data_dm_dh.txt','DESI_data_dv.txt'
-        datasets.append('_DESI')
+        datasets.append('_DESI_DR2')
     else:
         ds_DESI = None
 
     # BAO full
-    if config.USE_BAO_FULL == True:    
+    if config.USE_BAO_LEGACY_2 == True:    
         os.chdir(os.path.join(path_data, 'BAO_legacy_2'))
         ds_BAO_full = read_data_BAO_full('BAO_full_1.csv','BAO_full_2.csv')
-        datasets.append('_BAO_full')
+        datasets.append('_BAO_legacy_2')
     else:
         ds_BAO_full = None
 
@@ -187,6 +209,9 @@ def run():
                                         dataset_SN_plus = ds_SN_plus,
                                         dataset_SN = ds_SN,
                                         dataset_CC = ds_CC,
+                                        dataset_CC_cov = ds_CC_cov,
+                                        dataset_QSO = ds_QSO,
+                                        k_QSO = config.K_QSO,
                                         dataset_BAO = ds_BAO,
                                         dataset_DESI = ds_DESI,
                                         dataset_BAO_full = ds_BAO_full,
@@ -196,7 +221,8 @@ def run():
                                         all_analytic = all_analytic,
                                         use_c = use_c,
                                         rd_grid = rd_grid,
-                                        use_ml = use_ml
+                                        rd_fixed = rd_fixed,
+                                        wb_from_param = wb_from_param
                                         )
 
     nll = lambda theta: -ll(theta) # negative log likelihood
