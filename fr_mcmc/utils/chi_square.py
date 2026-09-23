@@ -17,12 +17,10 @@ os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
 from LambdaCDM import H_LCDM
 from solve_sys import Hubble_th
 from solve_sys_c import Hubble_th as Hubble_th_c
-# ML (neural networks, needs torch) is imported only if use_ml=True
 from supernovae import aparent_magnitude_th, chi2_supernovae
-from BAO import r_drag, r_drag_class, r_drag_grid, Hs_to_Ds, Ds_to_obs_final
+from BAO import r_drag_class, r_drag_grid, Hs_to_Ds, Ds_to_obs_final
 from AGN import zs_2_logDlH0
 from constants import OMEGA_R_0, WB_BBN
-#from ML import H_ML
 
 def chi2_without_cov(teo, data, errors_cuad):
     '''
@@ -99,7 +97,8 @@ def params_to_chi2(theta, fixed_params, index=0,
                    dataset_AGN=None, H0_Riess=False,
                    num_z_points=int(10**5), model='HS',n=1,
                    nuisance_2 = False, enlarged_errors=False,
-                   all_analytic=False, use_c=False, rd_grid=False, use_ml=False):
+                   all_analytic=False, use_c=False, rd_grid=False, rd_fixed=None,
+                   wb_from_param=False):
     '''
     Given the free parameters of the model, return chi square for the data.
     
@@ -124,8 +123,10 @@ def params_to_chi2(theta, fixed_params, index=0,
     use_c (bool): compute H(z) with the C implementation (utils/solve_sys_c).
     rd_grid (bool): interpolate r_d from the CLASS grid (BAO.r_drag_grid) instead of
         calling CLASS at each step (BAO.r_drag_class, default).
-    use_ml (bool): HS and ST: use the neural networks (ML.H_ML) inside their training range
-        instead of the numerical integration.
+    rd_fixed (float or None): if given, use this r_d (Mpc) for every BAO-type dataset
+        instead of computing it. Overrides rd_grid.
+    wb_from_param (bool): take omega_b = bao_param (sampled) for r_d instead of the fixed
+        WB_BBN. The r_d grid is only valid for omega_b in [0.019, 0.026].
     '''
 
     chi2_SN = 0
@@ -136,7 +137,6 @@ def params_to_chi2(theta, fixed_params, index=0,
     chi2_AGN = 0
     chi2_H0 =  0
 
-    ML_bool = use_ml
     if model == 'LCDM':
         [Mabs, bao_param, omega_m, H_0] = all_parameters(theta, fixed_params, model, index)
         zs_model = np.linspace(0, 10, num_z_points)
@@ -147,32 +147,13 @@ def params_to_chi2(theta, fixed_params, index=0,
         physical_params = [omega_m, b, H_0]
         Hubble = Hubble_th_c if use_c else Hubble_th
         
-        if (model == 'HS' or model == 'ST') and ML_bool == True:    
-            from ML import H_ML, ML_limits
-            Om_m_0_min, Om_m_0_max, b_min, b_max = ML_limits(model)
-            #print(Om_m_0_min, Om_m_0_max, b_min, b_max)
-
-            #If parameters are inside the ML training..
-            if (Om_m_0_min < omega_m < Om_m_0_max) and (b_min < b < b_max):
-                zs_model = np.linspace(0, 10, num_z_points)
-                Hs_model = H_ML(zs_model, [b, omega_m, H_0, 0], model=model)
-            else:
-                try:
-                    zs_model, Hs_model = Hubble(physical_params, n=n, model=model,
-                                                z_min=0, z_max=10, num_z_points=num_z_points,
-                                                all_analytic=all_analytic)
-                except Exception as e:
-                    # If integration fails, reject the step
-                    return np.inf
-
-        else:
-            try:
-                zs_model, Hs_model = Hubble(physical_params, n=n, model=model,
-                                            z_min=0, z_max=10, num_z_points=num_z_points,
-                                            all_analytic=all_analytic)
-            except Exception as e:
-                # If integration fails, reject the step
-                return np.inf
+        try:
+            zs_model, Hs_model = Hubble(physical_params, n=n, model=model,
+                                        z_min=0, z_max=10, num_z_points=num_z_points,
+                                        all_analytic=all_analytic)
+        except Exception as e:
+            # If integration fails, reject the step
+            return np.inf
 
     if (dataset_CC != None or dataset_BAO != None or dataset_DESI != None or 
         dataset_BAO_full != None or dataset_AGN != None):
@@ -186,16 +167,14 @@ def params_to_chi2(theta, fixed_params, index=0,
 
     if (dataset_BAO != None or dataset_DESI != None or 
         dataset_BAO_full != None):
-        #rd = bao_param
-
-        #wb = bao_param
-        #rd = r_drag(Omega_m_LCDM, H_0, wb) #rd calculation
-
+        wb = bao_param if wb_from_param else WB_BBN
         try:
-            if rd_grid:
-                rd = r_drag_grid(omega_m, H_0, WB_BBN) #rd from the grid computed with CLASS
+            if rd_fixed is not None:
+                rd = rd_fixed #r_d given directly (Mpc)
+            elif rd_grid:
+                rd = r_drag_grid(omega_m, H_0, wb) #rd from the grid computed with CLASS
             else:
-                rd = r_drag_class(omega_m, H_0, WB_BBN) #rd computed with CLASS
+                rd = r_drag_class(omega_m, H_0, wb) #rd computed with CLASS
         except Exception as e:
             # If CLASS fails (or outside of the r_d grid), reject the step
             return np.inf
@@ -231,7 +210,6 @@ def params_to_chi2(theta, fixed_params, index=0,
         for i in range(num_datasets): # For each datatype
             (z_data_BAO, data_values, data_squared_errors) = dataset_BAO[i]
             if i==0: #Da entry
-                rd = r_drag(omega_m, H_0, bao_param) # rd calculation
                 theoretical_distances = Hs_to_Ds(Hs_interp, int_inv_Hs_interp, z_data_BAO, i)
                 output_th = Ds_to_obs_final(theoretical_distances, rd, i)
             else: #If not..
