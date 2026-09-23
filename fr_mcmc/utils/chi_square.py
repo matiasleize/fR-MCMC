@@ -16,9 +16,10 @@ os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
 
 from LambdaCDM import H_LCDM
 from solve_sys import Hubble_th
-from ML import H_ML, ML_limits
+from solve_sys_c import Hubble_th as Hubble_th_c
+# ML (neural networks, needs torch) is imported only if use_ml=True
 from supernovae import aparent_magnitude_th, chi2_supernovae
-from BAO import r_drag, Hs_to_Ds, Ds_to_obs_final
+from BAO import r_drag, r_drag_class, r_drag_grid, Hs_to_Ds, Ds_to_obs_final
 from AGN import zs_2_logDlH0
 from constants import OMEGA_R_0, WB_BBN
 #from ML import H_ML
@@ -98,7 +99,7 @@ def params_to_chi2(theta, fixed_params, index=0,
                    dataset_AGN=None, H0_Riess=False,
                    num_z_points=int(10**5), model='HS',n=1,
                    nuisance_2 = False, enlarged_errors=False,
-                   all_analytic=False):
+                   all_analytic=False, use_c=False, rd_grid=False, use_ml=False):
     '''
     Given the free parameters of the model, return chi square for the data.
     
@@ -120,6 +121,11 @@ def params_to_chi2(theta, fixed_params, index=0,
     nuisance_2 (bool):
     enlarged_errors (bool):
     all_analytic (bool):
+    use_c (bool): compute H(z) with the C implementation (utils/solve_sys_c).
+    rd_grid (bool): interpolate r_d from the CLASS grid (BAO.r_drag_grid) instead of
+        calling CLASS at each step (BAO.r_drag_class, default).
+    use_ml (bool): HS and ST: use the neural networks (ML.H_ML) inside their training range
+        instead of the numerical integration.
     '''
 
     chi2_SN = 0
@@ -130,7 +136,7 @@ def params_to_chi2(theta, fixed_params, index=0,
     chi2_AGN = 0
     chi2_H0 =  0
 
-    ML_bool = True
+    ML_bool = use_ml
     if model == 'LCDM':
         [Mabs, bao_param, omega_m, H_0] = all_parameters(theta, fixed_params, model, index)
         zs_model = np.linspace(0, 10, num_z_points)
@@ -139,8 +145,10 @@ def params_to_chi2(theta, fixed_params, index=0,
     elif (model == 'HS' or model == 'ST' or model == 'EXP'):
         [Mabs, bao_param, omega_m, b, H_0] = all_parameters(theta, fixed_params, model, index)
         physical_params = [omega_m, b, H_0]
+        Hubble = Hubble_th_c if use_c else Hubble_th
         
         if (model == 'HS' or model == 'ST') and ML_bool == True:    
+            from ML import H_ML, ML_limits
             Om_m_0_min, Om_m_0_max, b_min, b_max = ML_limits(model)
             #print(Om_m_0_min, Om_m_0_max, b_min, b_max)
 
@@ -150,21 +158,21 @@ def params_to_chi2(theta, fixed_params, index=0,
                 Hs_model = H_ML(zs_model, [b, omega_m, H_0, 0], model=model)
             else:
                 try:
-                    zs_model, Hs_model = Hubble_th(physical_params, n=n, model=model,
+                    zs_model, Hs_model = Hubble(physical_params, n=n, model=model,
                                                 z_min=0, z_max=10, num_z_points=num_z_points,
                                                 all_analytic=all_analytic)
                 except Exception as e:
                     # If integration fails, reject the step
-                    return -np.inf
+                    return np.inf
 
         else:
             try:
-                zs_model, Hs_model = Hubble_th(physical_params, n=n, model=model,
+                zs_model, Hs_model = Hubble(physical_params, n=n, model=model,
                                             z_min=0, z_max=10, num_z_points=num_z_points,
                                             all_analytic=all_analytic)
             except Exception as e:
                 # If integration fails, reject the step
-                return -np.inf
+                return np.inf
 
     if (dataset_CC != None or dataset_BAO != None or dataset_DESI != None or 
         dataset_BAO_full != None or dataset_AGN != None):
@@ -183,13 +191,26 @@ def params_to_chi2(theta, fixed_params, index=0,
         #wb = bao_param
         #rd = r_drag(Omega_m_LCDM, H_0, wb) #rd calculation
 
-        rd = r_drag(omega_m, H_0, WB_BBN) #rd calculation
+        try:
+            if rd_grid:
+                rd = r_drag_grid(omega_m, H_0, WB_BBN) #rd from the grid computed with CLASS
+            else:
+                rd = r_drag_class(omega_m, H_0, WB_BBN) #rd computed with CLASS
+        except Exception as e:
+            # If CLASS fails (or outside of the r_d grid), reject the step
+            return np.inf
 
     if dataset_SN_plus_shoes != None:
         zhd, zhel, mb, mu_shoes, Cinv, is_cal = dataset_SN_plus_shoes #Import the data
         muobs = mb - Mabs
         muth_num = aparent_magnitude_th(int_inv_Hs_interp, zhd, zhel) #Numeric prediction of mu
         muth = muth_num*(-is_cal + 1) + mu_shoes*(is_cal) #Merge num predicion with mu_shoes
+        chi2_SN = chi2_supernovae(muth, muobs, Cinv)
+
+    if dataset_SN_plus != None:
+        zhd, zhel, Cinv, mb = dataset_SN_plus #Import the data
+        muth = aparent_magnitude_th(int_inv_Hs_interp, zhd, zhel)
+        muobs =  mb - Mabs
         chi2_SN = chi2_supernovae(muth, muobs, Cinv)
 
     if dataset_SN != None:
@@ -364,7 +385,7 @@ if __name__ == '__main__':
     # Pantheon plus
     os.chdir(path_git+'/fr_mcmc/source/Pantheon_plus_shoes')
     ds_SN_plus = read_data_pantheon_plus('Pantheon+SH0ES.dat',
-                                'covmat_pantheon_plus_only.npz')
+                                'Pantheon+SH0ES_STAT+SYS.cov')
 
     # Pantheon
     os.chdir(path_git+'/fr_mcmc/source/Pantheon/')
@@ -375,7 +396,7 @@ if __name__ == '__main__':
     ds_CC = read_data_chronometers('chronometers_data.txt')
 
     # BAO
-    os.chdir(path_git+'/fr_mcmc/source/BAO/')
+    os.chdir(path_git+'/fr_mcmc/source/BAO_legacy_1/')
     ds_BAO = []
     files_BAO = ['BAO_data_da.txt','BAO_data_dh.txt','BAO_data_dm.txt',
                     'BAO_data_dv.txt','BAO_data_H.txt']
@@ -384,12 +405,12 @@ if __name__ == '__main__':
         ds_BAO.append(aux)
 
     # BAO full
-    os.chdir(path_git+'/fr_mcmc/source/BAO_full/')
+    os.chdir(path_git+'/fr_mcmc/source/BAO_legacy_2/')
     ds_BAO_full = read_data_BAO_full('BAO_full_1.csv','BAO_full_2.csv')
 
     # DESI
     os.chdir(path_git+'/fr_mcmc/source/DESI/')
-    ds_DESI = read_data_DESI('DESI_data_dm_dh.txt','DESI_data_dv.txt')
+    ds_DESI = read_data_DESI('DESI_DR2_dm_dh.txt','DESI_DR2_dv.txt')
 
     # AGN
     os.chdir(path_git+'/fr_mcmc/source/AGN')
