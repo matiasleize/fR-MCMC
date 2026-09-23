@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fr-mcmc"
+version = "0.2.0"
+description = "MCMC analysis of f(R) background cosmologies with various datasets"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Matías Leizerovich" }]
+
+dependencies = [
+  "numpy>=1.26",
+  "scipy>=1.11",        # cumulative_trapezoid existe desde 1.6
+  "matplotlib>=3.8",
+  "click>=8.1",         # CLI en fr_mcmc/run.py
+  "pyyaml>=6.0",        # config.py
+  "python-box>=7.0",    # config.py: from box import Box
+  "emcee>=3.1",
+  "h5py>=3.10",         # backend HDF5 de emcee (emcee.backends.HDFBackend)
+  "tqdm>=4.66",         # sampler.sample(..., progress=True)
+  "pandas>=2.0",
+  "sympy>=1.12",        # utils/taylor.py, utils/initial_conditions.py
+  "gitpython>=3.1",     # localizacion del root del repo (ver TODO de portabilidad)
+  "classy>=3.2",        # wrapper de CLASS; sdist, compila en la instalacion
+]
+
+[project.optional-dependencies]
+plots = [
+  "getdist>=1.4",
+  "ipython>=8.0",
+]
+
+[project.scripts]
+fr-mcmc = "fr_mcmc.run:main_cli"
+
+[project.urls]
+Source = "https://github.com/matiasleize/fR-MCMC"
+
+[tool.setuptools.packages.find]
+include = ["fr_mcmc*"]
