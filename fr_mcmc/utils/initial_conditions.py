@@ -16,6 +16,7 @@ path_global = os.path.dirname(path_git)
 #os.chdir(path_git)
 #os.sys.path.append('./fr_mcmc/utils/')
 #from change_of_parameters import physical_to_model_params_HS
+from constants import Omega_r
 
 def redshift_initial_condition(physical_params, eps=10**(-10)):
     '''
@@ -24,9 +25,9 @@ def redshift_initial_condition(physical_params, eps=10**(-10)):
     z0 = np.exp(-x0)-1    
     '''
  
-    [omega_m, b, _] = physical_params
+    [omega_m, b, H0] = physical_params
     beta = 2/b
-    omega_l = 1 - omega_m
+    omega_l = 1 - omega_m - Omega_r(H0)
     
     #Initial z
     zi = (2 * omega_l*(-np.log(eps)-2*beta)/(beta*omega_m))**(1/3) - 1
@@ -42,13 +43,14 @@ def calculate_initial_conditions(physical_params, zi = 30, model = 'HS', CI_apro
     we can take c=1 (we checked this analitically).
     '''
 
-    [omega_m, b, _] = physical_params
+    [omega_m, b, H0] = physical_params
+    omega_r = Omega_r(H0) #photons + massless neutrinos (0 if constants.RADIATION is False)
 
     z = sym.Symbol('z')
-    E = (omega_m*(1+z)**3 + (1-omega_m))**(0.5)
+    E = (omega_r*(1+z)**4 + omega_m*(1+z)**3 + (1-omega_m-omega_r))**(0.5)
 
     if (model=='EXP' or model=='Odintsov'):
-        omega_l = 1-omega_m
+        omega_l = 1-omega_m-omega_r
 
         tildeR = 2 + (omega_m/(2*(1 - omega_m))) * (1+z)**3
 
@@ -62,7 +64,7 @@ def calculate_initial_conditions(physical_params, zi = 30, model = 'HS', CI_apro
 
     elif (model=='HS' or model=='ST'):
         R = sym.Symbol('R')
-        Lamb = 3 * (1-omega_m) #/c_light_km**2
+        Lamb = 3 * (1-omega_m-omega_r) #/c_light_km**2
         
         #c1,c2 = physical_to_model_params_HS(omega_m,b)
         #R_HS = 2 * Lamb * c2/c1
@@ -103,14 +105,14 @@ def calculate_initial_conditions(physical_params, zi = 30, model = 'HS', CI_apro
             xi = Ricci_t_ci(zi) * F_2R_ci(R_i) / (H_ci(zi) * F_R_ci(R_i))
             yi = F_ci(R_i) / (6 * (H_ci(zi)**2) * F_R_ci(R_i))
             vi = R_i / (6 * H_ci(zi)**2)
-            wi = 1 + xi + yi - vi
+            wi = 1 + xi + yi - vi - omega_r*(1+zi)**4 / H_ci(zi)**2 #Omega_m (w) = 1 + x + y - v - Omega_r
             ri = R_i / R_0
 
         else: #LCDM initial conditions
             xi = 0
             yi = (R_i  - 2 * Lamb) / (6 * H_ci(zi)**2)
             vi = R_i / (6 * H_ci(zi)**2)
-            wi = 1 + xi + yi - vi
+            wi = 1 + xi + yi - vi - omega_r*(1+zi)**4 / H_ci(zi)**2 #Omega_m (w) = 1 + x + y - v - Omega_r
             ri = R_i / R_0
 
         return[xi,yi,vi,wi,ri]

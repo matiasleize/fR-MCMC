@@ -2,6 +2,7 @@ import sympy as sym
 from sympy.utilities.lambdify import lambdify
 import numpy as np
 import math
+from constants import Omega_r
 
 #%%
 def Taylor_ST(z,omega_m,b,H0):
@@ -9,7 +10,7 @@ def Taylor_ST(z,omega_m,b,H0):
     Parametrization of the Hubble parameter H(z) given by Basilakos et al. for the Starobinsky model.
     The number of e-folds is not the same as the scale factor (N!=a). They are related according to: N=ln(a)=-ln(1+z)
     '''
-    omega_r=0
+    omega_r=Omega_r(H0) #photons + massless neutrinos (0 if constants.RADIATION is False)
     N = sym.Symbol('N')
     St_tay = H0*(1+(-1+math.e**(-3*N))*omega_m+(-1+math.e**(-4*N))*omega_r+
     (b**2*math.e**(5*N)*(-1+omega_m+omega_r)**3*(-37*math.e**N*omega_m**2-40*omega_m*omega_r+
@@ -45,7 +46,7 @@ def Taylor_HS(z,omega_m,b,H0):
     Parametrization of the Hubble parameter H(z) given by Basilakos et al. for the Starobinsky model.
     The number of e-folds is not the same as the scale factor (N!=a). They are related according to: N=ln(a)=-ln(1+z)
     '''
-    omega_r=0
+    omega_r=Omega_r(H0) #photons + massless neutrinos (0 if constants.RADIATION is False)
     N = sym.Symbol('N')
     Hs_tay=N
     Hs_tay = (H0**2*(1/((omega_m-4*math.e**(3*N)*(omega_m+omega_r-1))**8) * (b**2)*(math.e**(5*N))*((omega_m+omega_r-1)**3) *(37*math.e**(N)*omega_m**6-4656*math.e**(4*N)*omega_m**5*(omega_m+omega_r-1)-
