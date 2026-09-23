@@ -2,7 +2,6 @@
 Calculate the derivate parameters. IMPORTANT: It Doesn't work for all the indeces yet.
 """
 
-from numba import jit
 import numpy as np
 
 import os
@@ -12,7 +11,6 @@ os.chdir(path_git); os.sys.path.append('./fr_mcmc/utils/')
 from solve_sys import Hubble_th
 
 
-@jit
 def derived_parameters(sampler,discard, thin,model='EXP'):
 	'''Convert LCDM chains into physical chains (for Omega_m and H_0 parameters).'''
 	flat_samples = sampler.get_chain(discard=discard, flat=True, thin=thin)
