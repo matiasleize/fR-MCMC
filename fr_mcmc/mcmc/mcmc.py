@@ -4,11 +4,18 @@ Run MCMC analyses and calculations of the physical parameters of the models.
 Parameter order in this file: Mabs,omega_m,b,H_0,n
 '''
 
+import os
+# One thread per process for the linear algebra (BLAS). With several threads per process, and
+# with several processes (N_PROCESSES), the cores are oversubscribed and it is much slower.
+# Must be set before importing numpy.
+for _var in ['OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS', 'OMP_NUM_THREADS']:
+    os.environ.setdefault(_var, '1')
+
+import multiprocessing
 import numpy as np; #np.random.seed(42)
 import emcee
 from scipy.optimize import minimize
 
-import os
 import git
 
 # Get the root directory of the Git repository
@@ -35,6 +42,14 @@ import analysis
 # Change to the mcmc directory
 os.chdir(os.path.join(path_git, 'fr_mcmc', 'mcmc'))
 
+# The pool of processes pickles the function it evaluates, and log_probability (defined inside
+# run) can not be pickled. It is stored in this global before creating the pool ('fork' start
+# method, the workers inherit it) and evaluated through a top level function.
+_log_probability = None
+
+def _log_probability_global(theta):
+    return _log_probability(theta)
+
 def run():
     output_dir = config.OUTPUT_DIR
     model = config.MODEL
@@ -42,6 +57,9 @@ def run():
     index = config.LOG_LIKELIHOOD_INDEX
     num_params = int(str(index)[0])
     all_analytic = config.ALL_ANALYTIC
+    use_c = config.USE_C == True # Compute H(z) in C (utils/solve_sys_c)
+    rd_grid = config.RD_GRID == True # r_d from the CLASS grid instead of CLASS at each step
+    use_ml = config.USE_ML == True # HS/ST: neural networks instead of the integration
 
     witness_file = f'witness_{config.WITNESS_NUM}.txt'
     
@@ -82,7 +100,7 @@ def run():
         os.chdir(os.path.join(path_data, 'Pantheon_plus_shoes'))
 
         ds_SN_plus = read_data_pantheon_plus('Pantheon+SH0ES.dat',
-                                'covmat_pantheon_plus_only.npz')        
+                                'Pantheon+SH0ES_STAT+SYS.cov')
         datasets.append('_PP')
     else:
         ds_SN_plus = None
@@ -98,7 +116,10 @@ def run():
 
     # Cosmic Chronometers
     if config.USE_CC == True:
-        os.chdir(os.path.join(path_data, 'CC'))
+        # CC_legacy (30 puntos, diagonal): la tabla de Leizerovich et al. (2022), PRD 105, 103526.
+        # La compilacion nueva de 33 puntos (source/CC/) se usa con la covarianza de Moresco,
+        # via CC_cov.read_data_CC_cov; en diagonal no corresponde a nada publicado.
+        os.chdir(os.path.join(path_data, 'CC_legacy'))
 
         ds_CC = read_data_chronometers('chronometers_data.txt')
         datasets.append('_CC')
@@ -107,7 +128,7 @@ def run():
 
     # BAO
     if config.USE_BAO == True:    
-        os.chdir(os.path.join(path_data, 'BAO'))
+        os.chdir(os.path.join(path_data, 'BAO_legacy_1'))
 
         ds_BAO = []
         files_BAO = ['BAO_data_da.txt','BAO_data_dh.txt','BAO_data_dm.txt',
@@ -123,14 +144,14 @@ def run():
     if config.USE_DESI == True:    
         os.chdir(os.path.join(path_data, 'DESI'))
 
-        ds_DESI = read_data_DESI('DESI_data_dm_dh.txt','DESI_data_dv.txt')
+        ds_DESI = read_data_DESI('DESI_DR2_dm_dh.txt','DESI_DR2_dv.txt') # DR1: 'DESI_data_dm_dh.txt','DESI_data_dv.txt'
         datasets.append('_DESI')
     else:
         ds_DESI = None
 
     # BAO full
     if config.USE_BAO_FULL == True:    
-        os.chdir(os.path.join(path_data, 'BAO_full'))
+        os.chdir(os.path.join(path_data, 'BAO_legacy_2'))
         ds_BAO_full = read_data_BAO_full('BAO_full_1.csv','BAO_full_2.csv')
         datasets.append('_BAO_full')
     else:
@@ -172,7 +193,10 @@ def run():
                                         dataset_AGN = ds_AGN,
                                         H0_Riess = H0_Riess,
                                         model = model,
-                                        all_analytic = all_analytic
+                                        all_analytic = all_analytic,
+                                        use_c = use_c,
+                                        rd_grid = rd_grid,
+                                        use_ml = use_ml
                                         )
 
     nll = lambda theta: -ll(theta) # negative log likelihood
@@ -250,24 +274,49 @@ def run():
     else:
         print('Calculating maximum likelihood parameters ..')
         initial = np.array(config.GUEST)
-        soln = minimize(nll, initial, options = {'eps': 0.01}, bounds = bnds)
+        # Nelder-Mead (derivative free). L-BFGS-B with finite differences (eps=0.01) stopped
+        # at the initial point (ABNORMAL_TERMINATION_IN_LNSRCH).
+        soln = minimize(nll, initial, method='Nelder-Mead', bounds = bnds,
+                        options = {'xatol': 1e-4, 'fatol': 1e-3, 'maxiter': 5000})
         np.savez(filename_ml, sol=soln.x)
         with np.load(filename_ml + '.npz') as data:
             sol = data['sol']
     print(f'Maximun likelihood corresponds to the parameters: {sol}')
 
     # Define initial values of each chain using the minimun 
-    # values of the chi-squared.
-    pos = sol * (1 +  0.01 * np.random.randn(config.NUM_WALKERS, num_params))
+    # values of the chi-squared: 1% scatter, plus a small additive scatter (for parameters
+    # close to 0, e.g. b). Walkers outside of the prior are drawn again.
+    width = np.array([hi - lo for lo, hi in bnds])
+    pos = np.zeros((config.NUM_WALKERS, num_params))
+    for i in range(config.NUM_WALKERS):
+        for _ in range(10000):
+            pos[i] = sol * (1 + 0.01 * np.random.randn(num_params)) + 1e-3 * width * np.random.randn(num_params)
+            if np.isfinite(log_prior(pos[i], model)):
+                break
+        else:
+            raise ValueError('Could not place the initial walkers inside the prior')
 
     filename_h5 = filename + '.h5'
 
-    MCMC_sampler(log_probability,pos, 
-                filename = filename_h5,
-                witness_file = witness_file,
-                witness_freq = config.WITNESS_FREQ,
-                max_samples = config.MAX_SAMPLES,
-                save_path = output_directory)
+    # Parallel evaluation of the walkers
+    n_proc = config.N_PROCESSES or min(os.cpu_count(), config.NUM_WALKERS)
+    global _log_probability
+    _log_probability = log_probability
+    pool = multiprocessing.get_context('fork').Pool(n_proc) if n_proc > 1 else None
+    try:
+        MCMC_sampler(_log_probability_global if pool else log_probability, pos,
+                    filename = filename_h5,
+                    witness_file = witness_file,
+                    witness_freq = config.WITNESS_FREQ,
+                    max_samples = config.MAX_SAMPLES,
+                    save_path = output_directory,
+                    conv_freq = config.CONV_FREQ or 100,
+                    pool = pool,
+                    moves = config.MOVES if 'MOVES' in config else None)
+    finally:
+        if pool:
+            pool.close()
+            pool.join()
 
     # If it corresponds, derive physical parameters
     if model != 'LCDM':
